@@ -1,0 +1,21 @@
+Sucess information (Low):
+name:sel_wr_con[0]/rt
+enarow:(31, 30, 29, 28, 27, 26)
+actena:[1 0 1 0 0 0]
+AndItemNum:2
+Fail Information (Low):
+name:sel_wr_con[1]/rd
+Fail Information (Low):
+name:sel_wr_con[2]/31
+Sucess information (Middle):
+name:sel_wr_con[1]/rd
+enarow:[31 30 29 28 27 26  5  4  3  2  1  0]
+actena:[1 0 1 1 1 1 0 0 1 0 1 0]
+AndItemNum:3
+Fail Information (Middel):
+name:sel_wr_con[2]/31
+Sucess information (Hign):
+name:sel_wr_con[2]/31
+enarow:(31, 30, 29, 28, 27, 26, 20, 16, 5, 4, 3, 2, 1, 0)
+actena:[1 0 1 1 1 1 1 0 0 0 1 0 1 1]
+AndItemNum:25

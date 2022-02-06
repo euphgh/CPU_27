@@ -1,8 +1,8 @@
 /*====================Ports Declaration====================*/
 module brcal(
- 	output wire [31:0] RD1, //
-	output wire [31:0] RD2, //
-	output wire [5:0] brcal_con, //control:选择计算类型--{0:E,1:NE,2:GE,3:GT,4:LE,5:LT}
+ 	input wire [31:0] RD1, //
+	input wire [31:0] RD2, //
+	input wire [6:0] brcal_con, //control:选择计算类型--{0:E,1:NE,2:GE,3:GT,4:LE,5:LT,6:J}
 	output wire brcal_out //control:决定是否跳转--{0:不跳转,1:跳转}
 	);
 
@@ -25,5 +25,7 @@ assign brcal_out = 	brcal_con[0] ? beq_res:
 				    brcal_con[1] ? bne_res:
 	 				brcal_con[2] ? bgez_res:			
  					brcal_con[3] ? bgtz_res:
-					brcal_con[4] ? blez_res: bltz_res;
+					brcal_con[4] ? blez_res: 
+					brcal_con[5] ? bltz_res:
+					brcal_con[6] ? 1'b1:1'b0;
 endmodule

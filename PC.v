@@ -1,28 +1,31 @@
 `include "defines.vh"
 /*====================Ports Declaration====================*/
 module PC(
- 	output wire [0:0] clk, //
-	output wire [0:0] rst_n, //
-	output wire [31:0] pc_in, //
-	output reg [31:0] PC, //
-	output wire [31:0] NPC //
+ 	input wire clk, 
+	input wire rst_n, 
+	input wire [31:0] pc_in, 
+	
+	output reg [31:0] PC, NPC,
+	output wire [31:0] NNPC
 	);
 
 /*====================Variable Declaration====================*/
-wire [31:2] high; //:None
-
+wire [31:3] high;
 /*====================Function Code====================*/
 initial begin
 	PC <= `StartPoint;
+	NPC <= `StartNPC;
 end
 always @(posedge clk) begin
 	if (!rst_n)begin
-		PC <= pc_in;
+		PC <= `StartPoint;
+		NPC <= `StartNPC;
 	end
 	else begin
-		PC <= `StartPoint;
+		PC <= pc_in;
+		NPC <= pc_in+4;
 	end
 end
-assign high = PC[31:2] + 1;
-assign NPC = {high,PC[1:0]};
+assign high = pc_in[31:3] + 1'b1;
+assign NNPC = {high,pc_in[2:0]};
 endmodule
