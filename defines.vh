@@ -26,41 +26,51 @@
 `define ChipDisable 1'b0
 
 //IF
-`define StartPoint 32'hbfc00000
+`define StartPoint 32'h00000000
+`define ini_Instruct 32'h00000000 //BFC0_0000的J指令
+`define ini_NPC_reg 32'hbfc00_000 //高四位是B
+`define ini_PC_reg 32'b0
+`define StartNPC 32'hbfc00000
+`define StartNNPC 32'hbfc00004
 
-//指令
-`define EXE_ORI  6'b001101
+//ID
+`define ini_sel_wbdata_id 3'b0
+`define ini_sel_dm_id 2'b0
+`define ini_sel_mw_con_id 2'b0
+`define ini_RD1 32'b0
+`define ini_RD2 32'b0
+`define ini_aluop 12'b0
+`define ini_aludata1 32'b0
+`define ini_aludata2 32'b0
+`define ini_instr_index 26'b0
+`define ini_sbhw_con 3'b0
+`define ini_addrexc_con 5'b0
+`define ini_lr_con 2'b0
+`define ini_lubhw_con_id 5'b0 
+`define ini_NNPC_id 32'b0
+`define ini_regnum_id 5'b0
+`define ini_PC_id 32'b0
+`define idstop_con_w_reg 1'b0
+//EXE
+`define ini_aluout_exe 32'b0
+`define ini_sel_wbdata_exe 3'b0
+`define ini_lubhw_con_exe 5'b0
+`define ini_onehot 8'b0
+`define ini_regnum_exe 5'b0
+`define ini_exe_reg 32'b0//决定debugpc初值1级
+`define idstop_con_w_tmo 1'b0//最初不暂停
+`define idstop_con_w_eo 1'b0
 
+//MEM
+`define ini_wbdata 32'b0   
+`define ini_reg_we_mem 4'b0
 
-`define EXE_NOP 6'b000000
+// addrexc
+`define AdEL 8'h04 
+`define AdES 8'h05
 
-
-//AluOp
-`define EXE_OR_OP    8'b00100101
-`define EXE_ORI_OP  8'b01011010
-
-
-`define EXE_NOP_OP    8'b00000000
-
-//AluSel
-`define EXE_RES_LOGIC 3'b001
-
-`define EXE_RES_NOP 3'b000
-
-
-//指令存储器inst_rom
-`define InstAddrBus 31:0
-`define InstBus 31:0
-`define InstMemNum 131071
-`define InstMemNumLog2 17
-
-
-//通用寄存器regfile
-`define RegAddrBus 4:0
-`define RegBus 31:0
-`define RegWidth 32
-`define DoubleRegWidth 64
-`define DoubleRegBus 63:0
-`define RegNum 32
-`define RegNumLog2 5
-`define NOPRegAddr 5'b00000
+//datapath
+`define debug_wb_pc 32'b0
+`define debug_wb_rf_wen 4'b0
+`define debug_wb_rf_wnum 5'b0
+`define debug_wb_rf_wdata 32'b0
