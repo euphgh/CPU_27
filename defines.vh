@@ -1,66 +1,72 @@
-//全局
-`define RstEnable 1'b1
-`define RstDisable 1'b0
-`define ZeroWord 32'h00000000
-`define WriteEnable 1'b1
-`define WriteDisable 1'b0
-`define ReadEnable 1'b1
-`define ReadDisable 1'b0
-`define AluOpBus 7:0
-`define AluSelBus 2:0
-`define InstValid 1'b0
-`define InstInvalid 1'b1
-`define Stop 1'b1
-`define NoStop 1'b0
-`define InDelaySlot 1'b1
-`define NotInDelaySlot 1'b0
-`define Branch 1'b1
-`define NotBranch 1'b0
-`define InterruptAssert 1'b1
-`define InterruptNotAssert 1'b0
-`define TrapAssert 1'b1
-`define TrapNotAssert 1'b0
-`define True_v 1'b1
-`define False_v 1'b0
-`define ChipEnable 1'b1
-`define ChipDisable 1'b0
-
 //IF
-`define StartPoint 32'hbfc00000
+`define ini_id_brcal_res_in 1'b0
+`define ini_id_bjpc_res_in 32'b0
+`define ini_id_NPC_in 32'hbfc00000
 
-//指令
-`define EXE_ORI  6'b001101
+//ID
+`define ini_sel_wbdata_id 3'b0
+`define ini_sel_dm_id 2'b0
+`define ini_sel_mw_con_id 2'b0
+`define ini_RD1 32'b0
+`define ini_RD2 32'b0
+`define ini_aluop 12'b0
+`define ini_aludata1 32'b0
+`define ini_aludata2 32'b0
+`define ini_instr_index 26'b0
+`define ini_sbhw_con 3'b0
+`define ini_addrexc_con 5'b0
+`define ini_lr_con 2'b0
+`define ini_lubhw_con_id 5'b0 
+`define ini_NNPC_id 32'b0
+`define ini_regnum_id 5'b0
+`define ini_PC_id 32'b0
+//new
+`define ini_if_PC_in 32'b0
+`define ini_if_NPC_in 32'hbfc00000
+`define ini_if_NNPC_in 32'b0
+`define ini_exe_wnum 4'b0
+`define ini_mem_wnum 4'b0
+`define ini_wb_wnum 4'b0
+`define ini_exe_type 3'b0
+`define ini_mem_type 3'b0
+`define ini_wb_type 3'b0
+//EXE
+`define ini_id_sbhw_con_in 3'b0
+`define ini_id_addrexc_con_in 4'b0
+`define ini_id_sel_wbdata_in 4'b0
+`define ini_id_aluop_in 12'b0
+`define ini_id_RD2_in 32'b0
+`define ini_id_aludata1_in 32'b0
+`define ini_id_aludata2_in 32'b0
+`define ini_id_sel_dm_con_in 2'b0
+`define ini_id_lr_con_in 2'b0
+`define ini_id_lubhw_con_in 5'b0
+`define ini_id_PC_in 32'b0
+`define ini_id_NNPC_in 32'b0
+`define ini_id_regnum_in 5'b0
+`define ini_id_write_type_in 3'b0
+//MEM
+`define ini_wbdata 32'b0   
+`define ini_reg_we_mem 4'b0
+`define ini_exe_write_type_in 3'b0
+`define ini_exe_sel_wbdata_in 4'b0
+`define ini_exe_aluout_in 32'b0   
+`define ini_exe_onehot_in 8'b0    
+`define ini_exe_lubhw_con_in 5'b0 
+`define ini_exe_PC_in 32'b0       
+`define ini_exe_NNPC_in 32'b0     
+`define ini_exe_regnum_in 5'b0    
 
+// addrexc
+`define AdEL 8'h04 
+`define AdES 8'h05
 
-`define EXE_NOP 6'b000000
+//datapath
+`define debug_wb_pc 32'b0
+`define debug_wb_rf_wen 4'b0
+`define debug_wb_rf_wnum 5'b0
+`define debug_wb_rf_wdata 32'b0
 
-
-//AluOp
-`define EXE_OR_OP    8'b00100101
-`define EXE_ORI_OP  8'b01011010
-
-
-`define EXE_NOP_OP    8'b00000000
-
-//AluSel
-`define EXE_RES_LOGIC 3'b001
-
-`define EXE_RES_NOP 3'b000
-
-
-//指令存储器inst_rom
-`define InstAddrBus 31:0
-`define InstBus 31:0
-`define InstMemNum 131071
-`define InstMemNumLog2 17
-
-
-//通用寄存器regfile
-`define RegAddrBus 4:0
-`define RegBus 31:0
-`define RegWidth 32
-`define DoubleRegWidth 64
-`define DoubleRegBus 63:0
-`define RegNum 32
-`define RegNumLog2 5
-`define NOPRegAddr 5'b00000
+//WB
+`define wb_write_type 3'b0
+`define wb_wnum_reg 3'b0

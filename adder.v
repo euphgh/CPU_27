@@ -27,8 +27,8 @@ assign sltu_res[BUS-1:1] = 'b0;
 assign slt_res[0] = ((add_sub_res[BUS-1]) ? 1'b1:1'b0) ^ overflow;
 assign sltu_res[0] = (cout) ? 1'b0:1'b1;
 
-assign add_res = ({BUS{add_op|sub_op}} & add_sub_res)|
-                 ({BUS{slt_op}} & slt_res)|
-                 ({BUS{sltu_op}} & sltu_res);
+assign add_res = ({BUS{add_op||sub_op}} & add_sub_res)
+                 |({BUS{slt_op}} & slt_res)|
+                 |({BUS{sltu_op}} & sltu_res);
 
 endmodule
