@@ -224,7 +224,7 @@ brcal  u_brcal (
 
     .brcal_out               ( brcal_out   )
 );
-assign id_brcal_res_out = brcal_out;
+assign id_brcal_res_out = brcal_out&&(!nop);
 bjpc  u_bjpc (
     .NPC                     ( NPC           ),
     .RD1                     ( RD1           ),
