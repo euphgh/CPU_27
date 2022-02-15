@@ -24,14 +24,13 @@ module decoder(
     output wire [4:0] lubhw_con, //control:lubhw模块选择子
 	//new
 	output wire [2:0] read_type,
-	output wire [2:0] write_type
+	output wire [2:0] write_type,
+	output wire nop
 	);
 
 /*====================Variable Declaration====================*/
 wire [31:0] ins = Instruct; 
 wire sel_wb_con0_python;
-wire nop;
-wire writetype2_python;
 /*====================Function Code====================*/
 //--------------------Manual Code--------------------
 assign rs = ins[25:21] ;
@@ -42,11 +41,10 @@ assign instr_index = ins[25:0] ;
 assign sa = ins[10:6] ;
 assign sel_wb_con[0] = sel_wb_con0_python && (|ins[20:6]);
 assign nop = !(|ins);
-assign write_type[2] = (!nop) && writetype2_python;
 //--------------------Python Code--------------------
 assign write_type[1] = ins[31]&&(!ins[29]) ;
 assign write_type[0] = (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[3]&&(!ins[1])&&ins[0] ;
-assign writetype2_python = (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&(!ins[1]) || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&(!ins[3])&&(!ins[1]) || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&ins[1]
+assign write_type[2] = (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&(!ins[1]) || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&(!ins[3])&&(!ins[1]) || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&ins[1]
  || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&(!ins[3])&&ins[1] || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&ins[3]&&ins[1] || (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&ins[3]&&ins[1]
  || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&(!ins[1]) || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&(!ins[3])&&ins[1] || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&ins[3]&&(!ins[1])
  || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[20])&&ins[3]&&ins[1] || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&(!ins[3])&&(!ins[1]) || (!ins[31])&&ins[29]&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[20]&&(!ins[3])&&ins[1]

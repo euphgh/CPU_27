@@ -154,8 +154,8 @@ assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[2] ? llr_data:
                         exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r :32'b0; 
 
-assign mem_reg_we_out = (exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
-					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0;
+assign mem_reg_we_out = {4{|exe_to_mem_regnum_r}} & ((exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
+					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
 
 assign mem_PC_out = exe_to_mem_PC_r;
 assign data_sram_en = rst_n;

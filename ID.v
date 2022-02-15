@@ -83,6 +83,7 @@ wire  [4:0]  lubhw_con;
 wire  [1:0]  bjaddrexc_con;
 wire  [2:0]  read_type;
 wire  [2:0]  write_type;
+wire  nop;
 //------------------------------------------------------------
 
 // brcal Inputs ----------------------------------------------       
@@ -205,7 +206,8 @@ decoder  u_decoder (
     .lr_con                  ( lr_con          ),
     .lubhw_con               ( lubhw_con       ),
     .read_type               ( read_type       ),
-    .write_type              ( write_type      )
+    .write_type              ( write_type      ),
+    .nop                     ( nop             )
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
@@ -247,8 +249,8 @@ assign WD = wb_to_id_wdata_r;
 assign id_PC_out = if_to_id_PC_r;
 assign id_NNPC_out = if_to_id_NNPC_r;
 assign reg_we = wb_to_id_wen_r;
-assign WR = wb_to_id_wnum_r;
-assign id_write_type_out = write_type;
+assign WR = wb_to_id_wnum_r & {5{!nop}} ;
+assign id_write_type_out = write_type & {3{!nop}};
 
 //====================================================
 //==================流水暂停逻辑=======================
