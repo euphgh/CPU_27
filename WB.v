@@ -47,8 +47,8 @@ always @(posedge clk ) begin
 end
 
 assign wb_wbdata_out = mem_wbdata_in;
-assign wb_reg_we_out = mem_reg_we_in;
-assign wb_wnum_out = mem_wnum_in;
+assign wb_reg_we_out = mem_reg_we_in &{4{mem_valid_in}};
+assign wb_wnum_out = mem_wnum_in & {5{mem_valid_in}};
 
 always @(posedge clk) begin
     if (!rst_n) begin
@@ -61,18 +61,11 @@ always @(posedge clk) begin
     end
     else if (allowin && mem_valid_in) begin
         debug_wb_pc <= mem_PC_in;
-        debug_wb_rf_wen <= mem_reg_we_in;
-        debug_wb_rf_wnum <= mem_wnum_in;
+        debug_wb_rf_wen <= mem_reg_we_in & {4{valid_r}};
+        debug_wb_rf_wnum <= mem_wnum_in & {5{valid_r}};
         debug_wb_rf_wdata <= mem_wbdata_in;
-        wb_write_type_out <= mem_write_type_in;
-        wb_wnum_reg_out <= mem_wnum_in;
-    end
-    else if (!mem_valid_in) begin
-        debug_wb_rf_wen <= `debug_wb_rf_wen;
-        debug_wb_rf_wnum <= `debug_wb_rf_wnum;
-        debug_wb_rf_wdata <= `debug_wb_rf_wdata;
-        wb_write_type_out <= `wb_write_type;
-        wb_wnum_reg_out <= `wb_wnum_reg;
+        wb_write_type_out <= mem_write_type_in & valid_r;
+        wb_wnum_reg_out <= mem_wnum_in & {5{valid_r}};
     end
 end
 endmodule

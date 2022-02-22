@@ -138,7 +138,7 @@ always @(posedge clk ) begin
         valid_r <= if_valid_in ; 
     end
 end
-assign allowin = !valid_r || (ready&&exe_allowin_in);
+assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
 
@@ -157,10 +157,6 @@ always @(posedge clk) begin
         if_to_id_PC_r <= if_PC_in;
         if_to_id_NPC_r <= if_NPC_in;
         if_to_id_NNPC_r <= if_NNPC_in;
-    end
-    else if (if_valid_in) begin
-        if_to_id_NPC_r <= `ini_if_NPC_in;
-        if_to_id_NNPC_r <= `ini_if_NNPC_in;
     end
 end
 
@@ -211,10 +207,10 @@ decoder  u_decoder (
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
-assign id_sel_dm_out = sel_dm_con;
-assign id_addrexc_con_out = addrexc_con;
+assign id_sel_dm_out = sel_dm_con & {2{if_valid_in}};
+assign id_addrexc_con_out = addrexc_con & {4{if_valid_in}};
 assign id_lubhw_con_out = lubhw_con;
-assign id_sel_wbdata_out = sel_wb_con;
+assign id_sel_wbdata_out = sel_wb_con & {4{if_valid_in}};
 assign Instruct = if_to_id_Instruct_r;
 assign id_aluop_out = aluop;
 brcal  u_brcal (
@@ -224,7 +220,7 @@ brcal  u_brcal (
 
     .brcal_out               ( brcal_out   )
 );
-assign id_brcal_res_out = brcal_out&&(!nop);
+assign id_brcal_res_out = brcal_out && (!nop) && (if_valid_in);
 bjpc  u_bjpc (
     .NPC                     ( NPC           ),
     .RD1                     ( RD1           ),
@@ -238,7 +234,7 @@ assign id_bjpc_res_out = bjpc_out;
 assign NPC = if_to_id_NPC_r;
 assign regnum_id_wire = sel_wr_con[0] ? rt:
 			sel_wr_con[1] ? rd : 32'd31;
-assign id_regnum_out = regnum_id_wire;
+assign id_regnum_out = (regnum_id_wire  & {5{(!nop)&&valid_r}}) ;
 assign aludata1_wire = sel_alud1_con[0] ? RD1 : {27'b0,sa}; //不支持位移负值
 assign id_aludata1_out = aludata1_wire;
 assign aludata2_wire = sel_alud2_con[0] ? RD2 : extend_out;
@@ -248,13 +244,9 @@ assign RR2 = rt;
 assign WD = wb_to_id_wdata_r;
 assign id_PC_out = if_to_id_PC_r;
 assign id_NNPC_out = if_to_id_NNPC_r;
-assign reg_we = wb_to_id_wen_r;
-assign WR = wb_to_id_wnum_r & {5{!nop}} ;
-assign id_write_type_out = write_type & {3{!nop}};
-
-//====================================================
-//==================流水暂停逻辑=======================
-//=====================================================
+assign reg_we = wb_to_id_wen_r & {4{valid_r}};
+assign WR = wb_to_id_wnum_r;
+assign id_write_type_out = write_type & {3{(!nop)&&valid_r}};
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
     .mem_write_type          ( mem_write_type   ),

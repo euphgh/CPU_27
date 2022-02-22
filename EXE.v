@@ -28,7 +28,6 @@ module EXE(
 	output wire [4:0]  exe_lubhw_con_out, //control:lubw模块的选择子,由上一段接下来
     output wire [31:0] exe_PC_out,
     output wire [31:0] exe_NNPC_out,
-    output wire [4:0]  exe_regnum_out,
 	output wire [7:0]  exe_onehot_out, //control:llr模块选择子
 	output wire [31:0] exe_dm_data_out, //data:直接在EXE进行选择，并且不停止，直接传输DIN
 	output wire [3:0]  exe_dm_we_out, //control:直接在EXE进行选择，并且不停止，直接传输DMW
@@ -151,21 +150,6 @@ always @(posedge clk) begin
         id_to_exe_regnum_r <= id_regnum_in;
         id_to_exe_write_type_r <= id_write_type_in;
     end 
-    else if (!id_valid_in)begin
-        id_to_exe_sbhw_con_r <= `ini_id_sbhw_con_in;
-        id_to_exe_addrexc_con_r <= `ini_id_addrexc_con_in;
-        id_to_exe_sel_wbdata_r <= `ini_id_sel_wbdata_in;
-        id_to_exe_aluop_r <= `ini_id_aluop_in;
-        id_to_exe_RD2_r <= `ini_id_RD2_in;
-        id_to_exe_aludata1_r <= `ini_id_aludata1_in;
-        id_to_exe_aludata2_r <= `ini_id_aludata2_in;
-        id_to_exe_sel_dm_con_r <= `ini_id_sel_dm_con_in;
-        id_to_exe_lr_con_r <= `ini_id_lr_con_in;
-        id_to_exe_lubhw_con_r <= `ini_id_lubhw_con_in;
-        id_to_exe_NNPC_r <= `ini_id_NNPC_in;
-        id_to_exe_regnum_r <= `ini_id_regnum_in;
-        id_to_exe_write_type_r <= `ini_id_write_type_in;
-    end
 end
 
 ALU  u_ALU (
@@ -222,9 +206,8 @@ assign exe_dm_addr_out = aluso;
 assign exe_PC_out = id_to_exe_PC_r;
 assign exe_NNPC_out = id_to_exe_NNPC_r;
 assign exe_lubhw_con_out = id_to_exe_lubhw_con_r;
-assign exe_regnum_out = id_to_exe_regnum_r;
-assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r;
+assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {4{valid_r}};
 assign exe_onehot_out = onehot;
-assign exe_wnum_out = id_to_exe_regnum_r;
-assign exe_write_type_out = id_to_exe_write_type_r;
+assign exe_wnum_out = id_to_exe_regnum_r & {4{valid_r}};
+assign exe_write_type_out = id_to_exe_write_type_r & {3{valid_r}};
 endmodule

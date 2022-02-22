@@ -23,12 +23,12 @@ module MEM(
 	output wire [31:0] mem_wbdata_out, //data:回写数据
 	output wire [3:0]  mem_reg_we_out, //control:回写使能
     output wire [31:0] mem_PC_out,
-    output wire [4:0]  mem_wnum_out,
-    output wire [2:0]  mem_write_type_out,
+    output wire [4:0]  mem_wnum_out, //data: to id segment,传递实时情况
+    output wire [2:0]  mem_write_type_out, //data: to id segment,传递实时情况
 
-    output wire data_sram_en, //ram 使能信号，高电平有效
-    output wire [3:0]  data_sram_wen, //ram 字节写使能信号，高电平有效
-    output wire [31:0] data_sram_addr,  //ram 读写地址，字节寻址
+    output wire data_sram_en, //ram 使能信号,高电平有效
+    output wire [3:0]  data_sram_wen, //ram 字节写使能信号,高电平有效
+    output wire [31:0] data_sram_addr,  //ram 读写地址,字节寻址
     output wire [31:0] data_sram_wdata,  //ram 写数据
     input  wire [31:0] data_sram_rdata  //ram 读数据
 );
@@ -114,15 +114,6 @@ always @(posedge clk) begin
         exe_to_mem_regnum_r <= exe_regnum_in;
         exe_to_mem_write_type_r <= exe_write_type_in;
     end
-    else if (!exe_valid_in) begin
-        exe_to_mem_sel_wbdata_r <= `ini_exe_sel_wbdata_in;
-        exe_to_mem_aluout_r <= `ini_exe_aluout_in;
-        exe_to_mem_onehot_r <= `ini_exe_onehot_in;
-        exe_to_mem_lubhw_con_r <= `ini_exe_lubhw_con_in;
-        exe_to_mem_NNPC_r <= `ini_exe_NNPC_in;
-        exe_to_mem_regnum_r <= `ini_exe_regnum_in;
-        exe_to_mem_write_type_r <= `ini_exe_write_type_in;
-    end
 end
 FixedMapping  u_FixedMapping (
     .VAddr                   ( VAddr   ),
@@ -154,15 +145,16 @@ assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[2] ? llr_data:
                         exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r :32'b0; 
 
-assign mem_reg_we_out = {4{|exe_to_mem_regnum_r}} & ((exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
+assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(!exe_valid_in)}} & 
+                        ((exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
 					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
-
+assign mem_regnum_out = exe_to_mem_regnum_r && exe_valid_in;
 assign mem_PC_out = exe_to_mem_PC_r;
 assign data_sram_en = rst_n;
-assign data_sram_wen = exe_to_mem_dm_we_r;
+assign data_sram_wen = exe_to_mem_dm_we_r && exe_valid_in;
 assign data_sram_addr = PAddr;
 assign data_sram_wdata = exe_to_mem_dm_data_r;
 assign DMout = data_sram_rdata;
-assign mem_wnum_out = exe_to_mem_regnum_r;
-assign mem_write_type_out = exe_to_mem_write_type_r;
+assign mem_wnum_out = exe_to_mem_regnum_r & {5{valid_r}};
+assign mem_write_type_out = exe_to_mem_write_type_r && exe_valid_in;
 endmodule

@@ -173,7 +173,7 @@ wire  [2:0]  wb_write_type_out;
 // wire  [3:0]  debug_wb_rf_wen;[port]
 // wire  [4:0]  debug_wb_rf_wnum;[port]
 // wire  [31:0]  debug_wb_rf_wdata;[port]
-wire [3:0] wb_wnum_reg_out;
+wire [4:0] wb_wnum_reg_out;
 //----------------------------------------------
 wire [31:0] PC_IF,PC_ID,PC_EXE,PC_MEM,PC_WB,Instruct;
 assign PC_IF = if_PC_out;
@@ -296,7 +296,6 @@ EXE  u_EXE (
     .exe_lubhw_con_out       ( exe_lubhw_con_out    ),
     .exe_PC_out              ( exe_PC_out           ),
     .exe_NNPC_out            ( exe_NNPC_out         ),
-    .exe_regnum_out          ( exe_regnum_out       ),
     .exe_onehot_out          ( exe_onehot_out       ),
     .exe_dm_data_out         ( exe_dm_data_out      ),
     .exe_dm_we_out           ( exe_dm_we_out        ),
@@ -312,7 +311,6 @@ assign exe_sel_wbdata_in  = exe_sel_wbdata_out ;
 assign exe_lubhw_con_in   = exe_lubhw_con_out  ;
 assign exe_PC_in          = exe_PC_out         ;
 assign exe_NNPC_in        = exe_NNPC_out       ;
-assign exe_regnum_in      = exe_regnum_out     ;
 assign exe_onehot_in      = exe_onehot_out     ;
 assign exe_dm_data_in     = exe_dm_data_out    ;
 assign exe_dm_we_in       = exe_dm_we_out      ;
@@ -376,7 +374,7 @@ assign mem_valid_in      = mem_valid_out;
 assign mem_wbdata_in     = mem_wbdata_out;    
 assign mem_reg_we_in     = mem_reg_we_out;    
 assign mem_PC_in         = mem_PC_out;        
-assign mem_wnum_in       = mem_wnum_out;      
+assign mem_wnum_in       = mem_wnum_out;
 assign mem_write_type_in = mem_write_type_out;
 
 assign wb_allowin_in     = wb_allowin_out   ;
