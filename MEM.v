@@ -145,16 +145,16 @@ assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[2] ? llr_data:
                         exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r :32'b0; 
 
-assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(!exe_valid_in)}} & 
+assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(valid_r)}} & 
                         ((exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
 					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
-assign mem_regnum_out = exe_to_mem_regnum_r && exe_valid_in;
+assign mem_regnum_out = exe_to_mem_regnum_r && valid_r;
 assign mem_PC_out = exe_to_mem_PC_r;
 assign data_sram_en = rst_n;
-assign data_sram_wen = exe_to_mem_dm_we_r && exe_valid_in;
+assign data_sram_wen = exe_to_mem_dm_we_r && valid_r;
 assign data_sram_addr = PAddr;
 assign data_sram_wdata = exe_to_mem_dm_data_r;
 assign DMout = data_sram_rdata;
 assign mem_wnum_out = exe_to_mem_regnum_r & {5{valid_r}};
-assign mem_write_type_out = exe_to_mem_write_type_r && exe_valid_in;
+assign mem_write_type_out = exe_to_mem_write_type_r && valid_r;
 endmodule

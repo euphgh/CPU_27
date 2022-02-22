@@ -57,6 +57,12 @@
 `define ini_exe_NNPC_in 32'b0     
 `define ini_exe_regnum_in 5'b0    
 
+`define ini_mem_wbdata_in 32'b0
+`define ini_mem_reg_we_in 4'b0
+`define ini_mem_PC_in 32'b0
+`define ini_mem_wnum_in 5'b0
+`define ini_mem_write_type_in 3'b0
+
 // addrexc
 `define AdEL 8'h04 
 `define AdES 8'h05
