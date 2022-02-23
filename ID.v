@@ -207,10 +207,10 @@ decoder  u_decoder (
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
-assign id_sel_dm_out = sel_dm_con & {2{if_valid_in}};
-assign id_addrexc_con_out = addrexc_con & {4{if_valid_in}};
+assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
+assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
-assign id_sel_wbdata_out = sel_wb_con & {4{if_valid_in}};
+assign id_sel_wbdata_out = sel_wb_con & {4{valid_r}};
 assign Instruct = if_to_id_Instruct_r;
 assign id_aluop_out = aluop;
 brcal  u_brcal (
@@ -220,7 +220,7 @@ brcal  u_brcal (
 
     .brcal_out               ( brcal_out   )
 );
-assign id_brcal_res_out = brcal_out && (!nop) && (if_valid_in);
+assign id_brcal_res_out = brcal_out && (!nop) && (valid_r);
 bjpc  u_bjpc (
     .NPC                     ( NPC           ),
     .RD1                     ( RD1           ),

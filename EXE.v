@@ -208,6 +208,6 @@ assign exe_NNPC_out = id_to_exe_NNPC_r;
 assign exe_lubhw_con_out = id_to_exe_lubhw_con_r;
 assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {4{valid_r}};
 assign exe_onehot_out = onehot;
-assign exe_wnum_out = id_to_exe_regnum_r & {4{valid_r}};
+assign exe_wnum_out = id_to_exe_regnum_r & {5{valid_r}};
 assign exe_write_type_out = id_to_exe_write_type_r & {3{valid_r}};
 endmodule

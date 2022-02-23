@@ -14,11 +14,11 @@ assign {add_op,sub_op,and_op,or_op,nor_op,xor_op,slt_op,sltu_op,sll_op,srl_op,sr
 wire [31:0] and_res,or_res,nor_res,xor_res,sll_res,srl_res,sra_res,lui_res;
 assign and_res = scr0 & scr1;
 assign or_res = scr0 | scr1;
-assign nor_res = !(scr0 | scr1);
+assign nor_res = ~(scr0 | scr1);
 assign xor_res = scr0 ^ scr1;
 assign sll_res = scr1 << scr0[4:0] ;
 assign srl_res = scr1 >> scr0[4:0] ;
-assign sra_res = ($signed(scr1)) >> scr0[4:0] ;
+assign sra_res = ($signed(scr1)) >>> scr0[4:0] ;
 assign lui_res = {scr1[15:0],16'b0};
 
 //加、减、无符号比较、有符号比较
