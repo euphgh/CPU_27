@@ -18,8 +18,4 @@ module ThreeToTwo
     endgenerate
     assign out0[BUSin] = out0[BUSin-1];
     assign out1[0] = 1'b0;
-    wire [BUSin+1:0] Three_sum,Two_sum;
-    assign Three_sum = in0+in1+in2;
-    assign Two_sum = out0 + out1;
-    wire check = (Three_sum==Two_sum);
 endmodule
