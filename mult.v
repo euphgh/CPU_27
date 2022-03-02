@@ -57,6 +57,23 @@ booth  u_booth (
     .pp15                    ( pp15   ),
     .pp16                    ( pp16   )
 );
+wire  [63:0]  pp0_1 = {{30{pp0[33]}},pp0};
+wire  [63:0]  pp1_1 = {{30{pp1[33]}},pp1};
+wire  [63:0]  pp2_1 = {{30{pp2[33]}},pp2};
+wire  [63:0]  pp3_1 = {{30{pp3[33]}},pp3};
+wire  [63:0]  pp4_1 = {{30{pp4[33]}},pp4};
+wire  [63:0]  pp5_1 = {{30{pp5[33]}},pp5};
+wire  [63:0]  pp6_1 = {{30{pp6[33]}},pp6};
+wire  [63:0]  pp7_1 = {{30{pp7[33]}},pp7};
+wire  [63:0]  pp8_1 = {{30{pp8[33]}},pp8};
+wire  [63:0]  pp9_1 = {{30{pp9[33]}},pp9};
+wire  [63:0]  pp10_1 = {{30{pp10[33]}},pp10};
+wire  [63:0]  pp11_1 = {{30{pp11[33]}},pp11};
+wire  [63:0]  pp12_1 = {{30{pp12[33]}},pp12};
+wire  [63:0]  pp13_1 = {{30{pp13[33]}},pp13};
+wire  [63:0]  pp14_1 = {{30{pp14[33]}},pp14};
+wire  [63:0]  pp15_1 = {{30{pp15[33]}},pp15};
+wire  [63:0]  pp16_1 = {{30{pp16[33]}},pp16};
 //=========================level1 to level2=========================//
 wire [32:0] pp0_2 = pp0[33:1];
 wire [33:0] pp1_2 = pp1;
@@ -72,14 +89,14 @@ wire [36:0] pp10_2;
 wire [36:0] pp11_2;
 
 // ThreeToTwo Inputs -------------------------------------
-wire  [37:0]  in0_1to2_1;
-wire  [37:0]  in1_1to2_1;
-wire  [37:0]  in2_1to2_1;
+wire  [63:0]  in0_1to2_1;
+wire  [63:0]  in1_1to2_1;
+wire  [63:0]  in2_1to2_1;
 
 // ThreeToTwo Outputs
-wire  [38:0]  out0_1to2_1;
-wire  [38:0]  out1_1to2_1;
-ThreeToTwo #(.BUSin(38)) u1_ThreeToTwo (
+wire  [64:0]  out0_1to2_1;
+wire  [64:0]  out1_1to2_1;
+ThreeToTwo #(.BUSin(64)) u1_ThreeToTwo (
     .in0                     ( in0_1to2_1    ),
     .in1                     ( in1_1to2_1    ),
     .in2                     ( in2_1to2_1    ),
@@ -439,64 +456,64 @@ assign pp1_7 = out1_6to7_1[63:0];
 //--------------------------------------------------------
 //==================================================================//
 assign mult_res = pp0_7 + pp1_7;
-wire [63:0] tb_pp0 = pp0;
-wire [63:0] tb_pp1 = pp1;
-wire [63:0] tb_pp2 = pp2;
-wire [63:0] tb_pp3 = pp3;
-wire [63:0] tb_pp4 = pp4;
-wire [63:0] tb_pp5 = pp5;
-wire [63:0] tb_pp6 = pp6;
-wire [63:0] tb_pp7 = pp7;
-wire [63:0] tb_pp8 = pp8;
-wire [63:0] tb_pp9 = pp9;
-wire [63:0] tb_pp10 = pp10;
-wire [63:0] tb_pp11 = pp11;
-wire [63:0] tb_pp12 = pp12;
-wire [63:0] tb_pp13 = pp13;
-wire [63:0] tb_pp14 = pp14;
-wire [63:0] tb_pp15 = pp15;
-wire [63:0] tb_pp16 = pp16;
+wire signed [63:0] tb_pp0 = pp0_1;
+wire signed [63:0] tb_pp1 = pp1_1;
+wire signed [63:0] tb_pp2 = pp2_1;
+wire signed [63:0] tb_pp3 = pp3_1;
+wire signed [63:0] tb_pp4 = pp4_1;
+wire signed [63:0] tb_pp5 = pp5_1;
+wire signed [63:0] tb_pp6 = pp6_1;
+wire signed [63:0] tb_pp7 = pp7_1;
+wire signed [63:0] tb_pp8 = pp8_1;
+wire signed [63:0] tb_pp9 = pp9_1;
+wire signed [63:0] tb_pp10 = pp10_1;
+wire signed [63:0] tb_pp11 = pp11_1;
+wire signed [63:0] tb_pp12 = pp12_1;
+wire signed [63:0] tb_pp13 = pp13_1;
+wire signed [63:0] tb_pp14 = pp14_1;
+wire signed [63:0] tb_pp15 = pp15_1;
+wire signed [63:0] tb_pp16 = pp16_1;
 
-wire [63:0] tb_pp0_2 = pp0_2;
-wire [63:0] tb_pp1_2 = pp1_2;
-wire [63:0] tb_pp2_2 = pp2_2;
-wire [63:0] tb_pp3_2 = pp3_2;
-wire [63:0] tb_pp4_2 = pp4_2;
-wire [63:0] tb_pp5_2 = pp5_2;
-wire [63:0] tb_pp6_2 = pp6_2;
-wire [63:0] tb_pp7_2 = pp7_2;
-wire [63:0] tb_pp8_2 = pp8_2;
-wire [63:0] tb_pp9_2 = pp9_2;
-wire [63:0] tb_pp10_2 = pp10_2;
-wire [63:0] tb_pp11_2 = pp11_2;
+wire signed [63:0] tb_pp0_2 = $signed(pp0_2);
+wire signed [63:0] tb_pp1_2 = $signed(pp1_2);
+wire signed [63:0] tb_pp2_2 = $signed(pp2_2);
+wire signed [63:0] tb_pp3_2 = $signed(pp3_2);
+wire signed [63:0] tb_pp4_2 = $signed(pp4_2);
+wire signed [63:0] tb_pp5_2 = $signed(pp5_2);
+wire signed [63:0] tb_pp6_2 = $signed(pp6_2);
+wire signed [63:0] tb_pp7_2 = $signed(pp7_2);
+wire signed [63:0] tb_pp8_2 = $signed(pp8_2);
+wire signed [63:0] tb_pp9_2 = $signed(pp9_2);
+wire signed [63:0] tb_pp10_2 = $signed(pp10_2);
+wire signed [63:0] tb_pp11_2 = $signed(pp11_2);
 
-wire [63:0] tb_pp0_3 = pp0_3;
-wire [63:0] tb_pp1_3 = pp1_3;
-wire [63:0] tb_pp2_3 = pp2_3;
-wire [63:0] tb_pp3_3 = pp3_3;
-wire [63:0] tb_pp4_3 = pp4_3;
-wire [63:0] tb_pp5_3 = pp5_3;
-wire [63:0] tb_pp6_3 = pp6_3;
-wire [63:0] tb_pp7_3 = pp7_3;
+wire signed [63:0] tb_pp0_3 = $signed(pp0_3);
+wire signed [63:0] tb_pp1_3 = $signed(pp1_3);
+wire signed [63:0] tb_pp2_3 = $signed(pp2_3);
+wire signed [63:0] tb_pp3_3 = $signed(pp3_3);
+wire signed [63:0] tb_pp4_3 = $signed(pp4_3);
+wire signed [63:0] tb_pp5_3 = $signed(pp5_3);
+wire signed [63:0] tb_pp6_3 = $signed(pp6_3);
+wire signed [63:0] tb_pp7_3 = $signed(pp7_3);
 
-wire [63:0] tb_pp0_4 = pp0_4;
-wire [63:0] tb_pp1_4 = pp1_4;
-wire [63:0] tb_pp2_4 = pp2_4;
-wire [63:0] tb_pp3_4 = pp3_4;
-wire [63:0] tb_pp4_4 = pp4_4;
-wire [63:0] tb_pp5_4 = pp5_4;
+wire signed [63:0] tb_pp0_4 = $signed(pp0_4);
+wire signed [63:0] tb_pp1_4 = $signed(pp1_4);
+wire signed [63:0] tb_pp2_4 = $signed(pp2_4);
+wire signed [63:0] tb_pp3_4 = $signed(pp3_4);
+wire signed [63:0] tb_pp4_4 = $signed(pp4_4);
+wire signed [63:0] tb_pp5_4 = $signed(pp5_4);
 
-wire [63:0] tb_pp0_5 = pp0_5;
-wire [63:0] tb_pp1_5 = pp1_5;
-wire [63:0] tb_pp2_5 = pp2_5;
-wire [63:0] tb_pp3_5 = pp3_5;
+wire signed [63:0] tb_pp0_5 = $signed(pp0_5);
+wire signed [63:0] tb_pp1_5 = $signed(pp1_5);
+wire signed [63:0] tb_pp2_5 = $signed(pp2_5);
+wire signed [63:0] tb_pp3_5 = $signed(pp3_5);
 
-wire [63:0] tb_pp0_6 = pp0_6;
-wire [63:0] tb_pp1_6 = pp1_6;
-wire [63:0] tb_pp2_6 = pp2_6;
-
-wire [63:0] level1_check = (tb_pp0>>1  )+(tb_pp1<<1  )+(tb_pp2<<3   )+(tb_pp3<<5   )+(tb_pp4<<7   )+(tb_pp5<<9   )+(tb_pp6<<11  )+(tb_pp7<<13  )+(tb_pp8<<15  )+(tb_pp9<<17)    +(tb_pp10<<19)     +(tb_pp11<<21)+(tb_pp12<<23)+(tb_pp13<<25)+(tb_pp14<<27)+(tb_pp15<<29)+(tb_pp16<<31);
-wire [63:0] level2_check = (tb_pp0_2>>1)+(tb_pp1_2<<1)+(tb_pp2_2<<3 )+(tb_pp3_2<<9 )+(tb_pp4_2<<9 )+(tb_pp5_2<<9 )+(tb_pp6_2<<15)+(tb_pp7_2<<15)+(tb_pp8_2<<21)+(tb_pp9_2<<21)  +(tb_pp10_2<<27)   +(tb_pp11_2<<27);
+wire signed [63:0] tb_pp0_6 = $signed(pp0_6);
+wire signed [63:0] tb_pp1_6 = $signed(pp1_6);
+wire signed [63:0] tb_pp2_6 = $signed(pp2_6);
+wire [63:0] level1_check = ({tb_pp0[63],tb_pp0[63:1]})+(tb_pp1<<1  )+(tb_pp2<<3   )+(tb_pp3<<5   )+(tb_pp4<<7   )+(tb_pp5<<9   )+(tb_pp6<<11  )+(tb_pp7<<13  )+(tb_pp8<<15  )+(tb_pp9<<17)    +(tb_pp10<<19)     +(tb_pp11<<21)+(tb_pp12<<23)+(tb_pp13<<25)+(tb_pp14<<27)+(tb_pp15<<29)+(tb_pp16<<31);
+wire [63:0] level2_check = ({tb_pp0_2[63],tb_pp0_2[63:1]})
++(tb_pp1_2<<1)+(tb_pp2_2<<3 )+(tb_pp3_2<<9 )+(tb_pp4_2<<9 )+(tb_pp5_2<<9 )+(tb_pp6_2<<15)+(tb_pp7_2<<15)+(tb_pp8_2<<21)+(tb_pp9_2<<21)  +(tb_pp10_2<<27)   +(tb_pp11_2<<27);
 wire [63:0] level3_check = (tb_pp0_3   )+(tb_pp1_3   )+(tb_pp2_3<<3 )+(tb_pp3_3<<3 )+(tb_pp4_3<<15)+(tb_pp5_3<<15)+(tb_pp6_3<<21)+(tb_pp7_3<<21);
 wire [63:0] level4_check = (tb_pp0_4   )+(tb_pp1_4   )+(tb_pp2_4<<3 )+(tb_pp3_4<<15)+(tb_pp4_4<<15)+(tb_pp5_4<<15);
 wire [63:0] level5_check = (tb_pp0_5   )+(tb_pp1_5   )+(tb_pp2_5<<15)+(tb_pp3_5<<15);
