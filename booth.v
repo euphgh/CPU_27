@@ -64,85 +64,85 @@ assign pp0 =  ({34{(code0==3'd0)||(code0==3'd7)}} & 34'b0) |
             ({34{(code0==3'd1)||(code0==3'd2)}} & x_plus)|  
             ({34{(code0==3'd3)}} & x_plus_2)|
             ({34{(code0==3'd4)}} & x_minum_2)|
-            ({34{(code0==3'd5)||(code0==3'd6)}} & x_plus);  
+            ({34{(code0==3'd5)||(code0==3'd6)}} & x_minus);  
 assign pp1 =  ({34{(code1==3'd0)||(code1==3'd7)}} & 34'b0) |
             ({34{(code1==3'd1)||(code1==3'd2)}} & x_plus)|  
             ({34{(code1==3'd3)}} & x_plus_2)|
             ({34{(code1==3'd4)}} & x_minum_2)|
-            ({34{(code1==3'd5)||(code1==3'd6)}} & x_plus);  
+            ({34{(code1==3'd5)||(code1==3'd6)}} & x_minus);  
 assign pp2 =  ({34{(code2==3'd0)||(code2==3'd7)}} & 34'b0) |
             ({34{(code2==3'd1)||(code2==3'd2)}} & x_plus)|  
             ({34{(code2==3'd3)}} & x_plus_2)|
             ({34{(code2==3'd4)}} & x_minum_2)|
-            ({34{(code2==3'd5)||(code2==3'd6)}} & x_plus);  
+            ({34{(code2==3'd5)||(code2==3'd6)}} & x_minus);  
 assign pp3 =  ({34{(code3==3'd0)||(code3==3'd7)}} & 34'b0) |
             ({34{(code3==3'd1)||(code3==3'd2)}} & x_plus)|  
             ({34{(code3==3'd3)}} & x_plus_2)|
             ({34{(code3==3'd4)}} & x_minum_2)|
-            ({34{(code3==3'd5)||(code3==3'd6)}} & x_plus);  
+            ({34{(code3==3'd5)||(code3==3'd6)}} & x_minus);  
 assign pp4 =  ({34{(code4==3'd0)||(code4==3'd7)}} & 34'b0) |
             ({34{(code4==3'd1)||(code4==3'd2)}} & x_plus)|  
             ({34{(code4==3'd3)}} & x_plus_2)|
             ({34{(code4==3'd4)}} & x_minum_2)|
-            ({34{(code4==3'd5)||(code4==3'd6)}} & x_plus);  
+            ({34{(code4==3'd5)||(code4==3'd6)}} & x_minus);  
 assign pp5 =  ({34{(code5==3'd0)||(code5==3'd7)}} & 34'b0) |
             ({34{(code5==3'd1)||(code5==3'd2)}} & x_plus)|  
             ({34{(code5==3'd3)}} & x_plus_2)|
             ({34{(code5==3'd4)}} & x_minum_2)|
-            ({34{(code5==3'd5)||(code5==3'd6)}} & x_plus);  
+            ({34{(code5==3'd5)||(code5==3'd6)}} & x_minus);  
 assign pp6 =  ({34{(code6==3'd0)||(code6==3'd7)}} & 34'b0) |
             ({34{(code6==3'd1)||(code6==3'd2)}} & x_plus)|  
             ({34{(code6==3'd3)}} & x_plus_2)|
             ({34{(code6==3'd4)}} & x_minum_2)|
-            ({34{(code6==3'd5)||(code6==3'd6)}} & x_plus);  
+            ({34{(code6==3'd5)||(code6==3'd6)}} & x_minus);  
 assign pp7 =  ({34{(code7==3'd0)||(code7==3'd7)}} & 34'b0) |
             ({34{(code7==3'd1)||(code7==3'd2)}} & x_plus)|  
             ({34{(code7==3'd3)}} & x_plus_2)|
             ({34{(code7==3'd4)}} & x_minum_2)|
-            ({34{(code7==3'd5)||(code7==3'd6)}} & x_plus);
+            ({34{(code7==3'd5)||(code7==3'd6)}} & x_minus);
 assign pp8 =  ({34{(code8==3'd0)||(code8==3'd7)}} & 34'b0) |
             ({34{(code8==3'd1)||(code8==3'd2)}} & x_plus)|
             ({34{(code8==3'd3)}} & x_plus_2)|
             ({34{(code8==3'd4)}} & x_minum_2)|
-            ({34{(code8==3'd5)||(code8==3'd6)}} & x_plus);
+            ({34{(code8==3'd5)||(code8==3'd6)}} & x_minus);
 assign pp9 =  ({34{(code9==3'd0)||(code9==3'd7)}} & 34'b0) |
             ({34{(code9==3'd1)||(code9==3'd2)}} & x_plus)|
             ({34{(code9==3'd3)}} & x_plus_2)|
             ({34{(code9==3'd4)}} & x_minum_2)|
-            ({34{(code9==3'd5)||(code9==3'd6)}} & x_plus);
+            ({34{(code9==3'd5)||(code9==3'd6)}} & x_minus);
 assign pp10 =  ({34{(code10==3'd0)||(code10==3'd7)}} & 34'b0) |
             ({34{(code10==3'd1)||(code10==3'd2)}} & x_plus)|
             ({34{(code10==3'd3)}} & x_plus_2)|
             ({34{(code10==3'd4)}} & x_minum_2)|
-            ({34{(code10==3'd5)||(code10==3'd6)}} & x_plus);
+            ({34{(code10==3'd5)||(code10==3'd6)}} & x_minus);
 assign pp11 =  ({34{(code11==3'd0)||(code11==3'd7)}} & 34'b0) |
             ({34{(code11==3'd1)||(code11==3'd2)}} & x_plus)|
             ({34{(code11==3'd3)}} & x_plus_2)|
             ({34{(code11==3'd4)}} & x_minum_2)|
-            ({34{(code11==3'd5)||(code11==3'd6)}} & x_plus);
+            ({34{(code11==3'd5)||(code11==3'd6)}} & x_minus);
 assign pp12 =  ({34{(code12==3'd0)||(code12==3'd7)}} & 34'b0) |
             ({34{(code12==3'd1)||(code12==3'd2)}} & x_plus)|
             ({34{(code12==3'd3)}} & x_plus_2)|
             ({34{(code12==3'd4)}} & x_minum_2)|
-            ({34{(code12==3'd5)||(code12==3'd6)}} & x_plus);
+            ({34{(code12==3'd5)||(code12==3'd6)}} & x_minus);
 assign pp13 =  ({34{(code13==3'd0)||(code13==3'd7)}} & 34'b0) |
             ({34{(code13==3'd1)||(code13==3'd2)}} & x_plus)|
             ({34{(code13==3'd3)}} & x_plus_2)|
             ({34{(code13==3'd4)}} & x_minum_2)|
-            ({34{(code13==3'd5)||(code13==3'd6)}} & x_plus);
+            ({34{(code13==3'd5)||(code13==3'd6)}} & x_minus);
 assign pp14 =  ({34{(code14==3'd0)||(code14==3'd7)}} & 34'b0) |
             ({34{(code14==3'd1)||(code14==3'd2)}} & x_plus)|
             ({34{(code14==3'd3)}} & x_plus_2)|
             ({34{(code14==3'd4)}} & x_minum_2)|
-            ({34{(code14==3'd5)||(code14==3'd6)}} & x_plus);
+            ({34{(code14==3'd5)||(code14==3'd6)}} & x_minus);
 assign pp15 =  ({34{(code15==3'd0)||(code15==3'd7)}} & 34'b0) |
             ({34{(code15==3'd1)||(code15==3'd2)}} & x_plus)|
             ({34{(code15==3'd3)}} & x_plus_2)|
             ({34{(code15==3'd4)}} & x_minum_2)|
-            ({34{(code15==3'd5)||(code15==3'd6)}} & x_plus);
+            ({34{(code15==3'd5)||(code15==3'd6)}} & x_minus);
 assign pp16 =  ({34{(code16==3'd0)||(code16==3'd7)}} & 34'b0) |
             ({34{(code16==3'd1)||(code16==3'd2)}} & x_plus)|
             ({34{(code16==3'd3)}} & x_plus_2)|
             ({34{(code16==3'd4)}} & x_minum_2)|
-            ({34{(code16==3'd5)||(code16==3'd6)}} & x_plus);
+            ({34{(code16==3'd5)||(code16==3'd6)}} & x_minus);
 endmodule

@@ -16,6 +16,6 @@
 # print(temp)
 # for i in range(1,17):
 #     exec(temp)
-for i in range(6):
-    s="wire [48:0] pp{0}_4;".format(i)
+for i in range(17):
+    s="wire [63:0] tb_pp{} = pp{};".format(i,i)
     print(s)

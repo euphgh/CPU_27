@@ -3,7 +3,7 @@
 module  mult (
     input wire [31:0] scr0,scr1,
     input wire multop, //control:{0:unsigned,1:signed}
-    output wire [63:0] muldiv_res
+    output wire [63:0] mult_res
     );
 /*====================Variable Declaration====================*/
 // booth Inputs 
@@ -29,11 +29,10 @@ wire  [33:0]  pp14;
 wire  [33:0]  pp15;
 wire  [33:0]  pp16;
 wire [32:0] xnum,ynum;
-wire [33:0] x_plus_2,x_minum_2,x_minus,x_plus;
 wire [33:0] pp [15:0] ;
 /*====================Function Code====================*/
-assign xnum = multop ? {scr0[31],scr0} : {1'b0,scr0};
-assign ynum = multop ? {scr1[31],scr1} : {1'b0,scr1};
+assign xnum = {multop&&scr0[31],scr0};
+assign ynum = {multop&&scr1[31],scr1};
 assign x = xnum;
 assign y = ynum;
 booth  u_booth (
@@ -333,4 +332,173 @@ assign pp4_4 = out0_3to4_2[48:0];
 assign pp5_4 = out1_3to4_2[48:0];
 //--------------------------------------------------------
 //==================================================================//
+//=========================level4 to level5=========================//
+wire [50:0] pp0_5;
+wire [50:0] pp1_5;
+wire [48:0] pp2_5;
+wire [48:0] pp3_5;
+// ThreeToTwo Inputs -------------------------------------
+wire  [49:0]  in0_4to5_1;
+wire  [49:0]  in1_4to5_1;
+wire  [49:0]  in2_4to5_1;
+
+// ThreeToTwo Outputs
+wire  [50:0]  out0_4to5_1;
+wire  [50:0]  out1_4to5_1;
+ThreeToTwo #(.BUSin(50)) u_12ThreeToTwo (
+    .in0                     ( in0_4to5_1    ),
+    .in1                     ( in1_4to5_1    ),
+    .in2                     ( in2_4to5_1    ),
+
+    .out0                    ( out0_4to5_1   ),
+    .out1                    ( out1_4to5_1   ) 
+);
+assign in0_4to5_1 = pp0_4;
+assign in1_4to5_1 = pp1_4;
+assign in2_4to5_1 = {pp2_4[45],pp2_4,3'b0};
+assign pp0_5 = out0_4to5_1;
+assign pp1_5 = out1_4to5_1;
+//--------------------------------------------------------
+// ThreeToTwo Inputs -------------------------------------
+wire  [48:0]  in0_4to5_2;
+wire  [48:0]  in1_4to5_2;
+wire  [48:0]  in2_4to5_2;
+
+// ThreeToTwo Outputs
+wire  [49:0]  out0_4to5_2;
+wire  [49:0]  out1_4to5_2;
+ThreeToTwo #(.BUSin(49)) u_13ThreeToTwo (
+    .in0                     ( in0_4to5_2    ),
+    .in1                     ( in1_4to5_2    ),
+    .in2                     ( in2_4to5_2    ),
+
+    .out0                    ( out0_4to5_2   ),
+    .out1                    ( out1_4to5_2   ) 
+);
+assign in0_4to5_2 = {{3{pp3_4[45]}},pp3_4};
+assign in1_4to5_2 = pp4_4;
+assign in2_4to5_2 = pp5_4;
+assign pp2_5 = out0_4to5_2[48:0];
+assign pp3_5 = out1_4to5_2[48:0];
+//--------------------------------------------------------
+
+//==================================================================//
+
+//=========================level5 to level6=========================//
+wire [63:0] pp0_6;
+wire [63:0] pp1_6;
+wire [48:0] pp2_6 = pp3_5;
+// ThreeToTwo Inputs -------------------------------------
+wire  [63:0]  in0_5to6_1;
+wire  [63:0]  in1_5to6_1;
+wire  [63:0]  in2_5to6_1;
+
+// ThreeToTwo Outputs
+wire  [64:0]  out0_5to6_1;
+wire  [64:0]  out1_5to6_1;
+ThreeToTwo #(.BUSin(64)) u_14ThreeToTwo (
+    .in0                     ( in0_5to6_1    ),
+    .in1                     ( in1_5to6_1    ),
+    .in2                     ( in2_5to6_1    ),
+
+    .out0                    ( out0_5to6_1   ),
+    .out1                    ( out1_5to6_1   ) 
+);
+assign in0_5to6_1 = {{13{pp0_5}},pp0_5};
+assign in1_5to6_1 = {{13{pp1_5}},pp1_5};
+assign in2_5to6_1 = {pp2_5,15'b0};
+assign pp0_6 = out0_5to6_1[63:0];
+assign pp1_6 = out1_5to6_1[63:0];
+//--------------------------------------------------------
+//==================================================================//
+
+//=========================level6 to level7=========================//
+wire [63:0] pp0_7;
+wire [63:0] pp1_7;
+// ThreeToTwo Inputs -------------------------------------
+wire  [63:0]  in0_6to7_1;
+wire  [63:0]  in1_6to7_1;
+wire  [63:0]  in2_6to7_1;
+
+// ThreeToTwo Outputs
+wire  [64:0]  out0_6to7_1;
+wire  [64:0]  out1_6to7_1;
+ThreeToTwo #(.BUSin(64)) u_15ThreeToTwo (
+    .in0                     ( in0_6to7_1    ),
+    .in1                     ( in1_6to7_1    ),
+    .in2                     ( in2_6to7_1    ),
+
+    .out0                    ( out0_6to7_1   ),
+    .out1                    ( out1_6to7_1   ) 
+);
+assign in0_6to7_1 = pp0_6;
+assign in1_6to7_1 = pp1_6;
+assign in2_6to7_1 = {pp2_6,15'b0};
+assign pp0_7 = out0_6to7_1[63:0];
+assign pp1_7 = out1_6to7_1[63:0];
+//--------------------------------------------------------
+//==================================================================//
+assign mult_res = pp0_7 + pp1_7;
+wire [63:0] tb_pp0 = pp0;
+wire [63:0] tb_pp1 = pp1;
+wire [63:0] tb_pp2 = pp2;
+wire [63:0] tb_pp3 = pp3;
+wire [63:0] tb_pp4 = pp4;
+wire [63:0] tb_pp5 = pp5;
+wire [63:0] tb_pp6 = pp6;
+wire [63:0] tb_pp7 = pp7;
+wire [63:0] tb_pp8 = pp8;
+wire [63:0] tb_pp9 = pp9;
+wire [63:0] tb_pp10 = pp10;
+wire [63:0] tb_pp11 = pp11;
+wire [63:0] tb_pp12 = pp12;
+wire [63:0] tb_pp13 = pp13;
+wire [63:0] tb_pp14 = pp14;
+wire [63:0] tb_pp15 = pp15;
+wire [63:0] tb_pp16 = pp16;
+
+wire [63:0] tb_pp0_2 = pp0_2;
+wire [63:0] tb_pp1_2 = pp1_2;
+wire [63:0] tb_pp2_2 = pp2_2;
+wire [63:0] tb_pp3_2 = pp3_2;
+wire [63:0] tb_pp4_2 = pp4_2;
+wire [63:0] tb_pp5_2 = pp5_2;
+wire [63:0] tb_pp6_2 = pp6_2;
+wire [63:0] tb_pp7_2 = pp7_2;
+wire [63:0] tb_pp8_2 = pp8_2;
+wire [63:0] tb_pp9_2 = pp9_2;
+wire [63:0] tb_pp10_2 = pp10_2;
+wire [63:0] tb_pp11_2 = pp11_2;
+
+wire [63:0] tb_pp0_3 = pp0_3;
+wire [63:0] tb_pp1_3 = pp1_3;
+wire [63:0] tb_pp2_3 = pp2_3;
+wire [63:0] tb_pp3_3 = pp3_3;
+wire [63:0] tb_pp4_3 = pp4_3;
+wire [63:0] tb_pp5_3 = pp5_3;
+wire [63:0] tb_pp6_3 = pp6_3;
+wire [63:0] tb_pp7_3 = pp7_3;
+
+wire [63:0] tb_pp0_4 = pp0_4;
+wire [63:0] tb_pp1_4 = pp1_4;
+wire [63:0] tb_pp2_4 = pp2_4;
+wire [63:0] tb_pp3_4 = pp3_4;
+wire [63:0] tb_pp4_4 = pp4_4;
+wire [63:0] tb_pp5_4 = pp5_4;
+
+wire [63:0] tb_pp0_5 = pp0_5;
+wire [63:0] tb_pp1_5 = pp1_5;
+wire [63:0] tb_pp2_5 = pp2_5;
+wire [63:0] tb_pp3_5 = pp3_5;
+
+wire [63:0] tb_pp0_6 = pp0_6;
+wire [63:0] tb_pp1_6 = pp1_6;
+wire [63:0] tb_pp2_6 = pp2_6;
+
+wire [63:0] level1_check = (tb_pp0>>1  )+(tb_pp1<<1  )+(tb_pp2<<3   )+(tb_pp3<<5   )+(tb_pp4<<7   )+(tb_pp5<<9   )+(tb_pp6<<11  )+(tb_pp7<<13  )+(tb_pp8<<15  )+(tb_pp9<<17)    +(tb_pp10<<19)     +(tb_pp11<<21)+(tb_pp12<<23)+(tb_pp13<<25)+(tb_pp14<<27)+(tb_pp15<<29)+(tb_pp16<<31);
+wire [63:0] level2_check = (tb_pp0_2>>1)+(tb_pp1_2<<1)+(tb_pp2_2<<3 )+(tb_pp3_2<<9 )+(tb_pp4_2<<9 )+(tb_pp5_2<<9 )+(tb_pp6_2<<15)+(tb_pp7_2<<15)+(tb_pp8_2<<21)+(tb_pp9_2<<21)  +(tb_pp10_2<<27)   +(tb_pp11_2<<27);
+wire [63:0] level3_check = (tb_pp0_3   )+(tb_pp1_3   )+(tb_pp2_3<<3 )+(tb_pp3_3<<3 )+(tb_pp4_3<<15)+(tb_pp5_3<<15)+(tb_pp6_3<<21)+(tb_pp7_3<<21);
+wire [63:0] level4_check = (tb_pp0_4   )+(tb_pp1_4   )+(tb_pp2_4<<3 )+(tb_pp3_4<<15)+(tb_pp4_4<<15)+(tb_pp5_4<<15);
+wire [63:0] level5_check = (tb_pp0_5   )+(tb_pp1_5   )+(tb_pp2_5<<15)+(tb_pp3_5<<15);
+wire [63:0] level6_check = (tb_pp0_6   )+(tb_pp1_6   )+(tb_pp2_6<<15);
 endmodule
