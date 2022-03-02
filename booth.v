@@ -40,9 +40,10 @@ wire [2:0] code15;
 wire [2:0] code16;
 /*====================Function Code====================*/
 assign x_plus_2 = {x,1'b0};
-assign x_minus = ~x+1'b1;
+wire [32:0] x_minus_unextended = ~x+1'b1;
+assign x_minus = {x_minus_unextended[32],x_minus_unextended};
 assign x_minum_2 = ~x_plus_2+1'b1;
-assign x_plus = x;
+assign x_plus = {x[32],x};
 assign code0 = {y[0],2'b0};
 assign code1 = y[2:0];
 assign code2 = y[4:2];

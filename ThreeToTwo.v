@@ -16,7 +16,7 @@ module ThreeToTwo
             assign out1[i+1] = (in0[i]&&in1[i])||(in1[i]&&in2[i])||(in0[i]&&in2[i]);
         end
     endgenerate
-    assign out0[BUSin] = 1'b0;
+    assign out0[BUSin] = out0[BUSin-1];
     assign out1[0] = 1'b0;
     wire [BUSin+1:0] Three_sum,Two_sum;
     assign Three_sum = in0+in1+in2;
