@@ -333,6 +333,12 @@ assign pp4_4 = out0_3to4_2[48:0];
 assign pp5_4 = out1_3to4_2[48:0];
 //--------------------------------------------------------
 //==================================================================//
+reg [49:0] in0_4to5_1_r;
+reg [49:0] in1_4to5_1_r;
+reg [49:0] in2_4to5_1_r;
+reg [48:0] in0_4to5_2_r;
+reg [48:0] in1_4to5_2_r;
+reg [48:0] in2_4to5_2_r;
 //=========================level4 to level5=========================//
 wire [50:0] pp0_5;
 wire [50:0] pp1_5;
@@ -347,9 +353,9 @@ wire  [49:0]  in2_4to5_1;
 wire  [50:0]  out0_4to5_1;
 wire  [50:0]  out1_4to5_1;
 ThreeToTwo #(.BUSin(50)) u_12ThreeToTwo (
-    .in0                     ( in0_4to5_1    ),
-    .in1                     ( in1_4to5_1    ),
-    .in2                     ( in2_4to5_1    ),
+    .in0                     ( in0_4to5_1_r    ),
+    .in1                     ( in1_4to5_1_r    ),
+    .in2                     ( in2_4to5_1_r    ),
 
     .out0                    ( out0_4to5_1   ),
     .out1                    ( out1_4to5_1   ) 
@@ -369,9 +375,9 @@ wire  [48:0]  in2_4to5_2;
 wire  [49:0]  out0_4to5_2;
 wire  [49:0]  out1_4to5_2;
 ThreeToTwo #(.BUSin(49)) u_13ThreeToTwo (
-    .in0                     ( in0_4to5_2    ),
-    .in1                     ( in1_4to5_2    ),
-    .in2                     ( in2_4to5_2    ),
+    .in0                     ( in0_4to5_2_r    ),
+    .in1                     ( in1_4to5_2_r    ),
+    .in2                     ( in2_4to5_2_r    ),
 
     .out0                    ( out0_4to5_2   ),
     .out1                    ( out1_4to5_2   ) 
@@ -384,6 +390,25 @@ assign pp3_5 = out1_4to5_2[48:0];
 //--------------------------------------------------------
 
 //==================================================================//
+
+always @(posedge clk ) begin
+    if (!rst_n) begin
+        in0_4to5_1_r <= 49'b0;
+        in1_4to5_1_r <= 49'b0;
+        in2_4to5_1_r <= 49'b0;
+        in0_4to5_2_r <= 48'b0;
+        in1_4to5_2_r <= 48'b0;
+        in2_4to5_2_r <= 48'b0;
+    end
+    else begin
+        in0_4to5_1_r <= in0_4to5_1;
+        in1_4to5_1_r <= in1_4to5_1;
+        in2_4to5_1_r <= in2_4to5_1;
+        in0_4to5_2_r <= in0_4to5_2;
+        in1_4to5_2_r <= in1_4to5_2;
+        in2_4to5_2_r <= in2_4to5_2;
+    end
+end
 
 //=========================level5 to level6=========================//
 wire [63:0] pp0_6;
@@ -439,16 +464,5 @@ assign pp0_7 = out0_6to7_1[63:0];
 assign pp1_7 = out1_6to7_1[63:0];
 //--------------------------------------------------------
 //==================================================================//
-reg [63:0] pp0_7_r,pp1_7_r;
-always @(posedge clk ) begin
-    if (!rst_n) begin
-        pp0_7_r <= 64'b0;
-        pp1_7_r <= 64'b0;
-    end
-    else begin
-        pp0_7_r <= pp0_7;
-        pp1_7_r <= pp1_7;
-    end
-end
-assign mult_res = pp0_7_r + pp1_7_r;
+assign mult_res = pp0_7 + pp1_7;
 endmodule

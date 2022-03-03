@@ -23,6 +23,8 @@ end
 wire  [63:0]  mult_res;
 
 mult  u_mult (
+    .clk                     ( clk        ),
+    .rst_n                   ( rst_n      ),
     .scr0                    ( scr0       ),
     .scr1                    ( scr1       ),
     .multop                  ( multop     ),
