@@ -11,9 +11,7 @@ module try_div_ans (
 /*====================Variable Declaration====================*/
 wire [32:0] diff;
 wire [63:0] minuend_new;
-wire [32:0] test;
 /*====================Function Code====================*/
-assign test = minuend[63:31];
 assign diff = minuend[63:31] - {1'b0,divisor};
 assign minuend_new = {diff,minuend[30:0]};
 assign quotient_temp = (quotient_iter<<1) + (!diff[32]);
