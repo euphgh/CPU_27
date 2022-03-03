@@ -175,6 +175,17 @@ wire  [2:0]  wb_write_type_out;
 // wire  [31:0]  debug_wb_rf_wdata;[port]
 wire [4:0] wb_wnum_reg_out;
 //----------------------------------------------
+// mult_div Inputs -----------------------------
+// wire  clk;[port]
+// wire  rst_n;[port]
+wire  [7:0]  mult_div_op;
+wire  [31:0]  in0;       
+wire  [31:0]  in1;       
+
+// mult_div Outputs
+wire  [31:0]  mult_div_res;
+wire  accessible;
+//-----------------------------------------------
 wire [31:0] PC_IF,PC_ID,PC_EXE,PC_MEM,PC_WB,Instruct;
 assign PC_IF = if_PC_out;
 assign PC_ID = id_PC_out;
@@ -382,4 +393,17 @@ assign wb_wdata_in       = wb_wbdata_out    ;
 assign wb_wen_in         = wb_reg_we_out    ;
 assign wb_wnum_in        = wb_wnum_out      ;
 assign wb_write_type_in  = wb_write_type_out;
+
+mult_div  u_mult_div (
+    .clk                     ( clk           ),
+    .rst_n                   ( rst_n         ),
+    .mult_div_op             ( mult_div_op   ),
+    .in0                     ( in0           ),
+    .in1                     ( in1           ),
+
+    .mult_div_res            ( mult_div_res  ),
+    .accessible              ( accessible    ) 
+);
+assign in0 = id_aludata1_out;
+assign in1 = id_aludata2_out;
 endmodule

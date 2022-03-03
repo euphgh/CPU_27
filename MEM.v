@@ -8,7 +8,7 @@ module MEM(
     input  wire exe_valid_in,
     output wire mem_valid_out,
     //datain
-	input  wire [3:0]  exe_sel_wbdata_in, //datar:{0:aluout,1:lubw,2:llr,3:NNPC}
+	input  wire [4:0]  exe_sel_wbdata_in, //datar:{0:aluout,1:lubw,2:llr,3:NNPC,4:mf}
 	input  wire [31:0] exe_aluout_in, //datar:地址或者回写数据
 	input  wire [7:0]  exe_onehot_in, //datar:控制llr
 	input  wire [4:0]  exe_lubhw_con_in, //datar:控制lubhw
@@ -19,6 +19,8 @@ module MEM(
     input  wire [31:0] exe_NNPC_in, //datar:
     input  wire [4:0]  exe_regnum_in, //datar:
     input  wire [2:0]  exe_write_type_in,
+    input  wire [31:0] mult_div_res_in, //dataw:
+    input  wire mult_div_accessible_in, //dataw:表示此时hilo的数据是否有效
     //dataout
 	output wire [31:0] mem_wbdata_out, //data:回写数据
 	output wire [3:0]  mem_reg_we_out, //control:回写使能
@@ -75,9 +77,11 @@ reg  [31:0] exe_to_mem_NNPC_r ;
 reg  [4:0] exe_to_mem_regnum_r ;
 reg  [2:0]  exe_to_mem_write_type_r;
 wire [31:0] MEM_PC = mem_PC_out;
+wire [31:0] mult_div_res_w;
+wire  mult_div_to_mem_accessible_w;
 // ---------------------------------------------
 /*====================Function Code====================*/
-assign ready = 1'b1; 
+assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]); 
 assign allowin = (!valid_r) || (ready && wb_allowin_in) ;
 assign mem_allowin_out = allowin;
 assign mem_valid_out = ready && valid_r;
@@ -93,6 +97,8 @@ assign exe_to_mem_dm_data_r = exe_dm_data_in ;
 assign exe_to_mem_dm_we_r = exe_dm_we_in ;
 assign exe_to_mem_VAddr_r = exe_VAddr_in ;
 
+assign mult_div_res_w = mult_div_res_in;
+assign mult_div_to_mem_accessible_w = mult_div_accessible_in;
 always @(posedge clk) begin
     if (!rst_n) begin
         exe_to_mem_sel_wbdata_r <= `ini_exe_sel_wbdata_in;
@@ -143,10 +149,11 @@ assign word_llr = DMout;
 assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r : 
 				        exe_to_mem_sel_wbdata_r[1] ? lubhw_out :
                         exe_to_mem_sel_wbdata_r[2] ? llr_data:
-                        exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r :32'b0; 
+                        exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : 
+                        exe_to_mem_sel_wbdata_r[4] ? mult_div_res_w : 32'b0; 
 
 assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(valid_r)}} & 
-                        ((exe_to_mem_sel_wbdata_r[0]||exe_to_mem_sel_wbdata_r[1]||exe_to_mem_sel_wbdata_r[3]) ? 4'b1111 :
+                        ((exe_to_mem_sel_wbdata_r[0:3]||exe_to_mem_sel_wbdata_r[4]) ? 4'b1111 :
 					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
 assign mem_regnum_out = exe_to_mem_regnum_r && valid_r;
 assign mem_PC_out = exe_to_mem_PC_r;
