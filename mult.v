@@ -1,6 +1,7 @@
 `include "defines.vh"
 /*====================Ports Declaration====================*/
 module  mult (
+    input wire clk,rst_n,
     input wire [31:0] scr0,scr1,
     input wire multop, //control:{0:unsigned,1:signed}
     output wire [63:0] mult_res
@@ -438,5 +439,16 @@ assign pp0_7 = out0_6to7_1[63:0];
 assign pp1_7 = out1_6to7_1[63:0];
 //--------------------------------------------------------
 //==================================================================//
-assign mult_res = pp0_7 + pp1_7;
+reg [63:0] pp0_7_r,pp1_7_r;
+always @(posedge clk ) begin
+    if (!rst_n) begin
+        pp0_7_r <= 64'b0;
+        pp1_7_r <= 64'b0;
+    end
+    else begin
+        pp0_7_r <= pp0_7;
+        pp1_7_r <= pp1_7;
+    end
+end
+assign mult_res = pp0_7_r + pp1_7_r;
 endmodule
