@@ -31,7 +31,6 @@ assign reminder_sign = x[31] && div_signed;
 
 always @(posedge clk ) begin
     if (!(rst_n&&div)||complete) begin
-        dividend <= 32'b0;
         divisor <= 32'hffff_ffff;
         minuend <= 64'b0;
         timer = 6'b0;
@@ -40,7 +39,6 @@ always @(posedge clk ) begin
     else begin
         timer <= timer+1'b1;
         minuend <= first ? {32'b0,x_abs}:(minuend_back);
-        dividend <= first ? x_abs : dividend;
         divisor <= first ? y_abs : divisor;
         quotient_iter <= quotient_temp; 
     end
