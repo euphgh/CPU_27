@@ -79,6 +79,6 @@ hiol  u_hiol (
 );
 assign wen_hiol = mult_div_op[7:6]||{2{|mult_div_op[3:0]}};
 assign data_in =    (|mult_div_op[1:0]) ? mult_res :
-                    (|mult_div_op[3:2]) ? {s,r} : {in0,in1};
+                    (|mult_div_op[3:2]) ? {r,s} : {in0,in1};
 assign mult_div_res = mult_div_op[4] ? hi_out : ol_out;
 endmodule

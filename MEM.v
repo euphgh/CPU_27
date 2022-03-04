@@ -68,7 +68,7 @@ wire [3:0]  exe_to_mem_dm_we_r ;
 wire [31:0] exe_to_mem_VAddr_r ;
 wire [31:0] exe_to_mem_dm_data_r;
 
-reg  [3:0] exe_to_mem_sel_wbdata_r ;
+reg  [4:0] exe_to_mem_sel_wbdata_r ;
 reg  [31:0] exe_to_mem_aluout_r ;
 reg  [7:0] exe_to_mem_onehot_r ;
 reg  [4:0] exe_to_mem_lubhw_con_r ;
@@ -153,7 +153,7 @@ assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[4] ? mult_div_res_w : 32'b0; 
 
 assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(valid_r)}} & 
-                        ((exe_to_mem_sel_wbdata_r[0:3]||exe_to_mem_sel_wbdata_r[4]) ? 4'b1111 :
+                        ((exe_to_mem_sel_wbdata_r[3:0]||exe_to_mem_sel_wbdata_r[4]) ? 4'b1111 :
 					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
 assign mem_regnum_out = exe_to_mem_regnum_r && valid_r;
 assign mem_PC_out = exe_to_mem_PC_r;

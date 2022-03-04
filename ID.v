@@ -82,7 +82,7 @@ wire  [3:0]  addrexc_con;
 wire  [1:0]  lr_con;
 wire  [4:0]  lubhw_con;
 wire  [1:0]  bjaddrexc_con;
-wire  [2:0]  read_type;
+wire  [1:0]  read_type;
 wire  [2:0]  write_type;
 wire  [7:0]  mult_div_op;
 wire  nop;

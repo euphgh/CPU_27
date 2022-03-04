@@ -349,6 +349,8 @@ MEM  u_MEM (
     .exe_regnum_in           ( exe_regnum_in        ),
     .exe_write_type_in       ( exe_write_type_in    ),
     .data_sram_rdata         ( data_sram_rdata      ),
+    .mult_div_accessible_in  ( mult_div_accessible_in),
+    .mult_div_res_in         ( mult_div_res_in     ),
 
     .mem_allowin_out         ( mem_allowin_out      ),
     .mem_valid_out           ( mem_valid_out        ),
@@ -372,8 +374,6 @@ WB  u_WB (
     .mem_PC_in               ( mem_PC_in           ),
     .mem_wnum_in             ( mem_wnum_in         ),
     .mem_write_type_in       ( mem_write_type_in   ),
-    .mult_div_accessible_in  ( mult_div_accessible_in),
-    .mult_div_res_in         ( mult_div_res_in     ),
 
     .wb_allowin_out          ( wb_allowin_out      ),
     .wb_valid_out            ( wb_valid_out        ),
