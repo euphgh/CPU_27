@@ -3,9 +3,9 @@
 module datapath (
     input wire clk,rst_n,
     // 
-    output  wire  inst_sram_en,  //ram 使能信号，高电平有效
-    output  wire [3:0] inst_sram_wen,  //ram 字节写使能信号，高电平有效
-    output  wire [31:0] inst_sram_addr,  //ram 读写地址，字节寻址
+    output  wire  inst_sram_en,  //!ram 使能信号，高电平有效
+    output  wire [3:0] inst_sram_wen,  //!ram 字节写使能信号，高电平有效
+    output  wire [31:0] inst_sram_addr,  //!ram 读写地址，字节寻址
     output  wire [31:0] inst_sram_wdata,  //ram 写数据
     input  wire [31:0] inst_sram_rdata, //ram 读数据
 

@@ -1,3 +1,7 @@
+//PC
+`define StartPoint 32'b0
+`define StartNPC 32'b0
+`define StartNNPC 32'b0
 //IF
 `define ini_id_brcal_res_in 1'b0
 `define ini_id_bjpc_res_in 32'b0
