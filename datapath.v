@@ -65,7 +65,7 @@ wire  [4:0]  wb_wnum;
 // ID Outputs
 wire  id_allowin_out;
 wire  id_valid_out;
-wire  [3:0]  id_sel_wbdata_out;
+wire  [4:0]  id_sel_wbdata_out;
 wire  [1:0]  id_sel_dm_out;
 wire  [31:0]  id_RD2_out;
 wire  [11:0]  id_aluop_out;
@@ -81,6 +81,7 @@ wire  [4:0]  id_lubhw_con_out;
 wire  id_brcal_res_out;
 wire  [31:0]  id_bjpc_res_out;
 wire  [2:0]  id_write_type_out;
+wire  [7:0]  id_mult_div_op;
 //----------------------------------------------
 
 // EXE Inputs ----------------------------------
@@ -90,7 +91,7 @@ wire  mem_allowin_in;
 wire  id_valid_in;
 wire  [2:0]  id_sbhw_con_in;
 wire  [3:0]  id_addrexc_con_in;
-wire  [3:0]  id_sel_wbdata_in;
+wire  [4:0]  id_sel_wbdata_in;
 wire  [11:0]  id_aluop_in;
 wire  [31:0]  id_RD2_in;
 wire  [31:0]  id_aludata1_in;
@@ -107,7 +108,7 @@ wire  [2:0]  id_write_type_in;
 wire  exe_allowin_out;
 wire  exe_valid_out;
 wire  [31:0]  exe_alures_out;
-wire  [3:0]  exe_sel_wbdata_out;
+wire  [4:0]  exe_sel_wbdata_out;
 wire  [4:0]  exe_lubhw_con_out;
 wire  [31:0]  exe_PC_out;
 wire  [31:0]  exe_NNPC_out;
@@ -124,7 +125,7 @@ wire  [2:0]  exe_write_type_out;
 // wire  clk;[port]
 // wire  rst_n;[port]
 wire  exe_valid_in;
-wire  [3:0]  exe_sel_wbdata_in;
+wire  [4:0]  exe_sel_wbdata_in;
 wire  [31:0]  exe_aluout_in;   
 wire  [7:0]  exe_onehot_in;    
 wire  [4:0]  exe_lubhw_con_in; 
@@ -150,6 +151,8 @@ wire  [3:0]  mem_reg_we_out;
 wire  [31:0]  mem_PC_out;
 wire  [4:0]  mem_wnum_out;
 wire  [2:0]  mem_write_type_out;
+wire  mult_div_accessible_in;
+wire  [31:0]  mult_div_res_in;
 //----------------------------------------------
 
 // WB Inputs -----------------------------------
@@ -253,7 +256,8 @@ ID  u_ID (
     .id_lubhw_con_out        ( id_lubhw_con_out     ),
     .id_brcal_res_out        ( id_brcal_res_out     ),
     .id_bjpc_res_out         ( id_bjpc_res_out      ),
-    .id_write_type_out       ( id_write_type_out    )
+    .id_write_type_out       ( id_write_type_out    ),
+    .id_mult_div_op          ( id_mult_div_op       )
 );
 assign exe_wnum          = exe_wnum_out      ;
 assign mem_wnum          = mem_wnum_out      ;
@@ -368,6 +372,8 @@ WB  u_WB (
     .mem_PC_in               ( mem_PC_in           ),
     .mem_wnum_in             ( mem_wnum_in         ),
     .mem_write_type_in       ( mem_write_type_in   ),
+    .mult_div_accessible_in  ( mult_div_accessible_in),
+    .mult_div_res_in         ( mult_div_res_in     ),
 
     .wb_allowin_out          ( wb_allowin_out      ),
     .wb_valid_out            ( wb_valid_out        ),
@@ -406,4 +412,7 @@ mult_div  u_mult_div (
 );
 assign in0 = id_aludata1_out;
 assign in1 = id_aludata2_out;
+assign mult_div_op = id_mult_div_op;
+assign mult_div_accessible_in = accessible;
+assign mult_div_res_in = mult_div_res;
 endmodule

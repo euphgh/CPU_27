@@ -16,7 +16,7 @@ module ID(
     input wire [2:0] exe_write_type,mem_write_type,wb_write_type, //control{0:wb,1:mem,2:exe,000:nocheck}
     input wire [4:0] exe_wnum,mem_wnum,wb_wnum,
     //dataout
-	output wire [3:0]  id_sel_wbdata_out, //control:
+	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
 	output wire [31:0] id_RD2_out, //data:
 	output wire [11:0] id_aluop_out,
@@ -31,7 +31,8 @@ module ID(
     output wire [4:0]  id_lubhw_con_out,
     output wire id_brcal_res_out,
     output wire [31:0] id_bjpc_res_out,
-    output wire [2:0] id_write_type_out
+    output wire [2:0] id_write_type_out,
+    output wire [7:0] id_mult_div_op
 	);
 
 
@@ -76,13 +77,14 @@ wire  [6:0]  brcal_con;
 wire  [11:0]  aluop;       
 wire  [2:0]  sbhw_con;     
 wire  [1:0]  sel_dm_con;   
-wire  [3:0]  sel_wb_con;   
+wire  [4:0]  sel_wb_con;   
 wire  [3:0]  addrexc_con;
 wire  [1:0]  lr_con;
 wire  [4:0]  lubhw_con;
 wire  [1:0]  bjaddrexc_con;
 wire  [2:0]  read_type;
 wire  [2:0]  write_type;
+wire  [7:0]  mult_div_op;
 wire  nop;
 //------------------------------------------------------------
 
@@ -203,6 +205,7 @@ decoder  u_decoder (
     .lubhw_con               ( lubhw_con       ),
     .read_type               ( read_type       ),
     .write_type              ( write_type      ),
+    .mult_div_op             ( mult_div_op     ),
     .nop                     ( nop             )
 );
 assign id_sbhw_con_out = sbhw_con;
@@ -210,9 +213,10 @@ assign id_lr_con_out = lr_con;
 assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
 assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
-assign id_sel_wbdata_out = sel_wb_con & {4{valid_r}};
+assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
 assign Instruct = if_to_id_Instruct_r;
 assign id_aluop_out = aluop;
+assign id_mult_div_op = mult_div_op;
 brcal  u_brcal (
     .RD1                     ( RD1         ),
     .RD2                     ( RD2         ),

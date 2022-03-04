@@ -10,7 +10,7 @@ module EXE(
     //datain
  	input wire [2:0]  id_sbhw_con_in, //datar:sbhw模块选择子
 	input wire [3:0]  id_addrexc_con_in, //datar:地址例外选择子
-	input wire [3:0]  id_sel_wbdata_in, //datar:与ID段sel_wbdata_id_reg相连，直接输出sel_wbdata_exe_reg
+	input wire [4:0]  id_sel_wbdata_in, //datar:与ID段sel_wbdata_id_reg相连，直接输出sel_wbdata_exe_reg
 	input wire [11:0] id_aluop_in, //datar:
 	input wire [31:0] id_RD2_in, //datar:传送给swbh模块的数据
 	input wire [31:0] id_aludata1_in, //datar:
@@ -24,7 +24,7 @@ module EXE(
     input wire [2:0]  id_write_type_in, //datar:
 	//dataout
 	output wire [31:0] exe_alures_out, //data:传送给sel_wb
-	output wire [3:0]  exe_sel_wbdata_out, //contrl: sel_wbdata选择子
+	output wire [4:0]  exe_sel_wbdata_out, //contrl: sel_wbdata选择子
 	output wire [4:0]  exe_lubhw_con_out, //control:lubw模块的选择子,由上一段接下来
     output wire [31:0] exe_PC_out,
     output wire [31:0] exe_NNPC_out,
@@ -89,7 +89,7 @@ wire ready;
 wire [31:0] aluout_exe_wire;
 reg  [2:0] id_to_exe_sbhw_con_r ;
 reg  [3:0] id_to_exe_addrexc_con_r ;
-reg  [3:0] id_to_exe_sel_wbdata_r ;
+reg  [4:0] id_to_exe_sel_wbdata_r ;
 reg  [11:0] id_to_exe_aluop_r ;
 reg  [31:0] id_to_exe_RD2_r ;
 reg  [31:0] id_to_exe_aludata1_r ;
@@ -206,7 +206,7 @@ assign exe_dm_addr_out = aluso;
 assign exe_PC_out = id_to_exe_PC_r;
 assign exe_NNPC_out = id_to_exe_NNPC_r;
 assign exe_lubhw_con_out = id_to_exe_lubhw_con_r;
-assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {4{valid_r}};
+assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {5{valid_r}};
 assign exe_onehot_out = onehot;
 assign exe_wnum_out = id_to_exe_regnum_r & {5{valid_r}};
 assign exe_write_type_out = id_to_exe_write_type_r & {3{valid_r}};
