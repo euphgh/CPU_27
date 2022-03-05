@@ -14,9 +14,10 @@ wire x_sign,y_sign;
 wire first;
 wire [31:0] x_abs,y_abs;
 reg [5:0] timer; 
-reg [31:0] dividend,divisor,quotient_iter;
+reg [31:0] divisor,quotient_iter;
 reg [63:0] minuend;
 wire reminder_sign,quotient_sign;
+reg reminder_sign_r,quotient_sign_r;
 wire  [31:0]  quotient_temp;
 wire  [63:0]  minuend_back;
 wire pre_complete;
@@ -35,12 +36,16 @@ always @(posedge clk ) begin
         minuend <= 64'b0;
         timer = 6'b0;
         quotient_iter <= 32'b0;
+        reminder_sign_r <= 1'b0;
+        quotient_sign_r <=1'b0;
     end
     else begin
         timer <= timer+1'b1;
         minuend <= first ? {32'b0,x_abs}:(minuend_back);
         divisor <= first ? y_abs : divisor;
         quotient_iter <= quotient_temp; 
+        reminder_sign_r = (first) ? reminder_sign : reminder_sign_r;
+        quotient_sign_r = (first) ? quotient_sign : quotient_sign_r;
     end
 end
 
@@ -69,7 +74,7 @@ always @(posedge clk ) begin
         pre_complete_r <= pre_complete;
     end
 end
-assign s = quotient_sign ? (~quotient_temp_r+1'b1) : quotient_temp_r;
-assign r = reminder_sign ? (~minuend_back_r+1'b1)  : minuend_back_r;
+assign s = quotient_sign_r ? (~quotient_temp_r+1'b1) : quotient_temp_r;
+assign r = reminder_sign_r ? (~minuend_back_r+1'b1) : minuend_back_r;
 assign complete = pre_complete_r;
 endmodule
