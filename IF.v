@@ -1,8 +1,6 @@
 `include "defines.vh"
-/*====================Ports Declaration====================*/
 module IF(
-    //sys
-	input wire clk,rst_n,
+    input wire clk,rst_n,//sys
     input wire id_allowin_in,
     output wire if_valid_out,
     //data in

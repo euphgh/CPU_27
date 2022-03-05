@@ -21,12 +21,14 @@ module MEM(
     input  wire [2:0]  exe_write_type_in,
     input  wire [31:0] mult_div_res_in, //dataw:
     input  wire mult_div_accessible_in, //dataw:表示此时hilo的数据是否有效
+    input  wire exe_read_request_in,
     //dataout
 	output wire [31:0] mem_wbdata_out, //data:回写数据
 	output wire [3:0]  mem_reg_we_out, //control:回写使能
     output wire [31:0] mem_PC_out,
     output wire [4:0]  mem_wnum_out, //data: to id segment,传递实时情况
     output wire [2:0]  mem_write_type_out, //data: to id segment,传递实时情况
+    output wire mem_read_request_out,
 
     output wire data_sram_en, //ram 使能信号,高电平有效
     output wire [3:0]  data_sram_wen, //ram 字节写使能信号,高电平有效
@@ -76,12 +78,13 @@ reg  [31:0] exe_to_mem_PC_r ;
 reg  [31:0] exe_to_mem_NNPC_r ;
 reg  [4:0] exe_to_mem_regnum_r ;
 reg  [2:0]  exe_to_mem_write_type_r;
+reg  exe_to_mem_read_request_r;
 wire [31:0] MEM_PC = mem_PC_out;
 wire [31:0] mult_div_res_w;
 wire  mult_div_to_mem_accessible_w;
 // ---------------------------------------------
 /*====================Function Code====================*/
-assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]); 
+assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]);
 assign allowin = (!valid_r) || (ready && wb_allowin_in) ;
 assign mem_allowin_out = allowin;
 assign mem_valid_out = ready && valid_r;
@@ -109,6 +112,7 @@ always @(posedge clk) begin
         exe_to_mem_NNPC_r <= `ini_exe_NNPC_in;
         exe_to_mem_regnum_r <= `ini_exe_regnum_in;
         exe_to_mem_write_type_r <= `ini_exe_write_type_in;
+        exe_to_mem_read_request_r <= 1'b0;
     end
     else if (allowin && exe_valid_in) begin
         exe_to_mem_sel_wbdata_r <= exe_sel_wbdata_in;
@@ -119,6 +123,7 @@ always @(posedge clk) begin
         exe_to_mem_NNPC_r <= exe_NNPC_in;
         exe_to_mem_regnum_r <= exe_regnum_in;
         exe_to_mem_write_type_r <= exe_write_type_in;
+        exe_to_mem_read_request_r <= exe_read_request_in;
     end
 end
 FixedMapping  u_FixedMapping (
@@ -164,4 +169,5 @@ assign data_sram_wdata = exe_to_mem_dm_data_r;
 assign DMout = data_sram_rdata;
 assign mem_wnum_out = exe_to_mem_regnum_r & {5{valid_r}};
 assign mem_write_type_out = exe_to_mem_write_type_r && valid_r;
+assign mem_read_request_out = exe_to_mem_read_request_r;
 endmodule

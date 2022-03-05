@@ -22,6 +22,7 @@ module EXE(
     input wire [31:0] id_NNPC_in, //datar:
     input wire [4:0]  id_regnum_in, //datar:
     input wire [2:0]  id_write_type_in, //datar:
+    input wire [7:0]  id_mult_div_op_in,
 	//dataout
 	output wire [31:0] exe_alures_out, //data:传送给sel_wb
 	output wire [4:0]  exe_sel_wbdata_out, //contrl: sel_wbdata选择子
@@ -33,8 +34,11 @@ module EXE(
 	output wire [3:0]  exe_dm_we_out, //control:直接在EXE进行选择，并且不停止，直接传输DMW
 	output wire [31:0] exe_dm_addr_out, //address:不停止，直接传输DA
     output wire [4:0]  exe_wnum_out,
-    output wire [2:0]  exe_write_type_out
-
+    output wire [2:0]  exe_write_type_out,
+    output wire [31:0] exe_in0_out,
+    output wire [31:0] exe_in1_out,
+    output wire [5:0]  exe_mult_div_op_out,
+    output wire exe_read_request_out
 	);
 /*====================Variable Declaration====================*/
 // ALU Inputs------------------------------------      
@@ -101,6 +105,7 @@ reg  [31:0] id_to_exe_PC_r ;
 reg  [31:0] id_to_exe_NNPC_r ;
 reg  [4:0] id_to_exe_regnum_r ;
 reg  [2:0] id_to_exe_write_type_r ;
+reg  [5:0] id_to_exe_mult_div_op_r;
 wire [31:0] EXE_PC = exe_PC_out;
 //----------------------------------------------
 
@@ -133,6 +138,7 @@ always @(posedge clk) begin
         id_to_exe_NNPC_r <= `ini_id_NNPC_in;
         id_to_exe_regnum_r <= `ini_id_regnum_in;
         id_to_exe_write_type_r <= `ini_id_write_type_in;
+        id_to_exe_mult_div_op_r <= `ini_id_mul_div_op;
     end
     else if (allowin && id_valid_in) begin
         id_to_exe_sbhw_con_r <= id_sbhw_con_in;
@@ -149,6 +155,7 @@ always @(posedge clk) begin
         id_to_exe_NNPC_r <= id_NNPC_in;
         id_to_exe_regnum_r <= id_regnum_in;
         id_to_exe_write_type_r <= id_write_type_in;
+        id_to_exe_mult_div_op_r <= id_mult_div_op_in;
     end 
 end
 
@@ -210,4 +217,8 @@ assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {5{valid_r}};
 assign exe_onehot_out = onehot;
 assign exe_wnum_out = id_to_exe_regnum_r & {5{valid_r}};
 assign exe_write_type_out = id_to_exe_write_type_r & {3{valid_r}};
+assign exe_in0_out = id_to_exe_aludata1_r;
+assign exe_in1_out = id_to_exe_aludata2_r;
+assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]} & {6{valid_r}};
+assign exe_read_request_out = id_to_exe_mult_div_op_r[4];
 endmodule

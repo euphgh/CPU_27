@@ -103,7 +103,7 @@ wire  [31:0]  id_PC_in;
 wire  [31:0]  id_NNPC_in;
 wire  [4:0]  id_regnum_in;
 wire  [2:0]  id_write_type_in;
-
+wire  [7:0]  id_mult_div_op_in;
 // EXE Outputs
 wire  exe_allowin_out;
 wire  exe_valid_out;
@@ -119,6 +119,10 @@ wire  [3:0]  exe_dm_we_out;
 wire  [31:0]  exe_dm_addr_out;
 wire  [4:0]  exe_wnum_out;
 wire  [2:0]  exe_write_type_out;
+wire  [5:0]  exe_mult_div_op_out;
+wire  [31:0]  exe_in0_out;        
+wire  [31:0]  exe_in1_out;        
+wire  exe_read_request_out;
 //----------------------------------------------
 
 // MEM Inputs ----------------------------------
@@ -137,6 +141,7 @@ wire  [31:0]  exe_NNPC_in;
 wire  [4:0]  exe_regnum_in;    
 wire  wb_allowin_in;
 wire  [2:0]  exe_write_type_in;
+wire  exe_read_request_in;
 // wire  [31:0]  data_sram_rdata; [port]
 
 // MEM Outputs
@@ -153,6 +158,7 @@ wire  [4:0]  mem_wnum_out;
 wire  [2:0]  mem_write_type_out;
 wire  mult_div_accessible_in;
 wire  [31:0]  mult_div_res_in;
+wire  mem_read_request_out;
 //----------------------------------------------
 
 // WB Inputs -----------------------------------
@@ -181,7 +187,7 @@ wire [4:0] wb_wnum_reg_out;
 // mult_div Inputs -----------------------------
 // wire  clk;[port]
 // wire  rst_n;[port]
-wire  [7:0]  mult_div_op;
+wire  [5:0]  mult_div_op;
 wire  [31:0]  in0;       
 wire  [31:0]  in1;       
 
@@ -303,6 +309,7 @@ EXE  u_EXE (
     .id_NNPC_in              ( id_NNPC_in           ),
     .id_regnum_in            ( id_regnum_in         ),
     .id_write_type_in        ( id_write_type_in     ),
+    .id_mult_div_op_in       ( id_mult_div_op_in    ),
 
     .exe_allowin_out         ( exe_allowin_out      ),
     .exe_valid_out           ( exe_valid_out        ),
@@ -316,8 +323,13 @@ EXE  u_EXE (
     .exe_dm_we_out           ( exe_dm_we_out        ),
     .exe_dm_addr_out         ( exe_dm_addr_out      ),
     .exe_wnum_out            ( exe_wnum_out         ),
-    .exe_write_type_out      ( exe_write_type_out   )
+    .exe_write_type_out      ( exe_write_type_out   ),
+    .exe_in0_out             ( exe_in0_out          ),
+    .exe_in1_out             ( exe_in1_out          ),
+    .exe_mult_div_op_out     ( exe_mult_div_op_out  ),
+    .exe_read_request_out    ( exe_read_request_out )
 );
+assign id_mult_div_op_in  = id_mult_div_op     ;
 assign mem_allowin_in     = mem_allowin_out    ;
 assign exe_allowin_in     = exe_allowin_out    ;
 assign exe_valid_in       = exe_valid_out      ;
@@ -350,7 +362,8 @@ MEM  u_MEM (
     .exe_write_type_in       ( exe_write_type_in    ),
     .data_sram_rdata         ( data_sram_rdata      ),
     .mult_div_accessible_in  ( mult_div_accessible_in),
-    .mult_div_res_in         ( mult_div_res_in     ),
+    .mult_div_res_in         ( mult_div_res_in      ),
+    .exe_read_request_in     ( exe_read_request_in  ),
 
     .mem_allowin_out         ( mem_allowin_out      ),
     .mem_valid_out           ( mem_valid_out        ),
@@ -362,7 +375,8 @@ MEM  u_MEM (
     .data_sram_en            ( data_sram_en         ),
     .data_sram_wen           ( data_sram_wen        ),
     .data_sram_addr          ( data_sram_addr       ),
-    .data_sram_wdata         ( data_sram_wdata      )
+    .data_sram_wdata         ( data_sram_wdata      ),
+    .mem_read_request_out    ( mem_read_request_out )
 );
 
 WB  u_WB (
@@ -406,13 +420,15 @@ mult_div  u_mult_div (
     .mult_div_op             ( mult_div_op   ),
     .in0                     ( in0           ),
     .in1                     ( in1           ),
+    .read_request            ( read_request  ),
 
     .mult_div_res            ( mult_div_res  ),
     .accessible              ( accessible    ) 
 );
-assign in0 = id_aludata1_out;
-assign in1 = id_aludata2_out;
-assign mult_div_op = id_mult_div_op;
+assign mult_div_op = exe_mult_div_op_out;
+assign in0 = exe_in0_out;
+assign in1 = exe_in1_out;
+assign read_request = mem_read_request_out;
 assign mult_div_accessible_in = accessible;
 assign mult_div_res_in = mult_div_res;
 endmodule

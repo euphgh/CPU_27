@@ -1,8 +1,9 @@
 /*====================Ports Declaration====================*/
 module mult_div (
         input wire clk,rst_n,
-        input wire [7:0] mult_div_op, //control:{0:mult,1:multu,2:div,3:divu,4:mfhi,5:mflo,6:mthi,7:mtol}
+        input wire [5:0] mult_div_op, //control:{0:mult,1:multu,2:div,4:mthi,5:mtol}
         input wire [31:0] in0,in1, //data:{运算指令时即为运算数字，MT指令时in0为hi,in1为ol}
+        input wire read_request, //{0:mthi,1:mtol}
         output wire [31:0] mult_div_res,
         output reg accessible //control:表示hiol的数据可以使用
     );
@@ -63,6 +64,28 @@ module mult_div (
     assign x = in0;
     assign y = in1;
     assign div_signed = mult_div_op[2];
+
+    wire [63:0] mt_temp0;
+    wire [1:0] wen_temp0;
+    reg [63:0] mt_temp1;
+    reg [1:0] wen_temp1;
+
+    assign mt_temp0 =  (|mult_div_op[2:0]) ? mult_res : {in0,in1};
+    assign wen_temp0 = (|mult_div_op[2:0]) ? 2'b11 :
+                        (mult_div_op[4]) ? 2'b10 :
+                        (mult_div_op[5]) ? 2'b01 :2'b00;
+
+    always @(posedge clk ) 
+    begin
+        if (!rst_n) begin
+            mt_temp1 <= 32'b0;
+            wen_temp1 <= 2'b0;
+        end
+        else begin
+            mt_temp1 <= mt_temp0;
+            wen_temp1 <= wen_temp0;
+        end
+    end
     // hiol Inputs
     wire  [1:0] wen_hiol;
     wire  [63:0]  data_in;
@@ -80,8 +103,7 @@ module mult_div (
               .hi_out                  ( hi_out     ),
               .ol_out                  ( ol_out     )
           );
-    assign wen_hiol = mult_div_op[7:6]||{2{|mult_div_op[3:0]}};
-    assign data_in =    (|mult_div_op[1:0]) ? mult_res :
-           (|mult_div_op[3:2]) ? {r,s} : {in0,in1};
-    assign mult_div_res = mult_div_op[4] ? hi_out : ol_out;
+    assign wen_hiol = complete ? 2'b11 : wen_temp1;
+    assign data_in =  complete ? {r,s} : mt_temp1;
+    assign mult_div_res = read_request ? hi_out : ol_out;
 endmodule

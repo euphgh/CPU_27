@@ -13,7 +13,7 @@ module idready (
 	output wire       ready
 );
 	/*====================Variable Declaration====================*/
-	wire exe_RR1;
+	wire exe_RR1;//test
 	wire mem_RR1  ;
 	wire wb_RR1   ;
 	wire exe_RR2;

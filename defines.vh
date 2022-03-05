@@ -35,6 +35,7 @@
 `define ini_mem_type 3'b0
 `define ini_wb_type 3'b0
 //EXE
+`define ini_id_mul_div_op 6'b0
 `define ini_id_sbhw_con_in 3'b0
 `define ini_id_addrexc_con_in 4'b0
 `define ini_id_sel_wbdata_in 4'b0
