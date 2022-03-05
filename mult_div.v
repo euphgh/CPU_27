@@ -10,6 +10,7 @@ module mult_div (
     /*====================Variable Declaration====================*/
     reg div;
     wire div_w;
+    reg [5:0] mult_div_op_r;
     /*====================Function Code====================*/
     wire  [31:0]  scr0;
     wire  [31:0]  scr1;
@@ -72,20 +73,22 @@ module mult_div (
     reg [63:0] mt_temp1;
     reg [1:0] wen_temp1;
 
-    assign mt_temp0 =  (|mult_div_op[2:0]) ? mult_res : {in0,in1};
-    assign wen_temp0 = (|mult_div_op[2:0]) ? 2'b11 :
-                        (mult_div_op[4]) ? 2'b10 :
-                        (mult_div_op[5]) ? 2'b01 :2'b00;
+    assign mt_temp0 =  {in0,in1};
+    assign wen_temp0 = (|mult_div_op_r[2:0]) ? 2'b11 :
+                        (mult_div_op_r[4]) ? 2'b10 :
+                        (mult_div_op_r[5]) ? 2'b01 :2'b00;
 
     always @(posedge clk ) 
     begin
         if (!rst_n) begin
             mt_temp1 <= 32'b0;
             wen_temp1 <= 2'b0;
+            mult_div_op_r <= 6'b0;
         end
         else begin
             mt_temp1 <= mt_temp0;
             wen_temp1 <= wen_temp0;
+            mult_div_op_r <= mult_div_op;
         end
     end
     // hiol Inputs
@@ -106,6 +109,7 @@ module mult_div (
               .ol_out                  ( ol_out     )
           );
     assign wen_hiol = complete ? 2'b11 : wen_temp1;
-    assign data_in =  complete ? {r,s} : mt_temp1;
+    assign data_in =  complete ? {r,s} : 
+                        (|mult_div_op_r[2:0]) ? mult_res : mt_temp1;
     assign mult_div_res = read_request ? hi_out : ol_out;
 endmodule
