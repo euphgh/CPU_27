@@ -344,6 +344,7 @@ assign exe_dm_we_in       = exe_dm_we_out      ;
 assign exe_VAddr_in       = exe_dm_addr_out    ;
 assign exe_regnum_in      = exe_wnum_out       ;
 assign exe_write_type_in  = exe_write_type_out ;
+assign exe_read_request_in= exe_read_request_out;
 MEM  u_MEM (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),

@@ -105,7 +105,7 @@ reg  [31:0] id_to_exe_PC_r ;
 reg  [31:0] id_to_exe_NNPC_r ;
 reg  [4:0] id_to_exe_regnum_r ;
 reg  [2:0] id_to_exe_write_type_r ;
-reg  [5:0] id_to_exe_mult_div_op_r;
+reg  [7:0] id_to_exe_mult_div_op_r;
 wire [31:0] EXE_PC = exe_PC_out;
 //----------------------------------------------
 

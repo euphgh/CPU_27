@@ -9,6 +9,7 @@ module mult_div (
     );
     /*====================Variable Declaration====================*/
     reg div;
+    wire div_w;
     /*====================Function Code====================*/
     wire  [31:0]  scr0;
     wire  [31:0]  scr1;
@@ -39,7 +40,7 @@ module mult_div (
     div  u_div (
              .div_clk                 ( clk          ),
              .resetn                  ( rst_n        ),
-             .div                     ( div          ),
+             .div                     ( div_w        ),
              .div_signed              ( div_signed   ),
              .x                       ( x            ),
              .y                       ( y            ),
@@ -58,9 +59,10 @@ module mult_div (
         else
         begin
             div <= div ? (!complete) : (|mult_div_op[3:2]);
-            accessible <=  !div;
+            accessible <= (div&&complete)||(!div);
         end
     end
+    assign div_w = (|mult_div_op[3:2])||div;
     assign x = in0;
     assign y = in1;
     assign div_signed = mult_div_op[2];
