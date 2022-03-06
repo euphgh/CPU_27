@@ -85,13 +85,13 @@ wire  mult_div_to_mem_accessible_w;
 // ---------------------------------------------
 /*====================Function Code====================*/
 assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]);
-assign allowin = (!valid_r) || (ready && wb_allowin_in) ;
+assign allowin =  (!valid_r) || (ready && wb_allowin_in) ;//查看是否自锁
 assign mem_allowin_out = allowin;
 assign mem_valid_out = ready && valid_r;
 always @(posedge clk ) begin
     if (!rst_n) begin
         valid_r <= 1'b0;
-    end else begin
+    end else if (allowin) begin
         valid_r <= exe_valid_in;
     end
 end
@@ -103,7 +103,7 @@ assign exe_to_mem_VAddr_r = exe_VAddr_in ;
 assign mult_div_res_w = mult_div_res_in;
 assign mult_div_to_mem_accessible_w = mult_div_accessible_in;
 always @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rst_n||(allowin&&exe_valid_in)) begin
         exe_to_mem_sel_wbdata_r <= `ini_exe_sel_wbdata_in;
         exe_to_mem_aluout_r <= `ini_exe_aluout_in;
         exe_to_mem_onehot_r <= `ini_exe_onehot_in;
@@ -157,17 +157,16 @@ assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : 
                         exe_to_mem_sel_wbdata_r[4] ? mult_div_res_w : 32'b0; 
 
-assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)&&(valid_r)}} & 
+assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)}} & 
                         ((exe_to_mem_sel_wbdata_r[3:0]||exe_to_mem_sel_wbdata_r[4]) ? 4'b1111 :
 					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
-assign mem_regnum_out = exe_to_mem_regnum_r && valid_r;
 assign mem_PC_out = exe_to_mem_PC_r;
 assign data_sram_en = rst_n;
-assign data_sram_wen = exe_to_mem_dm_we_r & {4{exe_valid_in}};
+assign data_sram_wen = exe_to_mem_dm_we_r & {4{exe_valid_in}}; //!思考如何处理
 assign data_sram_addr = PAddr;
 assign data_sram_wdata = exe_to_mem_dm_data_r;
 assign DMout = data_sram_rdata;
-assign mem_wnum_out = exe_to_mem_regnum_r & {5{valid_r}};
-assign mem_write_type_out = exe_to_mem_write_type_r && valid_r;
+assign mem_wnum_out = exe_to_mem_regnum_r;
+assign mem_write_type_out = exe_to_mem_write_type_r;
 assign mem_read_request_out = exe_to_mem_read_request_r;
 endmodule
