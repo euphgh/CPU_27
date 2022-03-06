@@ -41,7 +41,8 @@ assign wb_valid_out = ready && valid_r;
 always @(posedge clk ) begin
     if (!rst_n) begin
         valid_r <= 1'b0;
-    end else begin
+    end 
+    else if (allowin) begin
         valid_r <= mem_valid_in;
     end
 end

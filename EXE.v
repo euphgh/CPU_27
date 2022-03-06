@@ -113,7 +113,7 @@ wire [31:0] EXE_PC = exe_PC_out;
 always @(posedge clk ) begin
     if (!rst_n) begin
         valid_r <= 1'b0;
-    end else begin
+    end else if (allowin) begin
         valid_r <= id_valid_in;
     end
 end
@@ -123,7 +123,7 @@ assign exe_allowin_out = allowin;
 assign exe_valid_out = valid_r && ready;
 
 always @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rst_n ||(allowin&&(!id_valid_in))) begin
         id_to_exe_sbhw_con_r <= `ini_id_sbhw_con_in;
         id_to_exe_addrexc_con_r <= `ini_id_addrexc_con_in;
         id_to_exe_sel_wbdata_r <= `ini_id_sel_wbdata_in;

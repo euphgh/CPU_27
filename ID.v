@@ -114,7 +114,7 @@ wire allowin;
 wire ready;
 reg valid_r;
 
-wire [31:0] if_to_id_Instruct_r ;
+wire [31:0] if_to_id_Instruct_w ;
 wire [31:0] wb_to_id_wdata_r ;
 wire [3:0] wb_to_id_wen_r ;
 wire [4:0] wb_to_id_wnum_r ;
@@ -129,6 +129,8 @@ reg  [31:0] if_to_id_NNPC_r ;
 wire [31:0] ID_PC;
 assign ID_PC = id_PC_out;
 wire [4:0] regnum_id_wire;
+wire change_ok = allowin&&if_valid_in;
+reg [31:0] if_to_id_Instruct_r;
 //------------------------------------------------------------
 
 /*====================Function Code====================*/
@@ -136,21 +138,29 @@ always @(posedge clk ) begin
     if (!rst_n)begin
        valid_r <= 1'b0; 
     end
-    else begin
+    else if (allowin) begin
         valid_r <= if_valid_in ; 
     end
 end
 assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
+always @(posedge clk ) begin
+    if (!rst_n) begin
+        if_to_id_Instruct_r <= 32'b0;
+    end
+    else begin
+        if_to_id_Instruct_r <= if_Instruct_in;       
+    end
+end
+assign if_to_id_Instruct_w = (change_ok) ? if_to_id_Instruct_w : if_to_id_Instruct_r ;
 
-assign if_to_id_Instruct_r = if_Instruct_in ;
 assign wb_to_id_wdata_r = wb_wdata_in ;
 assign wb_to_id_wen_r = wb_wen_in ;
 assign wb_to_id_wnum_r = wb_wnum_in ;
 
 always @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rst_n||(allowin&&(!if_valid_in))) begin
         if_to_id_PC_r <= `ini_if_PC_in;
         if_to_id_NPC_r <= `ini_if_NPC_in;
         if_to_id_NNPC_r <= `ini_if_NNPC_in;
