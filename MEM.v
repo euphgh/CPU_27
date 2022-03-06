@@ -164,17 +164,7 @@ assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)}} &
 assign mem_PC_out = exe_to_mem_PC_r;
 assign data_sram_en = rst_n;
 
-wire change_ok = exe_valid_in&&allowin;
-assign data_sram_wen = change_ok ? exe_to_mem_dm_we_w : exe_to_mem_dm_we_r ; //!思考如何处理
-always @(posedge clk ) begin
-    if (!rst_n) begin
-        exe_to_mem_dm_we_r <= 4'b0;
-    end
-    else begin
-        exe_to_mem_dm_we_r <= exe_dm_we_in;
-    end
-end
-
+assign data_sram_wen =  exe_to_mem_dm_we_w;
 assign data_sram_addr = PAddr;
 assign data_sram_wdata = exe_to_mem_dm_data_r;
 assign DMout = data_sram_rdata;

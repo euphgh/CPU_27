@@ -206,8 +206,8 @@ assign address = aluso;
 assign addrexc_con = id_to_exe_addrexc_con_r;
 assign exe_dm_data_out = id_to_exe_sel_dm_con_r[0] ? sbhw_data : slr_data;
 
-assign exe_dm_we_out = id_to_exe_sel_dm_con_r[0] ? sbhw_we : 
-				        id_to_exe_sel_dm_con_r[1] ? slr_we : 4'b0000;
+assign exe_dm_we_out = (id_to_exe_sel_dm_con_r[0] ? sbhw_we : 
+				        id_to_exe_sel_dm_con_r[1] ? slr_we : 4'b0000)&{4{exe_valid_out}};//从发射的角度来看
 
 assign exe_dm_addr_out = aluso;
 assign exe_PC_out = id_to_exe_PC_r;

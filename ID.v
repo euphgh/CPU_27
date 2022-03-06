@@ -129,8 +129,6 @@ reg  [31:0] if_to_id_NNPC_r ;
 wire [31:0] ID_PC;
 assign ID_PC = id_PC_out;
 wire [4:0] regnum_id_wire;
-wire change_ok = allowin&&if_valid_in;
-reg [31:0] if_to_id_Instruct_r;
 //------------------------------------------------------------
 
 /*====================Function Code====================*/
@@ -145,16 +143,7 @@ end
 assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
-always @(posedge clk ) begin
-    if (!rst_n) begin
-        if_to_id_Instruct_r <= 32'b0;
-    end
-    else begin
-        if_to_id_Instruct_r <= if_Instruct_in;       
-    end
-end
-assign if_to_id_Instruct_w = (change_ok) ? if_to_id_Instruct_w : if_to_id_Instruct_r ;
-
+assign Instruct = if_Instruct_in;
 assign wb_to_id_wdata_r = wb_wdata_in ;
 assign wb_to_id_wen_r = wb_wen_in ;
 assign wb_to_id_wnum_r = wb_wnum_in ;
@@ -224,7 +213,7 @@ assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
 assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
 assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
-assign Instruct = if_to_id_Instruct_w;
+assign Instruct = if_Instruct_in; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
 brcal  u_brcal (
