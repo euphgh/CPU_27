@@ -224,7 +224,7 @@ assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
 assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
 assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
-assign Instruct = if_to_id_Instruct_r;
+assign Instruct = if_to_id_Instruct_w;
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
 brcal  u_brcal (

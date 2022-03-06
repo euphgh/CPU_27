@@ -213,12 +213,12 @@ assign exe_dm_addr_out = aluso;
 assign exe_PC_out = id_to_exe_PC_r;
 assign exe_NNPC_out = id_to_exe_NNPC_r;
 assign exe_lubhw_con_out = id_to_exe_lubhw_con_r;
-assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r & {5{valid_r}};
+assign exe_sel_wbdata_out = id_to_exe_sel_wbdata_r;
 assign exe_onehot_out = onehot;
-assign exe_wnum_out = id_to_exe_regnum_r & {5{valid_r}};
-assign exe_write_type_out = id_to_exe_write_type_r & {3{valid_r}};
+assign exe_wnum_out = id_to_exe_regnum_r ;
+assign exe_write_type_out = id_to_exe_write_type_r;
 assign exe_in0_out = id_to_exe_aludata1_r;
 assign exe_in1_out = id_to_exe_aludata2_r;
-assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]} & {6{valid_r}};
+assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]};
 assign exe_read_request_out = id_to_exe_mult_div_op_r[4];
 endmodule
