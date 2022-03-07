@@ -8,7 +8,7 @@ module ID(
     input  wire if_valid_in,
     output wire id_valid_out,
     //datain
- 	input wire [31:0] if_PC_in,if_NPC_in,if_NNPC_in, //datar:
+ 	input wire [31:0] if_PC_in,if_NNPC_in, //datar:
     input wire [31:0] if_Instruct_in, //dataw:
 	input wire [31:0] wb_wdata_in, //dataw:
 	input wire [3:0]  wb_wen_in, //dataw:
@@ -19,6 +19,7 @@ module ID(
 	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
 	output wire [31:0] id_RD2_out, //data:
+    output wire [31:0] id_RD1_out, //data:
 	output wire [11:0] id_aluop_out,
 	output wire [31:0] id_aludata1_out, //data:
 	output wire [31:0] id_aludata2_out, //data:
@@ -29,10 +30,12 @@ module ID(
     output wire [3:0]  id_addrexc_con_out, //control:地址例外选择子
     output wire [1:0]  id_lr_con_out, //control:onehot模块选择子
     output wire [4:0]  id_lubhw_con_out,
-    output wire id_brcal_res_out,
-    output wire [31:0] id_bjpc_res_out,
     output wire [2:0] id_write_type_out,
-    output wire [7:0] id_mult_div_op
+    output wire [7:0] id_mult_div_op,
+    output wire [31:0] id_extend_res_out,
+    output wire [25:0] id_instr_index_out,
+    output wire [2:0] id_bjpc_con_out,
+    output wire [6:0] id_brcal_con_out
 	);
 
 
@@ -53,7 +56,7 @@ wire [31:0] RD1,RD2;
 wire   [2:0]  extend_con; //control:选择:imm的符号扩展-0/imm的0扩展-1/off的左移两位扩展-2
 
 // signext Outputs
-wire  [31:0]  extend_out;
+wire  [31:0]  extend_res;
 //------------------------------------------------------------
 
 
@@ -98,9 +101,8 @@ wire  nop;
 //------------------------------------------------------------
 
 // bjpc Inputs-------------------------------------------------
-wire  [31:0]  NPC;       
 // wire  [31:0]  RD1; [reg]       
-// wire  [31:0]  extend_out; [SE]
+// wire  [31:0]  extend_res; [SE]
 // wire  [25:0]  instr_index; [decoder]
 // wire  [2:0]  bjpc_con; [decorder]   
 
@@ -121,7 +123,6 @@ wire [4:0] wb_to_id_wnum_r ;
 wire [31:0] wb_to_id_PC_r ;
 
 reg  [31:0] if_to_id_PC_r ;
-reg  [31:0] if_to_id_NPC_r ;
 reg  [31:0] if_to_id_NNPC_r ;
 // wire [4:0] addrexc_con_wire; //control:地址例外选择子[decoder]
 // wire [1:0]  lr_con_wire; //control:onehot模块选择子[decoder]
@@ -151,12 +152,10 @@ assign wb_to_id_wnum_r = wb_wnum_in ;
 always @(posedge clk) begin
     if (!rst_n||(allowin&&(!if_valid_in))) begin
         if_to_id_PC_r <= `ini_if_PC_in;
-        if_to_id_NPC_r <= `ini_if_NPC_in;
         if_to_id_NNPC_r <= `ini_if_NNPC_in;
     end
     else if (allowin && if_valid_in) begin
         if_to_id_PC_r <= if_PC_in;
-        if_to_id_NPC_r <= if_NPC_in;
         if_to_id_NNPC_r <= if_NNPC_in;
     end
 end
@@ -174,11 +173,12 @@ Reg  u_Reg (
     .RD2                     ( RD2      )
 );
 assign id_RD2_out = RD2;
+assign id_RD1_out = RD1;
 signext  u_signext (
     .imm 		             ( imm		    ),
     .extend_con              ( extend_con   ),
 
-    .extend_out              ( extend_out   ) 
+    .extend_res              ( extend_res   ) 
 );
 decoder  u_decoder (
     .Instruct                ( Instruct        ),
@@ -216,31 +216,12 @@ assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
 assign Instruct = if_Instruct_in; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
-brcal  u_brcal (
-    .RD1                     ( RD1         ),
-    .RD2                     ( RD2         ),
-    .brcal_con               ( brcal_con   ),
-
-    .brcal_out               ( brcal_out   )
-);
-assign id_brcal_res_out = brcal_out && (!nop) && (valid_r);
-bjpc  u_bjpc (
-    .NPC                     ( NPC           ),
-    .RD1                     ( RD1           ),
-    .extend_out              ( extend_out    ),
-    .instr_index             ( instr_index   ),
-    .bjpc_con                ( bjpc_con      ),
-
-    .bjpc_out                ( bjpc_out      )
-);
-assign id_bjpc_res_out = bjpc_out;
-assign NPC = if_to_id_NPC_r;
 assign regnum_id_wire = sel_wr_con[0] ? rt:
 			sel_wr_con[1] ? rd : 32'd31;
 assign id_regnum_out = (regnum_id_wire  & {5{(!nop)&&valid_r}}) ;
 assign aludata1_wire = sel_alud1_con[0] ? RD1 : {27'b0,sa}; //不支持位移负值
 assign id_aludata1_out = aludata1_wire;
-assign aludata2_wire = sel_alud2_con[0] ? RD2 : extend_out;
+assign aludata2_wire = sel_alud2_con[0] ? RD2 : extend_res;
 assign id_aludata2_out = aludata2_wire;	
 assign RR1 = rs;
 assign RR2 = rt;		
@@ -263,4 +244,8 @@ idready  u_idready (
 
     .ready                   ( ready            )
 );
+assign id_extend_res_out = extend_res;
+assign id_instr_index_out = instr_index;
+assign id_bjpc_con_out = bjpc_con;
+assign id_brcal_con_out = brcal_con;
 endmodule

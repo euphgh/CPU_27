@@ -5,7 +5,13 @@
 //IF
 `define ini_id_brcal_res_in 1'b0
 `define ini_id_bjpc_res_in 32'b0
-`define ini_id_NPC_in 32'hbfc00000
+`define ini_if_NPC_in 32'hbfc00000
+`define ini_id_RD1_in 32'b0
+`define ini_id_RD2_in 32'b0
+`define ini_id_extend_res_in 32'b0
+`define ini_id_instr_index_in 32'b0
+`define ini_id_bjpc_con_in 32'b0
+`define ini_id_brcal_con_in 32'b0
 
 //ID
 `define ini_sel_wbdata_id 3'b0

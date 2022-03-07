@@ -173,6 +173,7 @@ assign exe_alures_out = aluso;
 sbhw  u_sbhw (
     .RD2                     ( RD2         ),
     .sbhw_con                ( sbhw_con    ),
+    .adlr                    ( adlr        ),
 
     .sbhw_data               ( sbhw_data   ),
     .sbhw_we                 ( sbhw_we     ) 

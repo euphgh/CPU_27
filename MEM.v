@@ -68,7 +68,8 @@ reg  valid_r;
 wire [31:0] DMout;
 wire [3:0]  exe_to_mem_dm_we_w ;
 reg  [3:0]  exe_to_mem_dm_we_r ;
-wire [31:0] exe_to_mem_VAddr_r ;
+wire [31:0] exe_to_mem_VAddr_w ;
+reg  [31:0] exe_to_mem_VAddr_r ;
 wire [31:0] exe_to_mem_dm_data_r;
 
 reg  [4:0] exe_to_mem_sel_wbdata_r ;
@@ -99,7 +100,7 @@ end
 
 assign exe_to_mem_dm_data_r = exe_dm_data_in ;
 assign exe_to_mem_dm_we_w = exe_dm_we_in ;
-assign exe_to_mem_VAddr_r = exe_VAddr_in ;
+assign exe_to_mem_VAddr_w = exe_VAddr_in ;
 
 assign mult_div_res_w = mult_div_res_in;
 assign mult_div_to_mem_accessible_w = mult_div_accessible_in;
@@ -114,6 +115,7 @@ always @(posedge clk) begin
         exe_to_mem_regnum_r <= `ini_exe_regnum_in;
         exe_to_mem_write_type_r <= `ini_exe_write_type_in;
         exe_to_mem_read_request_r <= 1'b0;
+        exe_to_mem_VAddr_r <= 32'b0;
     end
     else if (allowin && exe_valid_in) begin
         exe_to_mem_sel_wbdata_r <= exe_sel_wbdata_in;
@@ -125,6 +127,7 @@ always @(posedge clk) begin
         exe_to_mem_regnum_r <= exe_regnum_in;
         exe_to_mem_write_type_r <= exe_write_type_in;
         exe_to_mem_read_request_r <= exe_read_request_in;
+        exe_to_mem_VAddr_r <= exe_VAddr_in;
     end
 end
 FixedMapping  u_FixedMapping (
@@ -132,7 +135,7 @@ FixedMapping  u_FixedMapping (
 
     .PAddr                   ( PAddr   )
 );
-assign VAddr = exe_to_mem_VAddr_r;
+assign VAddr = exe_to_mem_VAddr_w;
 lubhw  u_lubhw (
     .word                    ( word_lubhw   ),
     .adrl_lubhw              ( adrl_lubhw   ),
@@ -141,7 +144,7 @@ lubhw  u_lubhw (
     .lubhw_out               ( lubhw_out    )
 );
 assign word_lubhw = DMout;
-assign adrl_lubhw = VAddr[1:0];
+assign adrl_lubhw = exe_to_mem_VAddr_r[1:0];
 assign lubhw_con = exe_to_mem_lubhw_con_r;
 llr  u_llr (
     .word                    ( word_llr   ),
