@@ -172,7 +172,6 @@ Reg  u_Reg (
     .RD2                     ( RD2      )
 );
 assign id_RD2_out = RD2;
-assign id_RD1_out = RD1;
 signext  u_signext (
     .imm 		             ( imm		    ),
     .extend_con              ( extend_con   ),
