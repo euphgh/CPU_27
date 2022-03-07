@@ -46,7 +46,7 @@ assign if_valid_out = valid_r;
 assign allowin = ready&&id_allowin_in;
 always @(posedge clk) begin
     if (!rst_n) begin
-        id_to_if_nextPC_r <= `ini_if_NPC_in;
+        id_to_if_nextPC_r <= `ini_id_nextPC_in;
         VAddr_r <= `ini_if_NPC_in;
     end
     else if (allowin && valid_r) begin

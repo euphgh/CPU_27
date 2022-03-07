@@ -5,7 +5,8 @@
 //IF
 `define ini_id_brcal_res_in 1'b0
 `define ini_id_bjpc_res_in 32'b0
-`define ini_if_NPC_in 32'hbfc00000
+`define ini_id_nextPC_in 32'hbfc00000 
+`define ini_if_NPC_in 32'hbfbf_fffc
 `define ini_id_RD1_in 32'b0
 `define ini_id_RD2_in 32'b0
 `define ini_id_extend_res_in 32'b0
@@ -33,7 +34,6 @@
 `define ini_if_Instruct_in 32'b0
 //new
 `define ini_if_PC_in 32'b0
-`define ini_if_NPC_in 32'hbfc00000
 `define ini_if_NNPC_in 32'b0
 `define ini_exe_wnum 4'b0
 `define ini_mem_wnum 4'b0

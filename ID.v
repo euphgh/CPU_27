@@ -92,7 +92,7 @@ wire  nop;
 //wire  [31:0]  RD1; [reg]     
 //wire  [31:0]  RD2; [reg]    
 //wire  [5:0]  brcal_con; [decoder]
-
+wire [31:0] NPC;
 // brcal Outputs
 // wire  brcal_out;
 //------------------------------------------------------------
@@ -141,7 +141,6 @@ end
 assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
-assign Instruct = if_Instruct_in;
 assign wb_to_id_wdata_w = wb_wdata_in ;
 assign wb_to_id_wen_w = wb_wen_in ;
 assign wb_to_id_wnum_w = wb_wnum_in ;
@@ -213,7 +212,7 @@ assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
 assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
 assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
-assign Instruct = if_Instruct_in; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
+assign Instruct = if_to_id_Instruct_r; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
 assign regnum_id_wire = sel_wr_con[0] ? rt:
@@ -261,5 +260,5 @@ brcal  u_brcal (
 
     .brcal_out               ( brcal_out   ) 
 );
-assign id_nextPC_out = brcal_con ? bjpc_con : if_NPC_fast_wire;
+assign id_nextPC_out = brcal_out ? bjpc_out : if_NPC_fast_wire;
 endmodule

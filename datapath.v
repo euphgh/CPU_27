@@ -253,7 +253,6 @@ ID  u_ID (
     .id_sel_wbdata_out       ( id_sel_wbdata_out    ),
     .id_sel_dm_out           ( id_sel_dm_out        ),
     .id_RD2_out              ( id_RD2_out           ),
-    .id_RD1_out              ( id_RD1_out           ),
     .id_aluop_out            ( id_aluop_out         ),
     .id_aludata1_out         ( id_aludata1_out      ),
     .id_aludata2_out         ( id_aludata2_out      ),
