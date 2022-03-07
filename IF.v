@@ -50,6 +50,7 @@ reg  [31:0] id_to_if_extend_res_r;
 reg  [25:0] id_to_if_instr_index_r;
 reg  [2:0] id_to_if_bjpc_con_r;
 reg  [6:0] id_to_if_brcal_con_r;
+reg  [31:0] bjpc_npc;
 //------------------------------------------------------
 /*====================Function Code====================*/
 assign ready = 1'b1; //以后根据IM来判断
@@ -65,6 +66,7 @@ always @(posedge clk) begin
         id_to_if_instr_index_r <= `ini_id_instr_index_in;
         id_to_if_bjpc_con_r <= `ini_id_bjpc_con_in;
         id_to_if_brcal_con_r <= `ini_id_brcal_con_in;
+        bjpc_npc <= `ini_if_NPC_in;
         
     end
     else if (allowin && valid_r) begin
@@ -75,6 +77,7 @@ always @(posedge clk) begin
         id_to_if_instr_index_r <= id_instr_index_in;
         id_to_if_bjpc_con_r <= id_bjpc_con_in;
         id_to_if_brcal_con_r <= id_brcal_con_in;
+        bjpc_npc <= if_PC_out;
     end
 end
 
@@ -117,7 +120,7 @@ bjpc  u_bjpc (
 );
 assign extend_out = id_to_if_extend_res_r;
 assign instr_index = id_to_if_instr_index_r;
-assign NPC = if_to_if_NPC_r;
+assign NPC = bjpc_npc;
 assign bjpc_con = id_to_if_bjpc_con_r;
 
 assign if_PC_out = brcal_out ? bjpc_out : if_to_if_NPC_r;

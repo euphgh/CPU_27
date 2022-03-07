@@ -87,6 +87,11 @@ wire  id_brcal_res_out;
 wire  [31:0]  id_bjpc_res_out;
 wire  [2:0]  id_write_type_out;
 wire  [7:0]  id_mult_div_op;
+wire  [31:0] id_RD1_out;
+wire  [31:0] id_extend_res_out;
+wire  [25:0] id_instr_index_out;
+wire  [2:0] id_bjpc_con_out;
+wire  [6:0] id_brcal_con_out;
 //----------------------------------------------
 
 // EXE Inputs ----------------------------------
@@ -236,7 +241,7 @@ assign if_NNPC_in     = if_NNPC_out;
 assign if_Instruct_in = if_Instruct_out;
 assign if_valid_in    = if_valid_out;
 assign if_NPC_in      = if_NPC_out;
-assign id_RD1_in       =  id_RD1_out;
+assign id_RD1_in       =    id_RD1_out;
 assign id_extend_res_in   = id_extend_res_out ;
 assign id_instr_index_in  = id_instr_index_out;
 assign id_bjpc_con_in     = id_bjpc_con_out   ;
