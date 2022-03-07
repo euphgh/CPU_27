@@ -27,25 +27,20 @@ module datapath (
 // IF Inputs ------------------------------------
 // wire  clk;[port]
 // wire  rst_n;[port]
-wire  id_allowin_in;
-wire  id_brcal_res_in;        
-wire  [31:0]  id_bjpc_res_in;    
+// wire  id_allowin_in;[id]
+wire  [31:0]  id_nextPC_in;   
 // wire  [31:0]  inst_sram_rdata;[port]
-wire [31:0] id_RD1_in   ;
-wire [31:0] id_extend_res_in ;
-wire [25:0] id_instr_index_in;
-wire [2:0] id_bjpc_con_in   ;
-wire [6:0] id_brcal_con_in  ;
 
 // IF Outputs
 wire  if_valid_out;
-wire  [31:0]  if_PC_out;
-wire  [31:0]  if_NPC_out;
-wire  [31:0]  if_NNPC_out;
+wire  [31:0]  if_PC_out;      
+wire  [31:0]  if_NPC_out;     
+wire  [31:0]  if_NNPC_out;    
 wire  [31:0]  if_Instruct_out;
 // wire  [31:0]  inst_sram_wdata;[port]
-// wire  [3:0]  inst_sram_wen;[port]
+// wire  [3:0]  inst_sram_wen;   [port]
 // wire  [31:0]  inst_sram_addr;[port]
+// wire  inst_sram_en;[port]
 //----------------------------------------------
 
 // ID Inputs -----------------------------------
@@ -66,6 +61,7 @@ wire  [2:0]  wb_write_type;
 wire  [4:0]  exe_wnum;
 wire  [4:0]  mem_wnum;
 wire  [4:0]  wb_wnum;
+wire  [31:0] if_NPC_fast_wire;
 
 // ID Outputs
 wire  id_allowin_out;
@@ -83,10 +79,9 @@ wire  [31:0]  id_PC_out;
 wire  [3:0]  id_addrexc_con_out;
 wire  [1:0]  id_lr_con_out;
 wire  [4:0]  id_lubhw_con_out;
-wire  id_brcal_res_out;
-wire  [31:0]  id_bjpc_res_out;
 wire  [2:0]  id_write_type_out;
 wire  [7:0]  id_mult_div_op;
+wire  [31:0] id_nextPC_out;
 //----------------------------------------------
 
 // EXE Inputs ----------------------------------
@@ -208,18 +203,13 @@ assign PC_MEM = mem_PC_out;
 assign PC_WB = debug_wb_pc;
 assign Instruct = if_Instruct_out;
 /*====================Function Code====================*/
+
 IF  u_IF (
     .clk                     ( clk               ),
     .rst_n                   ( rst_n             ),
     .id_allowin_in           ( id_allowin_in     ),
+    .id_nextPC_in            ( id_nextPC_in      ),
     .inst_sram_rdata         ( inst_sram_rdata   ),
-    .if_NPC_in               ( if_NPC_in         ),
-    .id_RD1_in               ( id_RD1_in         ),
-    .id_RD2_in               ( id_RD2_in         ),
-    .id_extend_res_in        ( id_extend_res_in  ),
-    .id_instr_index_in       ( id_instr_index_in ),
-    .id_bjpc_con_in          ( id_bjpc_con_in    ),
-    .id_brcal_con_in         ( id_brcal_con_in   ),
 
     .if_valid_out            ( if_valid_out      ),
     .if_PC_out               ( if_PC_out         ),
@@ -231,22 +221,20 @@ IF  u_IF (
     .inst_sram_addr          ( inst_sram_addr    ),
     .inst_sram_en            ( inst_sram_en      )
 );
+assign if_NPC_fast_wire = if_NPC_out;
 assign if_PC_in       = if_PC_out;
 assign if_NNPC_in     = if_NNPC_out;
 assign if_Instruct_in = if_Instruct_out;
 assign if_valid_in    = if_valid_out;
-assign if_NPC_in      = if_NPC_out;
-assign id_RD1_in       =  id_RD1_out;
-assign id_extend_res_in   = id_extend_res_out ;
-assign id_instr_index_in  = id_instr_index_out;
-assign id_bjpc_con_in     = id_bjpc_con_out   ;
-assign id_brcal_con_in    = id_brcal_con_out;
+assign id_nextPC_in   = id_nextPC_out;
+
 ID  u_ID (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
     .exe_allowin_in          ( exe_allowin_in       ),
     .if_valid_in             ( if_valid_in          ),
     .if_PC_in                ( if_PC_in             ),
+    .if_NPC_in               ( if_NPC_in            ),
     .if_NNPC_in              ( if_NNPC_in           ),
     .if_Instruct_in          ( if_Instruct_in       ),
     .wb_wdata_in             ( wb_wdata_in          ),
@@ -258,6 +246,7 @@ ID  u_ID (
     .exe_wnum                ( exe_wnum             ),
     .mem_wnum                ( mem_wnum             ),
     .wb_wnum                 ( wb_wnum              ),
+    .if_NPC_fast_wire        ( if_NPC_fast_wire     ),
 
     .id_allowin_out          ( id_allowin_out       ),
     .id_valid_out            ( id_valid_out         ),
@@ -277,10 +266,7 @@ ID  u_ID (
     .id_lubhw_con_out        ( id_lubhw_con_out     ),
     .id_write_type_out       ( id_write_type_out    ),
     .id_mult_div_op          ( id_mult_div_op       ),
-    .id_extend_res_out       ( id_extend_res_out    ),
-    .id_instr_index_out      ( id_instr_index_out   ),
-    .id_bjpc_con_out         ( id_bjpc_con_out      ),
-    .id_brcal_con_out        ( id_brcal_con_out     )
+    .id_nextPC_out           ( id_nextPC_out        )
 );
 assign exe_wnum          = exe_wnum_out      ;
 assign mem_wnum          = mem_wnum_out      ;
@@ -304,8 +290,6 @@ assign id_PC_in          = id_PC_out         ;
 assign id_addrexc_con_in = id_addrexc_con_out;
 assign id_lr_con_in      = id_lr_con_out     ;
 assign id_lubhw_con_in   = id_lubhw_con_out  ;
-assign id_brcal_res_in   = id_brcal_res_out  ;
-assign id_bjpc_res_in    = id_bjpc_res_out   ;
 assign id_write_type_in  = id_write_type_out ;
 EXE  u_EXE (
     .clk                     ( clk                  ),

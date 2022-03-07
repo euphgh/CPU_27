@@ -8,18 +8,18 @@ module ID(
     input  wire if_valid_in,
     output wire id_valid_out,
     //datain
- 	input wire [31:0] if_PC_in,if_NNPC_in, //datar:
+ 	input wire [31:0] if_PC_in,if_NNPC_in,if_NPC_in, //datar:
     input wire [31:0] if_Instruct_in, //dataw:
 	input wire [31:0] wb_wdata_in, //dataw:
 	input wire [3:0]  wb_wen_in, //dataw:
     input wire [4:0]  wb_wnum_in, //dataw:
     input wire [2:0] exe_write_type,mem_write_type,wb_write_type, //control{0:wb,1:mem,2:exe,000:nocheck}
     input wire [4:0] exe_wnum,mem_wnum,wb_wnum,
+    input wire [31:0] if_NPC_fast_wire,
     //dataout
 	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
 	output wire [31:0] id_RD2_out, //data:
-    output wire [31:0] id_RD1_out, //data:
 	output wire [11:0] id_aluop_out,
 	output wire [31:0] id_aludata1_out, //data:
 	output wire [31:0] id_aludata2_out, //data:
@@ -32,10 +32,7 @@ module ID(
     output wire [4:0]  id_lubhw_con_out,
     output wire [2:0] id_write_type_out,
     output wire [7:0] id_mult_div_op,
-    output wire [31:0] id_extend_res_out,
-    output wire [25:0] id_instr_index_out,
-    output wire [2:0] id_bjpc_con_out,
-    output wire [6:0] id_brcal_con_out
+    output wire [31:0] id_nextPC_out
 	);
 
 
@@ -116,14 +113,14 @@ wire allowin;
 wire ready;
 reg valid_r;
 
-wire [31:0] if_to_id_Instruct_w ;
-wire [31:0] wb_to_id_wdata_r ;
-wire [3:0] wb_to_id_wen_r ;
-wire [4:0] wb_to_id_wnum_r ;
-wire [31:0] wb_to_id_PC_r ;
+wire [31:0] wb_to_id_wdata_w;
+wire [3:0] wb_to_id_wen_w ;
+wire [4:0] wb_to_id_wnum_w ;
 
 reg  [31:0] if_to_id_PC_r ;
+reg  [31:0] if_to_id_NPC_r;
 reg  [31:0] if_to_id_NNPC_r ;
+reg  [31:0] if_to_id_Instruct_r;
 // wire [4:0] addrexc_con_wire; //control:地址例外选择子[decoder]
 // wire [1:0]  lr_con_wire; //control:onehot模块选择子[decoder]
 // wire [4:0] lubhw_con_id_wire;[decoder]
@@ -145,21 +142,24 @@ assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
 assign Instruct = if_Instruct_in;
-assign wb_to_id_wdata_r = wb_wdata_in ;
-assign wb_to_id_wen_r = wb_wen_in ;
-assign wb_to_id_wnum_r = wb_wnum_in ;
+assign wb_to_id_wdata_w = wb_wdata_in ;
+assign wb_to_id_wen_w = wb_wen_in ;
+assign wb_to_id_wnum_w = wb_wnum_in ;
 
 always @(posedge clk) begin
     if (!rst_n||(allowin&&(!if_valid_in))) begin
         if_to_id_PC_r <= `ini_if_PC_in;
+        if_to_id_NPC_r <= `ini_if_NPC_in;
         if_to_id_NNPC_r <= `ini_if_NNPC_in;
+        if_to_id_Instruct_r <= `ini_if_Instruct_in;
     end
     else if (allowin && if_valid_in) begin
         if_to_id_PC_r <= if_PC_in;
+        if_to_id_NPC_r <= if_NPC_in;
         if_to_id_NNPC_r <= if_NNPC_in;
+        if_to_id_Instruct_r <= if_Instruct_in;
     end
 end
-
 Reg  u_Reg (
     .clk                     ( clk      ),
     .rst_n                   ( rst_n    ),
@@ -224,12 +224,12 @@ assign id_aludata1_out = aludata1_wire;
 assign aludata2_wire = sel_alud2_con[0] ? RD2 : extend_res;
 assign id_aludata2_out = aludata2_wire;	
 assign RR1 = rs;
-assign RR2 = rt;		
-assign WD = wb_to_id_wdata_r;
+assign RR2 = rt;
+assign WD = wb_to_id_wdata_w;
 assign id_PC_out = if_to_id_PC_r;
 assign id_NNPC_out = if_to_id_NNPC_r;
-assign reg_we = wb_to_id_wen_r & {4{valid_r}};
-assign WR = wb_to_id_wnum_r;
+assign reg_we = wb_to_id_wen_w & {4{valid_r}};
+assign WR = wb_to_id_wnum_w;
 assign id_write_type_out = write_type & {3{(!nop)&&valid_r}};
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
@@ -244,8 +244,22 @@ idready  u_idready (
 
     .ready                   ( ready            )
 );
-assign id_extend_res_out = extend_res;
-assign id_instr_index_out = instr_index;
-assign id_bjpc_con_out = bjpc_con;
-assign id_brcal_con_out = brcal_con;
+bjpc  u_bjpc (
+    .NPC                     ( NPC           ),
+    .RD1                     ( RD1           ),
+    .extend_out              ( extend_res    ),
+    .instr_index             ( instr_index   ),
+    .bjpc_con                ( bjpc_con      ),
+
+    .bjpc_out                ( bjpc_out      )
+);
+assign NPC = if_to_id_NPC_r;
+brcal  u_brcal (
+    .RD1                     ( RD1         ),
+    .RD2                     ( RD2         ),
+    .brcal_con               ( brcal_con   ),
+
+    .brcal_out               ( brcal_out   ) 
+);
+assign id_nextPC_out = brcal_con ? bjpc_con : if_NPC_fast_wire;
 endmodule

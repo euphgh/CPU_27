@@ -30,6 +30,7 @@
 `define ini_NNPC_id 32'b0
 `define ini_regnum_id 5'b0
 `define ini_PC_id 32'b0
+`define ini_if_Instruct_in 32'b0
 //new
 `define ini_if_PC_in 32'b0
 `define ini_if_NPC_in 32'hbfc00000
