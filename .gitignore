@@ -1,0 +1,10 @@
+/.Xil/
+/project_1/
+/ip//*
+!/ip//*.xci
+/other/
+*.log
+*.jou
+/CPUhelp/*
+!/CPUhelp/*.py
+!/CPUhelp/*.xlsx
