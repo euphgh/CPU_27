@@ -130,6 +130,8 @@ reg  [31:0] if_to_id_NNPC_r ;
 wire [31:0] ID_PC;
 assign ID_PC = id_PC_out;
 wire [4:0] regnum_id_wire;
+reg switch;
+reg [31:0] Instruct_old;
 //------------------------------------------------------------
 
 /*====================Function Code====================*/
@@ -144,7 +146,6 @@ end
 assign allowin = !valid_r || (ready && exe_allowin_in);
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
-assign Instruct = if_Instruct_in;
 assign wb_to_id_wdata_r = wb_wdata_in ;
 assign wb_to_id_wen_r = wb_wen_in ;
 assign wb_to_id_wnum_r = wb_wnum_in ;
@@ -213,7 +214,7 @@ assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
 assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
 assign id_lubhw_con_out = lubhw_con;
 assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
-assign Instruct = if_Instruct_in; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
+assign Instruct = switch ? Instruct_old : if_Instruct_in; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
 assign regnum_id_wire = sel_wr_con[0] ? rt:
@@ -248,4 +249,29 @@ assign id_extend_res_out = extend_res;
 assign id_instr_index_out = instr_index;
 assign id_bjpc_con_out = bjpc_con;
 assign id_brcal_con_out = brcal_con;
+wire allowin_down;
+reg allowin_old;
+always @(posedge clk ) begin
+    if (!rst_n||((!if_valid_in)&&allowin)) begin
+        Instruct_old <= 32'b0;
+    end
+    else if (allowin_down) begin
+        Instruct_old <= if_Instruct_in;
+    end
+
+    if (!rst_n) begin
+        switch <= 1'b0;
+    end
+    else begin
+        switch <= valid_r&&(!(if_valid_in&&allowin));
+    end
+
+    if (!rst_n) begin
+        allowin_old <= 1'b0;
+    end
+    else begin
+        allowin_old <= allowin;
+    end
+end
+assign allowin_down = (!allowin)&&(allowin_old);
 endmodule

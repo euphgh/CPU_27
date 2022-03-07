@@ -147,5 +147,5 @@ assign addrexc_con = 4'b1;//表示一直开启开启读4检查
 assign if_Instruct_out = inst_sram_rdata;
 assign inst_sram_wen = 4'b0;
 assign inst_sram_wdata = 32'b0;
-assign inst_sram_en = id_allowin_in&&rst_n;
+assign inst_sram_en = rst_n;
 endmodule
