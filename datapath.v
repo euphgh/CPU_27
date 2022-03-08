@@ -151,11 +151,16 @@ wire  exe_read_request_in;
 // wire  [31:0]  data_sram_wdata;[port]
 wire  mem_allowin_out;
 wire  mem_valid_out;
-wire  [31:0]  mem_wbdata_out;
-wire  [3:0]  mem_reg_we_out;
-wire  [31:0]  mem_PC_out;
-wire  [4:0]  mem_wnum_out;
-wire  [2:0]  mem_write_type_out;
+wire [31:0] mem_PC_out;
+wire [31:0] mem_dm_data_out;
+wire [4:0]  mem_wnum_out;
+wire [2:0]  mem_sel_wbdata_out;
+wire [7:0]  mem_onehot_out;
+wire [4:0]  mem_lubhw_con_out;
+wire [31:0] mem_adrl_out;
+wire [2:0]  mem_write_type_out;
+wire [31:0] mem_wbdata_out;
+wire [3:0]  mem_llr_we_out;
 wire  mult_div_accessible_in;
 wire  [31:0]  mult_div_res_in;
 wire  mem_read_request_out;
@@ -164,20 +169,18 @@ wire  mem_read_request_out;
 // WB Inputs -----------------------------------
 // wire  clk;[port]
 // wire  rst_n;[port]
-wire  mem_valid_in;
-wire  [31:0]  mem_wbdata_in;   
-wire  [3:0]  mem_reg_we_in;    
-wire  [31:0]  mem_PC_in;       
-wire  [4:0]  mem_wnum_in;      
-wire  [2:0]  mem_write_type_in;
+wire [31:0] mem_PC_in;
+wire [31:0] mem_dm_data_in;
+wire [4:0]  mem_wnum_in;
+wire [2:0]  mem_sel_wbdata_in;
+wire [7:0]  mem_onehot_in;
+wire [4:0]  mem_lubhw_con_in;
+wire [31:0] mem_adrl_in;
+wire [2:0]  mem_write_type_in;
+wire [31:0] mem_wbdata_in;
+wire [3:0]  mem_llr_we_in;
 
 // WB Outputs
-wire  wb_allowin_out;
-wire  wb_valid_out;
-wire  [31:0]  wb_wbdata_out;
-wire  [3:0]  wb_reg_we_out;
-wire  [4:0]  wb_wnum_out;
-wire  [2:0]  wb_write_type_out;
 // wire  [31:0]  debug_wb_pc;[port]
 // wire  [3:0]  debug_wb_rf_wen;[port]
 // wire  [4:0]  debug_wb_rf_wnum;[port]
@@ -366,29 +369,51 @@ MEM  u_MEM (
     .mult_div_res_in         ( mult_div_res_in      ),
     .exe_read_request_in     ( exe_read_request_in  ),
 
-    .mem_allowin_out         ( mem_allowin_out      ),
-    .mem_valid_out           ( mem_valid_out        ),
-    .mem_wbdata_out          ( mem_wbdata_out       ),
-    .mem_reg_we_out          ( mem_reg_we_out       ),
     .mem_PC_out              ( mem_PC_out           ),
+    .mem_dm_data_out         ( mem_dm_data_out      ),
     .mem_wnum_out            ( mem_wnum_out         ),
+    .mem_sel_wbdata_out      ( mem_sel_wbdata_out   ),
+    .mem_onehot_out          ( mem_onehot_out       ),
+    .mem_lubhw_con_out       ( mem_lubhw_con_out    ),
+    .mem_adrl_out            ( mem_adrl_out         ),
     .mem_write_type_out      ( mem_write_type_out   ),
+    .mem_read_request_out    ( mem_read_request_out ),
+    .mem_wbdata_out          ( mem_wbdata_out       ),
+    .mem_llr_we_out          ( mem_llr_we_out       ),
     .data_sram_en            ( data_sram_en         ),
     .data_sram_wen           ( data_sram_wen        ),
     .data_sram_addr          ( data_sram_addr       ),
     .data_sram_wdata         ( data_sram_wdata      ),
-    .mem_read_request_out    ( mem_read_request_out )
+    .mem_allowin_out         ( mem_allowin_out      ),
+    .mem_valid_out           ( mem_valid_out        )
 );
+
+assign mem_valid_in       = mem_valid_out       ;
+assign mem_PC_in          = mem_PC_out          ;
+assign mem_dm_data_in     = mem_dm_data_out     ;
+assign mem_wnum_in        = mem_wnum_out        ;
+assign mem_sel_wbdata_in  = mem_sel_wbdata_out  ;
+assign mem_onehot_in      = mem_onehot_out      ;
+assign mem_lubhw_con_in   = mem_lubhw_con_out   ;
+assign mem_adrl_in        = mem_adrl_out        ;
+assign mem_write_type_in  = mem_write_type_out  ;
+assign mem_wbdata_in      = mem_wbdata_out      ;
+assign mem_llr_we_in      = mem_llr_we_out      ;
 
 WB  u_WB (
     .clk                     ( clk                 ),
     .rst_n                   ( rst_n               ),
     .mem_valid_in            ( mem_valid_in        ),
-    .mem_wbdata_in           ( mem_wbdata_in       ),
-    .mem_reg_we_in           ( mem_reg_we_in       ),
-    .mem_PC_in               ( mem_PC_in           ),
-    .mem_wnum_in             ( mem_wnum_in         ),
-    .mem_write_type_in       ( mem_write_type_in   ),
+    .mem_PC_in               ( mem_PC_in           ),  
+    .mem_dm_data_in          ( mem_dm_data_in      ),        
+    .mem_wnum_in             ( mem_wnum_in         ),      
+    .mem_sel_wbdata_in       ( mem_sel_wbdata_in   ),              
+    .mem_onehot_in           ( mem_onehot_in       ),        
+    .mem_lubhw_con_in        ( mem_lubhw_con_in    ),            
+    .mem_adrl_in             ( mem_adrl_in         ),   
+    .mem_write_type_in       ( mem_write_type_in   ),              
+    .mem_wbdata_in           ( mem_wbdata_in       ),        
+    .mem_llr_we_in           ( mem_llr_we_in       ),        
 
     .wb_allowin_out          ( wb_allowin_out      ),
     .wb_valid_out            ( wb_valid_out        ),
@@ -402,12 +427,6 @@ WB  u_WB (
     .debug_wb_rf_wnum        ( debug_wb_rf_wnum    ),
     .debug_wb_rf_wdata       ( debug_wb_rf_wdata   )
 );
-assign mem_valid_in      = mem_valid_out;     
-assign mem_wbdata_in     = mem_wbdata_out;    
-assign mem_reg_we_in     = mem_reg_we_out;    
-assign mem_PC_in         = mem_PC_out;        
-assign mem_wnum_in       = mem_wnum_out;
-assign mem_write_type_in = mem_write_type_out;
 
 assign wb_allowin_in     = wb_allowin_out   ;
 assign wb_wdata_in       = wb_wbdata_out    ;

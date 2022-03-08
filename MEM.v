@@ -56,9 +56,7 @@ wire [31:0] exe_to_mem_VAddr_w ;
 wire [31:0] exe_to_mem_dm_data_w;
 reg  valid_r;
 
-reg  [3:0]  exe_to_mem_dm_we_r ;
 reg  [31:0] exe_to_mem_VAddr_r ;
-
 reg  [4:0] exe_to_mem_sel_wbdata_r ;
 reg  [31:0] exe_to_mem_aluout_r ;
 reg  [7:0] exe_to_mem_onehot_r ;

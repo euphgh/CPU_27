@@ -124,4 +124,18 @@ assign wb_reg_we_out = (|mem_to_wb_sel_wbdata_r[1:0]) ? 4'b1111:
                         mem_to_wb_sel_wbdata_r[2] ?  mem_to_wb_llr_we_r : 4'b0;
 assign wb_wnum_out = mem_to_wb_wnum_r;
 assign wb_write_type_out = mem_to_wb_write_type_r;
+always @(posedge clk ) begin
+    if(!rst_n) begin
+        debug_wb_pc <= `debug_wb_pc;
+        debug_wb_rf_wen <=  `debug_wb_rf_wen;
+        debug_wb_rf_wnum <= `debug_wb_rf_wnum;
+        debug_wb_rf_wdata <= `debug_wb_rf_wdata;
+    end
+    else begin
+        debug_wb_pc <= mem_to_wb_PC_r;
+        debug_wb_rf_wen <=  wb_reg_we_out;
+        debug_wb_rf_wnum <= wb_wnum_out;
+        debug_wb_rf_wdata <= wb_wbdata_out;
+    end
+end
 endmodule

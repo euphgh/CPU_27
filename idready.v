@@ -44,5 +44,5 @@ module idready (
 	assign exe_stop  = exe_same && exe_check;
 	assign mem_stop  = mem_same && mem_check;
 	assign wb_stop   = wb_same && wb_check;
-	assign ready     = !(exe_stop || mem_stop) && 1'b1;
+	assign ready     = !(exe_stop || mem_stop||wb_stop) && 1'b1;
 endmodule
