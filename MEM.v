@@ -56,7 +56,6 @@ wire [31:0] exe_to_mem_VAddr_w ;
 wire [31:0] exe_to_mem_dm_data_w;
 reg  valid_r;
 
-reg  [31:0] exe_to_mem_VAddr_r ;
 reg  [4:0] exe_to_mem_sel_wbdata_r ;
 reg  [31:0] exe_to_mem_aluout_r ;
 reg  [7:0] exe_to_mem_onehot_r ;
@@ -99,7 +98,6 @@ always @(posedge clk) begin
         exe_to_mem_regnum_r <= `ini_exe_regnum_in;
         exe_to_mem_write_type_r <= `ini_exe_write_type_in;
         exe_to_mem_read_request_r <= 1'b0;
-        exe_to_mem_VAddr_r <= 32'b0;
     end
     else if (allowin && exe_valid_in) begin
         exe_to_mem_sel_wbdata_r <= exe_sel_wbdata_in;
@@ -111,7 +109,6 @@ always @(posedge clk) begin
         exe_to_mem_regnum_r <= exe_regnum_in;
         exe_to_mem_write_type_r <= exe_write_type_in;
         exe_to_mem_read_request_r <= exe_read_request_in;
-        exe_to_mem_VAddr_r <= exe_VAddr_in;
     end
 end
 FixedMapping  u_FixedMapping (
@@ -131,9 +128,11 @@ assign llr_we = onehot[7] ? 4'b0001 :
 assign mem_PC_out = exe_to_mem_PC_r;
 assign mem_adrl_out = VAddr[1:0];
 assign mem_dm_data_out = data_sram_rdata;
-assign mem_lubhw_con_out = {{exe_to_mem_sel_wbdata_r[1]||(|exe_to_mem_sel_wbdata_r[3:4])}, exe_to_mem_lubhw_con_r[1:2]};
-assign mem_sel_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
-                            exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : mult_div_res_w;
+assign mem_lubhw_con_out = exe_to_mem_lubhw_con_r;
+assign mem_dm_data_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
+                        exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : mult_div_res_w;
+assign mem_sel_wbdata_out = {{exe_to_mem_sel_wbdata_r[1]||(|exe_to_mem_sel_wbdata_r[4:3])}, exe_to_mem_lubhw_con_r[2:1]};
+assign mem_onehot_out = exe_to_mem_onehot_r;
 assign mem_llr_we_out = llr_we;
 assign data_sram_en = rst_n;
 assign data_sram_wen =  exe_to_mem_dm_we_w;

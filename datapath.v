@@ -186,6 +186,11 @@ wire [3:0]  mem_llr_we_in;
 // wire  [4:0]  debug_wb_rf_wnum;[port]
 // wire  [31:0]  debug_wb_rf_wdata;[port]
 wire [4:0] wb_wnum_reg_out;
+wire [3:0] wb_reg_we_out;
+wire [2:0] wb_write_type_out;
+wire [31:0] wb_wbdata_out;
+wire wb_allowin_out;
+wire [4:0] wb_wnum_out;
 //----------------------------------------------
 // mult_div Inputs -----------------------------
 // wire  clk;[port]
@@ -420,7 +425,6 @@ WB  u_WB (
     .wb_wbdata_out           ( wb_wbdata_out       ),
     .wb_reg_we_out           ( wb_reg_we_out       ),
     .wb_wnum_out             ( wb_wnum_out         ),
-    .wb_wnum_reg_out         ( wb_wnum_reg_out     ),
     .wb_write_type_out       ( wb_write_type_out   ),
     .debug_wb_pc             ( debug_wb_pc         ),
     .debug_wb_rf_wen         ( debug_wb_rf_wen     ),
