@@ -16,18 +16,23 @@ module MEM(
 	input  wire [3:0]  exe_dm_we_in, //dataw:
     input  wire [31:0] exe_VAddr_in, //dataw:
     input  wire [31:0] exe_PC_in, //datar:
-    input  wire [31:0] exe_NNPC_in, //datar:
     input  wire [4:0]  exe_regnum_in, //datar:
+    input  wire [31:0] exe_NNPC_in, //datar:
     input  wire [2:0]  exe_write_type_in,
     input  wire [31:0] mult_div_res_in, //dataw:
     input  wire mult_div_accessible_in, //dataw:表示此时hilo的数据是否有效
     input  wire exe_read_request_in,
     //dataout
-	output wire [31:0] mem_wbdata_out, //data:回写数据
-	output wire [3:0]  mem_reg_we_out, //control:回写使能
     output wire [31:0] mem_PC_out,
-    output wire [4:0]  mem_wnum_out, //data: to id segment,传递实时情况
-    output wire [2:0]  mem_write_type_out, //data: to id segment,传递实时情况
+    output wire [31:0] mem_dm_data_out,
+    output wire [4:0]  mem_wnum_out,
+    output wire [2:0]  mem_sel_wbdata_out,
+    output wire [7:0]  mem_onehot_out,
+    output wire [4:0]  mem_lubhw_con_out,
+    output wire [31:0] mem_adrl_out,
+    output wire [2:0]  mem_write_type_out,
+    output wire [31:0] mem_wbdata_out,
+    output wire [3:0]  mem_llr_we_out,
     output wire mem_read_request_out,
 
     output wire data_sram_en, //ram 使能信号,高电平有效
@@ -41,36 +46,18 @@ module MEM(
 wire  [31:0]  VAddr;
 // FixedMapping Outputs       
 wire  [31:0]  PAddr;
-// ---------------------------------------------
-
-
-
-// llr Inputs-----------------------------------       
-wire  [31:0]  word_llr; 
+// ---------------------------------------------      
 wire  [7:0]  onehot;
-// llr Outputs
-wire  [31:0]  llr_data;
 wire  [3:0]  llr_we;   
-// ---------------------------------------------
-
-// lubhw Inputs---------------------------------
-wire  [31:0]  word_lubhw;     
-wire  [1:0]  adrl_lubhw;
-wire  [4:0]  lubhw_con;
-
-// lubhw Outputs        
-wire  [31:0]  lubhw_out;
-//----------------------------------------------
-
 // other----------------------------------------
 wire allowin,ready;
-reg  valid_r;
-wire [31:0] DMout;
 wire [3:0]  exe_to_mem_dm_we_w ;
-reg  [3:0]  exe_to_mem_dm_we_r ;
 wire [31:0] exe_to_mem_VAddr_w ;
+wire [31:0] exe_to_mem_dm_data_w;
+reg  valid_r;
+
+reg  [3:0]  exe_to_mem_dm_we_r ;
 reg  [31:0] exe_to_mem_VAddr_r ;
-wire [31:0] exe_to_mem_dm_data_r;
 
 reg  [4:0] exe_to_mem_sel_wbdata_r ;
 reg  [31:0] exe_to_mem_aluout_r ;
@@ -97,8 +84,7 @@ always @(posedge clk ) begin
         valid_r <= exe_valid_in;
     end
 end
-
-assign exe_to_mem_dm_data_r = exe_dm_data_in ;
+assign exe_to_mem_dm_data_w = exe_dm_data_in ;
 assign exe_to_mem_dm_we_w = exe_dm_we_in ;
 assign exe_to_mem_VAddr_w = exe_VAddr_in ;
 
@@ -136,41 +122,25 @@ FixedMapping  u_FixedMapping (
     .PAddr                   ( PAddr   )
 );
 assign VAddr = exe_to_mem_VAddr_w;
-lubhw  u_lubhw (
-    .word                    ( word_lubhw   ),
-    .adrl_lubhw              ( adrl_lubhw   ),
-    .lubhw_con               ( lubhw_con    ),
-
-    .lubhw_out               ( lubhw_out    )
-);
-assign word_lubhw = DMout;
-assign adrl_lubhw = exe_to_mem_VAddr_r[1:0];
-assign lubhw_con = exe_to_mem_lubhw_con_r;
-llr  u_llr (
-    .word                    ( word_llr   ),
-    .onehot                  ( onehot     ),
-
-    .llr_data                ( llr_data   ),
-    .llr_we                  ( llr_we     )
-);
 assign onehot = exe_to_mem_onehot_r;
-assign word_llr = DMout;
-assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r : 
-				        exe_to_mem_sel_wbdata_r[1] ? lubhw_out :
-                        exe_to_mem_sel_wbdata_r[2] ? llr_data:
-                        exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : 
-                        exe_to_mem_sel_wbdata_r[4] ? mult_div_res_w : 32'b0; 
-
-assign mem_reg_we_out = {4{(|exe_to_mem_regnum_r)}} & 
-                        ((exe_to_mem_sel_wbdata_r[3:0]||exe_to_mem_sel_wbdata_r[4]) ? 4'b1111 :
-					    exe_to_mem_sel_wbdata_r[2] ? llr_we : 4'b0);
+assign llr_we = onehot[7] ? 4'b0001 :
+                onehot[6] ? 4'b0011 :
+                onehot[5] ? 4'b0111 :
+                (onehot[3]||onehot[4]) ? 4'b1111 :
+                onehot[2] ? 4'b1110 :
+                onehot[1] ? 4'b1100 :
+                onehot[0] ? 4'b1000 : 4'b0;  
 assign mem_PC_out = exe_to_mem_PC_r;
+assign mem_adrl_out = VAddr[1:0];
+assign mem_dm_data_out = data_sram_rdata;
+assign mem_lubhw_con_out = {{exe_to_mem_sel_wbdata_r[1]||(|exe_to_mem_sel_wbdata_r[3:4])}, exe_to_mem_lubhw_con_r[1:2]};
+assign mem_sel_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
+                            exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : mult_div_res_w;
+assign mem_llr_we_out = llr_we;
 assign data_sram_en = rst_n;
-
 assign data_sram_wen =  exe_to_mem_dm_we_w;
 assign data_sram_addr = PAddr;
-assign data_sram_wdata = exe_to_mem_dm_data_r;
-assign DMout = data_sram_rdata;
+assign data_sram_wdata = exe_to_mem_dm_data_w;
 assign mem_wnum_out = exe_to_mem_regnum_r;
 assign mem_write_type_out = exe_to_mem_write_type_r;
 assign mem_read_request_out = exe_to_mem_read_request_r;

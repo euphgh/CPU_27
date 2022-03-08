@@ -68,12 +68,18 @@
 `define ini_exe_PC_in 32'b0       
 `define ini_exe_NNPC_in 32'b0     
 `define ini_exe_regnum_in 5'b0    
-
-`define ini_mem_wbdata_in 32'b0
-`define ini_mem_reg_we_in 4'b0
+//WB
 `define ini_mem_PC_in 32'b0
+`define ini_mem_dm_data_in 32'b0
 `define ini_mem_wnum_in 5'b0
+`define ini_mem_sel_wbdata_in 5'b0
+`define ini_mem_onehot_in 8'b0
+`define ini_mem_lubhw_con_in 2'b0
+`define ini_mem_adrl_in 2'b0
 `define ini_mem_write_type_in 3'b0
+`define ini_mem_wbdata_in 32'b0
+`define ini_mem_llr_we_in 4'b0
+
 
 // addrexc
 `define AdEL 8'h04 
@@ -84,7 +90,3 @@
 `define debug_wb_rf_wen 4'b0
 `define debug_wb_rf_wnum 5'b0
 `define debug_wb_rf_wdata 32'b0
-
-//WB
-`define wb_write_type 3'b0
-`define wb_wnum_reg 3'b0
