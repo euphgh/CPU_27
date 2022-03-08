@@ -90,3 +90,27 @@
 `define debug_wb_rf_wen 4'b0
 `define debug_wb_rf_wnum 5'b0
 `define debug_wb_rf_wdata 32'b0
+
+
+//CP0
+//Status
+`define Bev 22
+`define Bev_ini 1'b0
+`define EXL 1
+`define EXL_ini 1'b0
+`define IE 0
+`define IE_ini 1'b0
+`define IM 15:8
+`define IM_ini 8'b0
+`define cp0addr_Status 7'b011000
+//Cause
+`define TI 30
+`define BD 31
+`define IP_hard 15:10
+`define IP_soft 9:8
+`define ExcCode 6:2
+`define TI_ini 1'b0
+`define BD_ini 1'b0
+`define IP_hard_ini 6'b0
+`define IP_soft_ini 2'b0
+`define ExcCode_ini 5'b0
