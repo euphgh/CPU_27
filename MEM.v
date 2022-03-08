@@ -29,7 +29,7 @@ module MEM(
     output wire [2:0]  mem_sel_wbdata_out,
     output wire [7:0]  mem_onehot_out,
     output wire [4:0]  mem_lubhw_con_out,
-    output wire [31:0] mem_adrl_out,
+    output wire [1:0] mem_adrl_out,
     output wire [2:0]  mem_write_type_out,
     output wire [31:0] mem_wbdata_out,
     output wire [3:0]  mem_llr_we_out,
@@ -129,9 +129,9 @@ assign mem_PC_out = exe_to_mem_PC_r;
 assign mem_adrl_out = VAddr[1:0];
 assign mem_dm_data_out = data_sram_rdata;
 assign mem_lubhw_con_out = exe_to_mem_lubhw_con_r;
-assign mem_dm_data_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
+assign mem_wbdata_out = exe_to_mem_sel_wbdata_r[0] ? exe_to_mem_aluout_r :
                         exe_to_mem_sel_wbdata_r[3] ? exe_to_mem_NNPC_r : mult_div_res_w;
-assign mem_sel_wbdata_out = {{exe_to_mem_sel_wbdata_r[1]||(|exe_to_mem_sel_wbdata_r[4:3])}, exe_to_mem_lubhw_con_r[2:1]};
+assign mem_sel_wbdata_out = {{exe_to_mem_sel_wbdata_r[0]||(|exe_to_mem_sel_wbdata_r[4:3])}, exe_to_mem_lubhw_con_r[2:1]};
 assign mem_onehot_out = exe_to_mem_onehot_r;
 assign mem_llr_we_out = llr_we;
 assign data_sram_en = rst_n;

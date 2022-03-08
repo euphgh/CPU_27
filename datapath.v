@@ -185,7 +185,6 @@ wire [3:0]  mem_llr_we_in;
 // wire  [3:0]  debug_wb_rf_wen;[port]
 // wire  [4:0]  debug_wb_rf_wnum;[port]
 // wire  [31:0]  debug_wb_rf_wdata;[port]
-wire [4:0] wb_wnum_reg_out;
 wire [3:0] wb_reg_we_out;
 wire [2:0] wb_write_type_out;
 wire [31:0] wb_wbdata_out;
@@ -277,7 +276,7 @@ ID  u_ID (
 );
 assign exe_wnum          = exe_wnum_out      ;
 assign mem_wnum          = mem_wnum_out      ;
-assign wb_wnum           = wb_wnum_reg_out   ;
+assign wb_wnum           = wb_wnum_out       ;
 assign mem_write_type    = mem_write_type_out;
 assign wb_write_type     = wb_write_type_out ;
 assign exe_write_type    = exe_write_type_out;
@@ -437,7 +436,6 @@ assign wb_wdata_in       = wb_wbdata_out    ;
 assign wb_wen_in         = wb_reg_we_out    ;
 assign wb_wnum_in        = wb_wnum_out      ;
 assign wb_write_type_in  = wb_write_type_out;
-
 mult_div  u_mult_div (
     .clk                     ( clk           ),
     .rst_n                   ( rst_n         ),

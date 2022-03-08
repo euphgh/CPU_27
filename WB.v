@@ -13,7 +13,7 @@ module WB(
     input  wire [2:0]  mem_sel_wbdata_in, //datar:{0:mem_wbdata_out,1:lubw,2:llr}
     input  wire [7:0]  mem_onehot_in, //datar:控制llr
     input  wire [4:0]  mem_lubhw_con_in, //datar:控制lubhw
-    input  wire [31:0] mem_adrl_in, //dataw:
+    input  wire [1:0] mem_adrl_in, //dataw:
     input  wire [2:0]  mem_write_type_in,
     input  wire [31:0] mem_wbdata_in,
     input  wire [3:0]  mem_llr_we_in,
