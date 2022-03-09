@@ -157,7 +157,7 @@ wire [4:0]  mem_wnum_out;
 wire [2:0]  mem_sel_wbdata_out;
 wire [7:0]  mem_onehot_out;
 wire [4:0]  mem_lubhw_con_out;
-wire [31:0] mem_adrl_out;
+wire [1:0] mem_adrl_out;
 wire [2:0]  mem_write_type_out;
 wire [31:0] mem_wbdata_out;
 wire [3:0]  mem_llr_we_out;
@@ -223,8 +223,8 @@ wire  [5:0]  id_cp0_addr_out;
 wire  [31:0]  id_error_VAddr_out;
 wire  id_eret_out;
 wire  id_mtc0_op_out;
-wire  [31:0] wb_ClrStpJmp_in;
-wire  wb_cp0_res_in  ;
+wire  wb_ClrStpJmp_in;
+wire  [31:0] wb_cp0_res_in  ;
 
 wire  id_exception_in;
 wire  id_bd_in;
@@ -580,7 +580,8 @@ WB  u_WB (
     .debug_wb_rf_wnum        ( debug_wb_rf_wnum    ),
     .debug_wb_rf_wdata       ( debug_wb_rf_wdata   ),
     .wb_cp0_res_out          ( wb_cp0_res_out      ),
-    .wb_ClrStpJmp_out        ( wb_ClrStpJmp_out    )
+    .wb_ClrStpJmp_out        ( wb_ClrStpJmp_out    ),
+    .ext_int                 ( ext_int             )
 );
 assign wb_allowin_in     = wb_allowin_out   ;
 assign wb_wdata_in       = wb_wbdata_out    ;

@@ -25,7 +25,7 @@ wire  [3:0]  addrexc_con;
 
 // addrexc Outputs
 wire  ExceptSet;
-wire  [7:0]  ExcCode;
+wire  [4:0]  ExcCode;
 //-------------------------------------------------------
 // FixedMapping Inputs-----------------------------------
 wire  [31:0]  VAddr;  

@@ -10,12 +10,14 @@ module CP0 (
     input wire mem_to_wb_eret_r,
     input wire mem_to_wb_mtc0_op_r,
     input wire valid_r,
+    input wire [5:0] ext_int,
 
     output wire [31:0] cp0_res,//若csj信号为1，则res中为跳转的pc，否则为mfc0de值
     output wire ClrStpJmp//指示发生中断、例外和eret时都要进行的stopwrite，clearpileline、jump的行为
     );
 /*====================Variable Declaration====================*/
 wire [5:0] cp0_addr;
+wire [5:0]int_in;
 wire [31:0] error_VAddr,mtc0_data;
 wire exception;
 wire ExcCode,eret_op;
@@ -28,7 +30,7 @@ wire  EXL;
 wire  BD;
 // wire  [31:0]  mem_to_wb_PC_r;[port]
 // wire  [5:0]  cp0_addr;       [port]
-// wire  [31:0]  mct0_data;     [port]
+// wire  [31:0]  mtc0_data;     [port]
 
 // cp0_EPC Outputs
 wire  [31:0]  cp0_EPC_data;
@@ -42,10 +44,9 @@ wire  [31:0]  cp0_EPC_data;
 // wire  eret_op;[port]
 // wire  bd;[port]
 wire  equal;
-wire  [4:0]  int_in;
 // wire  [4:0]  ExcCode;[port]   
 // wire  [5:0]  cp0_addr;[port]  
-// wire  [31:0]  mct0_data;[port]
+// wire  [31:0]  mtc0_data;[port]
 
 // cp0_Cause Outputs
 wire  [31:0]  cp0_Cause_data;
@@ -58,7 +59,7 @@ wire  [31:0]  cp0_Cause_data;
 // wire  exception;[port]        
 // wire  eret_op;[port]       
 // wire  [5:0]  cp0_addr;[port]  
-// wire  [31:0]  mct0_data;[port]
+// wire  [31:0]  mtc0_data;[port]
 // cp0_Status Outputs
 wire  [31:0]  cp0_Status_data;
 //-------------------------------------------------
@@ -105,7 +106,7 @@ cp0_Status  u_cp0_Status (
     .exception               ( exception         ),
     .eret_op                 ( eret_op           ),
     .cp0_addr                ( cp0_addr          ),
-    .mct0_data               ( mct0_data         ),
+    .mtc0_data               ( mtc0_data         ),
 
     .cp0_Status_data         ( cp0_Status_data   )
 );
@@ -114,13 +115,12 @@ cp0_Cause  u_cp0_Cause (
     .rst_n                   ( rst_n            ),
     .mtc0_we                 ( mtc0_we          ),
     .exception               ( exception        ),
-    .eret_op                 ( eret_op          ),
     .bd                      ( bd               ),
     .equal                   ( equal            ),
-    .int_in                  ( int_in           ),
+    .ext_int                 ( ext_int          ),
     .ExcCode                 ( ExcCode          ),
     .cp0_addr                ( cp0_addr         ),
-    .mct0_data               ( mct0_data        ),
+    .mtc0_data               ( mtc0_data        ),
 
     .cp0_Cause_data          ( cp0_Cause_data   )
 );
@@ -134,7 +134,7 @@ cp0_EPC  u_cp0_EPC (
     .BD                      ( BD               ),
     .mem_to_wb_PC_r          ( mem_to_wb_PC_r   ),
     .cp0_addr                ( cp0_addr         ),
-    .mct0_data               ( mct0_data        ),
+    .mtc0_data               ( mtc0_data        ),
 
     .cp0_EPC_data            ( cp0_EPC_data     )
 );

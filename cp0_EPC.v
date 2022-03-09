@@ -4,7 +4,7 @@ module cp0_EPC (
     input  wire clk,rst_n,mtc0_we,exception,EXL,BD,
     input  wire [31:0] mem_to_wb_PC_r,
     input  wire [5:0]  cp0_addr,
-    input  wire [31:0] mct0_data,
+    input  wire [31:0] mtc0_data,
     output reg  [31:0] cp0_EPC_data
     );
 /*====================Variable Declaration====================*/
@@ -16,6 +16,6 @@ always @(posedge clk ) begin
     if (exception && (!EXL)) 
         cp0_EPC_data <= BD ? (mem_to_wb_PC_r-3'd4) : mem_to_wb_PC_r;
     else if  (mtc0_we && (cp0_addr==`cp0addr_EPC))
-        cp0_EPC_data <= mct0_data;
+        cp0_EPC_data <= mtc0_data;
 end
 endmodule

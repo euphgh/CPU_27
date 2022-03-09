@@ -36,7 +36,8 @@ module WB(
     output reg [31:0] debug_wb_pc,   //写回级（多周期最后一级） 的 PC， 因而需要 mycpu信号，高电平有效
     output reg [3:0]  debug_wb_rf_wen,   //写回级写寄存器堆(regfiles)的写使能，为字节写，字节寻址
     output reg [4:0]  debug_wb_rf_wnum,   //写回级写 regfiles 的目的寄存器号
-    output reg [31:0] debug_wb_rf_wdata   //写回级写 regfiles 的写数据
+    output reg [31:0] debug_wb_rf_wdata,   //写回级写 regfiles 的写数据
+    input wire [5:0] ext_int
 );
 /*====================Variable Declaration====================*/
 
@@ -203,6 +204,7 @@ CP0  u_CP0 (
     .mem_to_wb_eret_r         ( mem_to_wb_eret_r          ),
     .mem_to_wb_mtc0_op_r      ( mem_to_wb_mtc0_op_r       ),
     .valid_r                  ( valid_r                   ),
+    .ext_int                  ( ext_int                   ),
 
     .cp0_res                  ( cp0_res                   ),
     .ClrStpJmp                ( ClrStpJmp                 )

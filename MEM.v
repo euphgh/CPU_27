@@ -182,4 +182,12 @@ assign data_sram_wdata = exe_to_mem_dm_data_w;
 assign mem_wnum_out = exe_to_mem_regnum_r;
 assign mem_write_type_out = exe_to_mem_write_type_r;
 assign mem_read_request_out = exe_to_mem_read_request_r;
+assign mem_exception_out = exe_to_mem_exception_r;
+assign mem_bd_out = exe_to_mem_bd_r;
+assign mem_ExcCode_out = exe_to_mem_ExcCode_r;
+assign mem_cp0_addr_out = exe_to_mem_cp0_addr_r;
+assign mem_mtc0_data_out = exe_to_mem_mtc0_data_r;
+assign mem_error_VAddr_out = exe_to_mem_error_VAddr_r;
+assign mem_eret_out = exe_to_mem_eret_r;
+assign mem_mtc0_op_out = exe_to_mem_mtc0_op_r;
 endmodule
