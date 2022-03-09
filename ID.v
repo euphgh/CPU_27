@@ -282,7 +282,7 @@ brcal  u_brcal (
 );
 assign id_nextPC_out = wb_ClrStpJmp_in ? wb_cp0_res_in: (brcal_out ? bjpc_out : if_NPC_fast_wire);
 //需要decoder支持
-wire sys_exc,rsvinst_exc,eret,mtc0_op;
+wire sys_exc,rsvinst_exc,eret,mtc0_op,mfc0_op;
 wire [5:0] cp0_addr;
 reg bj_last;//表示上一条指令时bj类指令
 always @(posedge clk ) begin
