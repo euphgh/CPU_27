@@ -23,6 +23,14 @@ module EXE(
     input wire [4:0]  id_regnum_in, //datar:
     input wire [2:0]  id_write_type_in, //datar:
     input wire [7:0]  id_mult_div_op_in,
+    input wire  id_exception_in,
+    input wire  id_bd_in,
+    input wire  [4:0]  id_ExcCode_in,
+    input wire  [5:0]  id_cp0_addr_in,
+    input wire  [31:0]  id_error_VAddr_in,
+    input wire  id_eret_in,
+    input wire  id_mtc0_op_in,
+    input wire  wb_ClrStpJmp_in,
 	//dataout
 	output wire [31:0] exe_alures_out, //data:传送给sel_wb
 	output wire [4:0]  exe_sel_wbdata_out, //contrl: sel_wbdata选择子
@@ -38,7 +46,15 @@ module EXE(
     output wire [31:0] exe_in0_out,
     output wire [31:0] exe_in1_out,
     output wire [5:0]  exe_mult_div_op_out,
-    output wire exe_read_request_out
+    output wire exe_read_request_out,
+    output wire  exe_exception_out,
+    output wire  exe_bd_out,
+    output wire  [4:0]  exe_ExcCode_out,
+    output wire  [5:0]  exe_cp0_addr_out,
+    output wire  [31:0]  exe_mtc0_data_out,
+    output wire  [31:0]  exe_error_VAddr_out,
+    output wire  exe_eret_out,
+    output wire  exe_mtc0_op_out
 	);
 /*====================Variable Declaration====================*/
 // ALU Inputs------------------------------------      
@@ -107,11 +123,18 @@ reg  [4:0] id_to_exe_regnum_r ;
 reg  [2:0] id_to_exe_write_type_r ;
 reg  [7:0] id_to_exe_mult_div_op_r;
 wire [31:0] EXE_PC = exe_PC_out;
+reg  id_to_exe_exception_r;
+reg  id_to_exe_bd_r;
+reg  [4:0]  id_to_exe_ExcCode_r;
+reg  [5:0]  id_to_exe_cp0_addr_r;
+reg  [31:0]  id_to_exe_error_VAddr_r;
+reg  id_to_exe_eret_r;
+reg  id_to_exe_mtc0_op_r;
 //----------------------------------------------
 
 /*====================Function Code====================*/
 always @(posedge clk ) begin
-    if (!rst_n) begin
+    if (!rst_n||wb_ClrStpJmp_in) begin
         valid_r <= 1'b0;
     end else if (allowin) begin
         valid_r <= id_valid_in;
@@ -123,7 +146,7 @@ assign exe_allowin_out = allowin;
 assign exe_valid_out = valid_r && ready;
 
 always @(posedge clk) begin
-    if (!rst_n ||(allowin&&(!id_valid_in))) begin
+    if (!rst_n ||(allowin&&(!id_valid_in))||wb_ClrStpJmp_in) begin
         id_to_exe_sbhw_con_r <= `ini_id_sbhw_con_in;
         id_to_exe_addrexc_con_r <= `ini_id_addrexc_con_in;
         id_to_exe_sel_wbdata_r <= `ini_id_sel_wbdata_in;
@@ -139,6 +162,13 @@ always @(posedge clk) begin
         id_to_exe_regnum_r <= `ini_id_regnum_in;
         id_to_exe_write_type_r <= `ini_id_write_type_in;
         id_to_exe_mult_div_op_r <= `ini_id_mul_div_op;
+        id_to_exe_exception_r <= `ini_id_exception_in;
+        id_to_exe_bd_r <= `ini_id_bd_in;
+        id_to_exe_ExcCode_r <= `ini_id_ExcCode_in;
+        id_to_exe_cp0_addr_r <= `ini_id_cp0_addr_in;
+        id_to_exe_error_VAddr_r <= `ini_id_error_VAddr_in;
+        id_to_exe_eret_r <= `ini_id_eret_in;
+        id_to_exe_mtc0_op_r <= `ini_id_mtc0_op_in;
     end
     else if (allowin && id_valid_in) begin
         id_to_exe_sbhw_con_r <= id_sbhw_con_in;
@@ -156,6 +186,13 @@ always @(posedge clk) begin
         id_to_exe_regnum_r <= id_regnum_in;
         id_to_exe_write_type_r <= id_write_type_in;
         id_to_exe_mult_div_op_r <= id_mult_div_op_in;
+        id_to_exe_exception_r <= id_exception_in;
+        id_to_exe_bd_r <= id_bd_in;
+        id_to_exe_ExcCode_r <= id_ExcCode_in;
+        id_to_exe_cp0_addr_r <= id_cp0_addr_in;
+        id_to_exe_error_VAddr_r <= id_error_VAddr_in;
+        id_to_exe_eret_r <= id_eret_in;
+        id_to_exe_mtc0_op_r <= id_mtc0_op_in;
     end 
 end
 
@@ -222,4 +259,12 @@ assign exe_in0_out = id_to_exe_aludata1_r;
 assign exe_in1_out = id_to_exe_aludata2_r;
 assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]};
 assign exe_read_request_out = id_to_exe_mult_div_op_r[4];
+assign exe_exception_out = overflow||ExceptSet||id_to_exe_exception_r;
+assign exe_bd_out = id_to_exe_bd_r;
+assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : (overflow ? `Ov : ExcCode);
+assign exe_cp0_addr_out = id_to_exe_cp0_addr_r;
+assign exe_mtc0_data_out = id_to_exe_aludata2_r;
+assign exe_error_VAddr_out = id_to_exe_exception_r ? id_to_exe_error_VAddr_r : aluso ;
+assign exe_eret_out = id_to_exe_eret_r ;
+assign exe_mtc0_op_out = id_to_exe_mtc0_op_r;
 endmodule

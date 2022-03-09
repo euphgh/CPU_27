@@ -209,8 +209,69 @@ assign PC_EXE = exe_PC_out;
 assign PC_MEM = mem_PC_out;
 assign PC_WB = debug_wb_pc;
 assign Instruct = if_Instruct_out;
-/*====================Function Code====================*/
+wire  if_exception_out;
+wire  [4:0]  if_ExcCode_out;
+wire  [31:0]  if_error_VAddr_out;
 
+wire  if_exception_in;
+wire  [4:0]  if_ExcCode_in;
+wire  [31:0]  if_error_VAddr_in;
+wire  id_exception_out;
+wire  id_bd_out;
+wire  [4:0]  id_ExcCode_out;
+wire  [5:0]  id_cp0_addr_out;
+wire  [31:0]  id_error_VAddr_out;
+wire  id_eret_out;
+wire  id_mtc0_op_out;
+wire  [31:0] wb_ClrStpJmp_in;
+wire  wb_cp0_res_in  ;
+
+wire  id_exception_in;
+wire  id_bd_in;
+wire  [4:0]  id_ExcCode_in;
+wire  [5:0]  id_cp0_addr_in;
+wire  [31:0]  id_error_VAddr_in;
+wire  id_eret_in;
+wire  id_mtc0_op_in;
+wire  exe_exception_out;
+
+wire  exe_bd_out;
+wire  [4:0]  exe_ExcCode_out;
+wire  [5:0]  exe_cp0_addr_out;
+wire  [31:0]  exe_mtc0_data_out;
+wire  [31:0]  exe_error_VAddr_out;
+wire  exe_eret_out;
+wire  exe_mtc0_op_out;
+
+wire  exe_exception_in;
+wire  exe_bd_in;
+wire  [4:0]  exe_ExcCode_in;
+wire  [5:0]  exe_cp0_addr_in;
+wire  [31:0]  exe_mtc0_data_in;
+wire  [31:0]  exe_error_VAddr_in;
+wire  exe_eret_in;
+wire  exe_mtc0_op_in;
+
+wire  mem_exception_out;
+wire  mem_bd_out;
+wire  [4:0]  mem_ExcCode_out;
+wire  [5:0]  mem_cp0_addr_out;
+wire  [31:0]  mem_mtc0_data_out;
+wire  [31:0]  mem_error_VAddr_out;
+wire  mem_eret_out;
+wire  mem_mtc0_op_out;
+
+wire  mem_exception_in;
+wire  mem_bd_in;
+wire  [4:0]  mem_ExcCode_in;
+wire  [5:0]  mem_cp0_addr_in;
+wire  [31:0]  mem_mtc0_data_in;
+wire  [31:0]  mem_error_VAddr_in;
+wire  mem_eret_in;
+wire  mem_mtc0_op_in;
+wire  [31:0]  wb_cp0_res_out;
+wire  wb_ClrStpJmp_out;
+/*====================Function Code====================*/
 IF  u_IF (
     .clk                     ( clk               ),
     .rst_n                   ( rst_n             ),
@@ -223,6 +284,9 @@ IF  u_IF (
     .if_NPC_out              ( if_NPC_out        ),
     .if_NNPC_out             ( if_NNPC_out       ),
     .if_Instruct_out         ( if_Instruct_out   ),
+    .if_exception_out        ( if_exception_out  ),
+    .if_ExcCode_out          ( if_ExcCode_out    ),
+    .if_error_VAddr_out      ( if_error_VAddr_out),
     .inst_sram_wdata         ( inst_sram_wdata   ),
     .inst_sram_wen           ( inst_sram_wen     ),
     .inst_sram_addr          ( inst_sram_addr    ),
@@ -234,7 +298,9 @@ assign if_NNPC_in     = if_NNPC_out;
 assign if_Instruct_in = if_Instruct_out;
 assign if_valid_in    = if_valid_out;
 assign id_nextPC_in   = id_nextPC_out;
-
+assign if_exception_in = if_exception_out;
+assign if_ExcCode_in = if_ExcCode_out;
+assign if_error_VAddr_in = if_error_VAddr_out;
 ID  u_ID (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
@@ -254,6 +320,11 @@ ID  u_ID (
     .mem_wnum                ( mem_wnum             ),
     .wb_wnum                 ( wb_wnum              ),
     .if_NPC_fast_wire        ( if_NPC_fast_wire     ),
+    .if_exception_in         ( if_exception_in      ),  
+    .if_ExcCode_in           ( if_ExcCode_in        ),
+    .if_error_VAddr_in       ( if_error_VAddr_in    ),    
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
+    .wb_cp0_res_in           ( wb_cp0_res_in        ),
 
     .id_allowin_out          ( id_allowin_out       ),
     .id_valid_out            ( id_valid_out         ),
@@ -272,7 +343,14 @@ ID  u_ID (
     .id_lubhw_con_out        ( id_lubhw_con_out     ),
     .id_write_type_out       ( id_write_type_out    ),
     .id_mult_div_op          ( id_mult_div_op       ),
-    .id_nextPC_out           ( id_nextPC_out        )
+    .id_nextPC_out           ( id_nextPC_out        ),
+    .id_exception_out        ( id_exception_out     ),           
+    .id_bd_out               ( id_bd_out            ), 
+    .id_ExcCode_out          ( id_ExcCode_out       ),         
+    .id_cp0_addr_out         ( id_cp0_addr_out      ),          
+    .id_error_VAddr_out      ( id_error_VAddr_out   ),                 
+    .id_eret_out             ( id_eret_out          ),  
+    .id_mtc0_op_out          ( id_mtc0_op_ou        )     
 );
 assign exe_wnum          = exe_wnum_out      ;
 assign mem_wnum          = mem_wnum_out      ;
@@ -297,6 +375,17 @@ assign id_addrexc_con_in = id_addrexc_con_out;
 assign id_lr_con_in      = id_lr_con_out     ;
 assign id_lubhw_con_in   = id_lubhw_con_out  ;
 assign id_write_type_in  = id_write_type_out ;
+
+assign id_exception_in = id_exception_out;
+assign id_bd_in = id_bd_out;
+assign id_ExcCode_in = id_ExcCode_out;
+assign id_cp0_addr_in = id_cp0_addr_out;
+assign id_error_VAddr_in = id_error_VAddr_out;
+assign id_eret_in = id_eret_out;
+assign id_mtc0_op_in = id_mtc0_op_out;
+assign wb_ClrStpJmp_in = wb_ClrStpJmp_out;
+assign wb_cp0_res_in = wb_cp0_res_out;
+
 EXE  u_EXE (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
@@ -317,6 +406,14 @@ EXE  u_EXE (
     .id_regnum_in            ( id_regnum_in         ),
     .id_write_type_in        ( id_write_type_in     ),
     .id_mult_div_op_in       ( id_mult_div_op_in    ),
+    .id_exception_in         ( id_exception_in      ),                  
+    .id_bd_in                ( id_bd_in             ),  
+    .id_ExcCode_in           ( id_ExcCode_in        ),              
+    .id_cp0_addr_in          ( id_cp0_addr_in       ),              
+    .id_error_VAddr_in       ( id_error_VAddr_in    ),                      
+    .id_eret_in              ( id_eret_in           ),      
+    .id_mtc0_op_in           ( id_mtc0_op_in        ),    
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
 
     .exe_allowin_out         ( exe_allowin_out      ),
     .exe_valid_out           ( exe_valid_out        ),
@@ -334,7 +431,15 @@ EXE  u_EXE (
     .exe_in0_out             ( exe_in0_out          ),
     .exe_in1_out             ( exe_in1_out          ),
     .exe_mult_div_op_out     ( exe_mult_div_op_out  ),
-    .exe_read_request_out    ( exe_read_request_out )
+    .exe_read_request_out    ( exe_read_request_out ),
+    .exe_exception_out       ( exe_exception_out    ),
+    .exe_bd_out              ( exe_bd_out           ),
+    .exe_ExcCode_out         ( exe_ExcCode_out      ),
+    .exe_cp0_addr_out        ( exe_cp0_addr_out     ),
+    .exe_mtc0_data_out       ( exe_mtc0_data_out    ),
+    .exe_error_VAddr_out     ( exe_error_VAddr_out  ),
+    .exe_eret_out            ( exe_eret_out         ),
+    .exe_mtc0_op_out         ( exe_mtc0_op_out      )
 );
 assign id_mult_div_op_in  = id_mult_div_op     ;
 assign mem_allowin_in     = mem_allowin_out    ;
@@ -352,6 +457,16 @@ assign exe_VAddr_in       = exe_dm_addr_out    ;
 assign exe_regnum_in      = exe_wnum_out       ;
 assign exe_write_type_in  = exe_write_type_out ;
 assign exe_read_request_in= exe_read_request_out;
+
+assign exe_exception_in = exe_exception_out;
+assign exe_bd_in = exe_bd_out;
+assign exe_ExcCode_in = exe_ExcCode_out;
+assign exe_cp0_addr_in = exe_cp0_addr_out;
+assign exe_mtc0_data_in = exe_mtc0_data_out;
+assign exe_error_VAddr_in = exe_error_VAddr_out;
+assign exe_eret_in = exe_eret_out;
+assign exe_mtc0_op_in = exe_mtc0_op_out;
+
 MEM  u_MEM (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
@@ -372,6 +487,15 @@ MEM  u_MEM (
     .mult_div_accessible_in  ( mult_div_accessible_in),
     .mult_div_res_in         ( mult_div_res_in      ),
     .exe_read_request_in     ( exe_read_request_in  ),
+    .exe_exception_in        ( exe_exception_in     ),
+    .exe_bd_in               ( exe_bd_in            ),
+    .exe_ExcCode_in          ( exe_ExcCode_in       ),
+    .exe_cp0_addr_in         ( exe_cp0_addr_in      ),
+    .exe_mtc0_data_in        ( exe_mtc0_data_in     ),
+    .exe_error_VAddr_in      ( exe_error_VAddr_in   ),
+    .exe_eret_in             ( exe_eret_in          ),
+    .exe_mtc0_op_in          ( exe_mtc0_op_in       ),
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
 
     .mem_PC_out              ( mem_PC_out           ),
     .mem_dm_data_out         ( mem_dm_data_out      ),
@@ -389,7 +513,15 @@ MEM  u_MEM (
     .data_sram_addr          ( data_sram_addr       ),
     .data_sram_wdata         ( data_sram_wdata      ),
     .mem_allowin_out         ( mem_allowin_out      ),
-    .mem_valid_out           ( mem_valid_out        )
+    .mem_valid_out           ( mem_valid_out        ),
+    .mem_exception_out       ( mem_exception_out    ),
+    .mem_bd_out              ( mem_bd_out           ),
+    .mem_ExcCode_out         ( mem_ExcCode_out      ),
+    .mem_cp0_addr_out        ( mem_cp0_addr_out     ),
+    .mem_mtc0_data_out       ( mem_mtc0_data_out    ),
+    .mem_error_VAddr_out     ( mem_error_VAddr_out  ), 
+    .mem_eret_out            ( mem_eret_out         ),
+    .mem_mtc0_op_out         ( mem_mtc0_op_out      )
 );
 
 assign mem_valid_in       = mem_valid_out       ;
@@ -404,20 +536,38 @@ assign mem_write_type_in  = mem_write_type_out  ;
 assign mem_wbdata_in      = mem_wbdata_out      ;
 assign mem_llr_we_in      = mem_llr_we_out      ;
 
+
+assign mem_exception_in = mem_exception_out;
+assign mem_bd_in = mem_bd_out;
+assign mem_ExcCode_in = mem_ExcCode_out;
+assign mem_cp0_addr_in = mem_cp0_addr_out;
+assign mem_mtc0_data_in = mem_mtc0_data_out;
+assign mem_error_VAddr_in = mem_error_VAddr_out;
+assign mem_eret_in = mem_eret_out;
+assign mem_mtc0_op_in = mem_mtc0_op_out;
+
 WB  u_WB (
     .clk                     ( clk                 ),
     .rst_n                   ( rst_n               ),
     .mem_valid_in            ( mem_valid_in        ),
-    .mem_PC_in               ( mem_PC_in           ),  
-    .mem_dm_data_in          ( mem_dm_data_in      ),        
-    .mem_wnum_in             ( mem_wnum_in         ),      
-    .mem_sel_wbdata_in       ( mem_sel_wbdata_in   ),              
-    .mem_onehot_in           ( mem_onehot_in       ),        
-    .mem_lubhw_con_in        ( mem_lubhw_con_in    ),            
-    .mem_adrl_in             ( mem_adrl_in         ),   
-    .mem_write_type_in       ( mem_write_type_in   ),              
-    .mem_wbdata_in           ( mem_wbdata_in       ),        
-    .mem_llr_we_in           ( mem_llr_we_in       ),        
+    .mem_PC_in               ( mem_PC_in           ),
+    .mem_dm_data_in          ( mem_dm_data_in      ),
+    .mem_wnum_in             ( mem_wnum_in         ),
+    .mem_sel_wbdata_in       ( mem_sel_wbdata_in   ),
+    .mem_onehot_in           ( mem_onehot_in       ),
+    .mem_lubhw_con_in        ( mem_lubhw_con_in    ),
+    .mem_adrl_in             ( mem_adrl_in         ),
+    .mem_write_type_in       ( mem_write_type_in   ),
+    .mem_wbdata_in           ( mem_wbdata_in       ),
+    .mem_llr_we_in           ( mem_llr_we_in       ),
+    .mem_exception_in        ( mem_exception_in    ),
+    .mem_bd_in               ( mem_bd_in           ),
+    .mem_ExcCode_in          ( mem_ExcCode_in      ),
+    .mem_cp0_addr_in         ( mem_cp0_addr_in     ),
+    .mem_mtc0_data_in        ( mem_mtc0_data_in    ),
+    .mem_error_VAddr_in      ( mem_error_VAddr_in  ),
+    .mem_eret_in             ( mem_eret_in         ),
+    .mem_mtc0_op_in          ( mem_mtc0_op_in      ),
 
     .wb_allowin_out          ( wb_allowin_out      ),
     .wb_valid_out            ( wb_valid_out        ),
@@ -428,9 +578,10 @@ WB  u_WB (
     .debug_wb_pc             ( debug_wb_pc         ),
     .debug_wb_rf_wen         ( debug_wb_rf_wen     ),
     .debug_wb_rf_wnum        ( debug_wb_rf_wnum    ),
-    .debug_wb_rf_wdata       ( debug_wb_rf_wdata   )
+    .debug_wb_rf_wdata       ( debug_wb_rf_wdata   ),
+    .wb_cp0_res_out          ( wb_cp0_res_out      ),
+    .wb_ClrStpJmp_out        ( wb_ClrStpJmp_out    )
 );
-
 assign wb_allowin_in     = wb_allowin_out   ;
 assign wb_wdata_in       = wb_wbdata_out    ;
 assign wb_wen_in         = wb_reg_we_out    ;

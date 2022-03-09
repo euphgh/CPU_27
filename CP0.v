@@ -5,8 +5,8 @@ module CP0 (
     input wire mem_to_wb_exception_r,
     input wire mem_to_wb_bd_r,
     input wire [4:0] mem_to_wb_ExcCode_r,
-    input wire [5:0] cp0_addr,
-    input wire [31:0] mtc0_data,mem_to_wb_PC_r,error_VAddr,
+    input wire [5:0] mem_to_wb_cp0_addr_r,
+    input wire [31:0] mem_to_wb_mtc0_data_r,mem_to_wb_PC_r,mem_to_wb_error_VAddr_r,
     input wire mem_to_wb_eret_r,
     input wire mem_to_wb_mtc0_op_r,
     input wire valid_r,
@@ -15,7 +15,9 @@ module CP0 (
     output wire ClrStpJmp//指示发生中断、例外和eret时都要进行的stopwrite，clearpileline、jump的行为
     );
 /*====================Variable Declaration====================*/
-wire exception;//同时代表 jump_op，clear pileline,stop write三条信号
+wire [5:0] cp0_addr;
+wire [31:0] error_VAddr,mtc0_data;
+wire exception;
 wire ExcCode,eret_op;
 // cp0_EPC Inputs---------------------------------
 // wire  clk;[port]
@@ -169,6 +171,9 @@ cp0_BadVAddr  u_cp0_BadVAddr (
 );
 wire [31:0] exc_jump_inst;
 wire [31:0] mft0;
+assign cp0_addr = mem_to_wb_cp0_addr_r;
+assign error_VAddr = mem_to_wb_error_VAddr_r;
+assign mtc0_data = mem_to_wb_mtc0_data_r;
 assign ClrStpJmp = exception||eret_op;
 assign exception = mem_to_wb_exception_r || int_in;
 assign exc_jump_inst = eret_op ? cp0_EPC_data : 32'hbfc00380;

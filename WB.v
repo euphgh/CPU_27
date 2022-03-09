@@ -17,12 +17,21 @@ module WB(
     input  wire [2:0]  mem_write_type_in,
     input  wire [31:0] mem_wbdata_in,
     input  wire [3:0]  mem_llr_we_in,
+    input  wire  mem_exception_in,
+    input  wire  mem_bd_in,
+    input  wire  [4:0]  mem_ExcCode_in,
+    input  wire  [5:0]  mem_cp0_addr_in,
+    input  wire  [31:0]  mem_mtc0_data_in,
+    input  wire  [31:0]  mem_error_VAddr_in,
+    input  wire  mem_eret_in,
+    input  wire  mem_mtc0_op_in,
     //dataout
 	output wire [31:0] wb_wbdata_out, //data:回写数据
 	output wire [3:0]  wb_reg_we_out, //control:回写使能
     output wire [4:0]  wb_wnum_out,
     output wire [2:0]  wb_write_type_out,
-
+    output wire  [31:0]  wb_cp0_res_out,
+    output wire  wb_ClrStpJmp_out,
     //debug 信号， 供验证平台使用效
     output reg [31:0] debug_wb_pc,   //写回级（多周期最后一级） 的 PC， 因而需要 mycpu信号，高电平有效
     output reg [3:0]  debug_wb_rf_wen,   //写回级写寄存器堆(regfiles)的写使能，为字节写，字节寻址
@@ -46,6 +55,15 @@ reg [1:0]  mem_to_wb_adrl_r;
 reg [2:0]  mem_to_wb_write_type_r;
 reg [31:0] mem_to_wb_wbdata_r;
 reg [3:0]  mem_to_wb_llr_we_r;
+
+reg  mem_to_wb_exception_r;
+reg  mem_to_wb_bd_r;
+reg  [4:0]  mem_to_wb_ExcCode_r;
+reg  [5:0]  mem_to_wb_cp0_addr_r;
+reg  [31:0]  mem_to_wb_mtc0_data_r;
+reg  [31:0]  mem_to_wb_error_VAddr_r;
+reg  mem_to_wb_eret_r;
+reg  mem_to_wb_mtc0_op_r;
 // ---------------------------------------------
 /*====================Function Code====================*/
 assign ready = 1'b1; 
@@ -72,6 +90,14 @@ always @(posedge clk) begin
         mem_to_wb_write_type_r <= `ini_mem_write_type_in; 
         mem_to_wb_wbdata_r <= `ini_mem_wbdata_in;
         mem_to_wb_llr_we_r <= `ini_mem_llr_we_in;
+        mem_to_wb_exception_r <= `ini_mem_exception_in;
+        mem_to_wb_bd_r <= `ini_mem_bd_in;
+        mem_to_wb_ExcCode_r <= `ini_mem_ExcCode_in;
+        mem_to_wb_cp0_addr_r <= `ini_mem_cp0_addr_in;
+        mem_to_wb_mtc0_data_r <= `ini_mem_mtc0_data_in;
+        mem_to_wb_error_VAddr_r <= `ini_mem_error_VAddr_in;
+        mem_to_wb_eret_r <= `ini_mem_eret_in;
+        mem_to_wb_mtc0_op_r <= `ini_mem_mtc0_op_in;
     end
     else if (allowin && mem_valid_in) begin
         mem_to_wb_PC_r <= mem_PC_in; 
@@ -84,6 +110,14 @@ always @(posedge clk) begin
         mem_to_wb_adrl_r <= mem_adrl_in;
         mem_to_wb_wbdata_r <= mem_wbdata_in;
         mem_to_wb_llr_we_r <= mem_llr_we_in;
+        mem_to_wb_exception_r <= mem_exception_in;
+        mem_to_wb_bd_r <= mem_bd_in;
+        mem_to_wb_ExcCode_r <= mem_ExcCode_in;
+        mem_to_wb_cp0_addr_r <= mem_cp0_addr_in;
+        mem_to_wb_mtc0_data_r <= mem_mtc0_data_in;
+        mem_to_wb_error_VAddr_r <= mem_error_VAddr_in;
+        mem_to_wb_eret_r <= mem_eret_in;
+        mem_to_wb_mtc0_op_r <= mem_mtc0_op_in;
     end
 end
 // llr Inputs-----------------------------------       
@@ -138,4 +172,41 @@ always @(posedge clk ) begin
         debug_wb_rf_wdata <= wb_wbdata_out;
     end
 end
+// CP0 Inputs
+// wire  clk;[port]
+// wire  rst_n;[port]
+// wire  mem_to_wb_exception_r;[pileline]
+// wire  mem_to_wb_bd_r;[pileline]
+// wire  [4:0]  mem_to_wb_ExcCode_r;[pileline]
+// wire  [5:0]  mem_to_wb_cp0_addr_r;[pileline]
+// wire  [31:0]  mem_to_wb_mtc0_data_r;[pileline]
+// wire  [31:0]  mem_to_wb_error_VAddr_r;[pileline]
+// wire  mem_to_wb_eret_r;[pileline]
+// wire  mem_to_wb_mtc0_op_r;[pileline]
+// wire  [31:0]  mem_to_wb_PC_r;[pileline]
+// wire  valid_r;[pileline]
+
+// CP0 Outputs        
+wire  [31:0]  cp0_res;
+wire  ClrStpJmp;
+
+CP0  u_CP0 (
+    .clk                      ( clk                       ),
+    .rst_n                    ( rst_n                     ),
+    .mem_to_wb_exception_r    ( mem_to_wb_exception_r     ),
+    .mem_to_wb_bd_r           ( mem_to_wb_bd_r            ),
+    .mem_to_wb_ExcCode_r      ( mem_to_wb_ExcCode_r       ),
+    .mem_to_wb_cp0_addr_r     ( mem_to_wb_cp0_addr_r      ),
+    .mem_to_wb_mtc0_data_r    ( mem_to_wb_mtc0_data_r     ),
+    .mem_to_wb_PC_r           ( mem_to_wb_PC_r            ),
+    .mem_to_wb_error_VAddr_r  ( mem_to_wb_error_VAddr_r   ),
+    .mem_to_wb_eret_r         ( mem_to_wb_eret_r          ),
+    .mem_to_wb_mtc0_op_r      ( mem_to_wb_mtc0_op_r       ),
+    .valid_r                  ( valid_r                   ),
+
+    .cp0_res                  ( cp0_res                   ),
+    .ClrStpJmp                ( ClrStpJmp                 )
+);
+assign wb_ClrStpJmp_out = ClrStpJmp;
+assign wb_cp0_res_out = cp0_res;
 endmodule

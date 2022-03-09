@@ -7,6 +7,9 @@ module IF(
     input wire [31:0] id_nextPC_in,
     //data out
 	output wire [31:0] if_PC_out,if_NPC_out,if_NNPC_out,if_Instruct_out,
+    output wire  if_exception_out,
+    output wire  [4:0]  if_ExcCode_out,
+    output wire  [31:0]  if_error_VAddr_out,
     //sram
     output wire [31:0] inst_sram_wdata,
     output wire [3:0] inst_sram_wen,
@@ -86,4 +89,7 @@ assign if_Instruct_out = inst_sram_rdata;
 assign inst_sram_wen = 4'b0;
 assign inst_sram_wdata = 32'b0;
 assign inst_sram_en = rst_n&&id_allowin_in;
+assign if_exception_out = ExceptSet;
+assign if_ExcCode_out = ExcCode;
+assign if_error_VAddr_out = VAddr_r;
 endmodule

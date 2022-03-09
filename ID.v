@@ -16,6 +16,11 @@ module ID(
     input wire [2:0] exe_write_type,mem_write_type,wb_write_type, //control{0:wb,1:mem,2:exe,000:nocheck}
     input wire [4:0] exe_wnum,mem_wnum,wb_wnum,
     input wire [31:0] if_NPC_fast_wire,
+    input wire  if_exception_in,
+    input wire  [4:0]  if_ExcCode_in,
+    input wire  [31:0] if_error_VAddr_in,
+    input wire  [31:0] wb_cp0_res_in,
+    input wire  wb_ClrStpJmp_in,
     //dataout
 	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
@@ -32,7 +37,14 @@ module ID(
     output wire [4:0]  id_lubhw_con_out,
     output wire [2:0] id_write_type_out,
     output wire [7:0] id_mult_div_op,
-    output wire [31:0] id_nextPC_out
+    output wire [31:0] id_nextPC_out,
+    output wire  id_exception_out,
+    output wire  id_bd_out,
+    output wire  [4:0]  id_ExcCode_out,
+    output wire  [5:0]  id_cp0_addr_out,
+    output wire  [31:0]  id_error_VAddr_out,
+    output wire  id_eret_out,
+    output wire  id_mtc0_op_out
 	);
 
 
@@ -121,6 +133,9 @@ reg  [31:0] if_to_id_PC_r ;
 reg  [31:0] if_to_id_NPC_r;
 reg  [31:0] if_to_id_NNPC_r ;
 reg  [31:0] if_to_id_Instruct_r;
+reg  if_to_id_exception_r;
+reg  [4:0]  if_to_id_ExcCode_r;
+reg  [31:0]  if_to_id_error_VAddr_r;
 // wire [4:0] addrexc_con_wire; //control:地址例外选择子[decoder]
 // wire [1:0]  lr_con_wire; //control:onehot模块选择子[decoder]
 // wire [4:0] lubhw_con_id_wire;[decoder]
@@ -131,7 +146,7 @@ wire [4:0] regnum_id_wire;
 
 /*====================Function Code====================*/
 always @(posedge clk ) begin
-    if (!rst_n)begin
+    if (!rst_n||wb_ClrStpJmp_in)begin
        valid_r <= 1'b0; 
     end
     else if (allowin) begin
@@ -146,17 +161,23 @@ assign wb_to_id_wen_w = wb_wen_in ;
 assign wb_to_id_wnum_w = wb_wnum_in ;
 
 always @(posedge clk) begin
-    if (!rst_n||(allowin&&(!if_valid_in))) begin
+    if (!rst_n||(allowin&&(!if_valid_in))||wb_ClrStpJmp_in) begin
         if_to_id_PC_r <= `ini_if_PC_in;
         if_to_id_NPC_r <= `ini_if_NPC_in;
         if_to_id_NNPC_r <= `ini_if_NNPC_in;
         if_to_id_Instruct_r <= `ini_if_Instruct_in;
+        if_to_id_exception_r <= `ini_if_exception_in;
+        if_to_id_ExcCode_r <= `ini_if_ExcCode_in;
+        if_to_id_error_VAddr_r <= `ini_if_error_VAddr_in;
     end
     else if (allowin && if_valid_in) begin
         if_to_id_PC_r <= if_PC_in;
         if_to_id_NPC_r <= if_NPC_in;
         if_to_id_NNPC_r <= if_NNPC_in;
         if_to_id_Instruct_r <= if_Instruct_in;
+        if_to_id_exception_r <= if_exception_in;
+        if_to_id_ExcCode_r <= if_ExcCode_in;
+        if_to_id_error_VAddr_r <= if_error_VAddr_in;
     end
 end
 Reg  u_Reg (
@@ -259,5 +280,22 @@ brcal  u_brcal (
 
     .brcal_out               ( brcal_out   ) 
 );
-assign id_nextPC_out = brcal_out ? bjpc_out : if_NPC_fast_wire;
+assign id_nextPC_out = wb_ClrStpJmp_in ? wb_cp0_res_in: (brcal_out ? bjpc_out : if_NPC_fast_wire);
+//需要decoder支持
+wire sys_exc,rsvinst_exc,eret,mtc0_op;
+wire [5:0] cp0_addr;
+reg bj_last;//表示上一条指令时bj类指令
+always @(posedge clk ) begin
+    if (!rst_n) 
+        bj_last <= 1'b0;
+    else
+        bj_last <= |brcal_con;
+end
+assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc;
+assign id_bd_out = bj_last;
+assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : (rsvinst_exc ? `RI : `Sys);
+assign id_cp0_addr_out = cp0_addr;
+assign id_error_VAddr_out = if_to_id_error_VAddr_r;
+assign id_eret_out = eret;
+assign id_mtc0_op_out = mtc0_op;
 endmodule

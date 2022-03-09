@@ -4,7 +4,7 @@ module addrexc (
     input wire [31:0] address,
     input wire [3:0] addrexc_con, //control:选择哪种类型的地址检查{0:r2,1:r4,2:w2,3:w4}
     output wire ExceptSet,
-    output wire [7:0] ExcCode
+    output wire [4:0] ExcCode
     );
 /*====================Variable Declaration====================*/
 wire two,four;
