@@ -1,7 +1,7 @@
 `include "defines.vh"
 /*====================Ports Declaration====================*/
 module cp0_Status (
-    input  wire clk,rst_n,mtc0_we,exception,eret_flush,
+    input  wire clk,rst_n,mtc0_we,exception,eret_op,
     input  wire [5:0] cp0_addr,
     input  wire [31:0] mct0_data,
     output reg  [31:0] cp0_Status_data
@@ -14,7 +14,7 @@ always @(posedge clk ) begin
         cp0_Status_data[`EXL] <= `EXL_ini;
     else if (exception) 
         cp0_Status_data[`EXL] <= 1'b1;
-    else if (eret_flush)
+    else if (eret_op)
         cp0_Status_data[`EXL] <= 1'b0;
     else if (mtc0_we && cp0_addr==`cp0addr_Status)
         cp0_Status_data[`EXL] <= mct0_data[`EXL];

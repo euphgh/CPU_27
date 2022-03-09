@@ -101,6 +101,7 @@
 //Cause
 `define TI 30
 `define BD 31
+`define IP 15:8
 `define IP_hard 15:10
 `define IP_soft 9:8
 `define ExcCode 6:2
@@ -120,6 +121,7 @@
 `define BadVAddr_ini 32'hbfc00000
 //Count
 `define cp0addr_Count 6'b010010
+`define Count_ini 32'b0
 //compare
 `define cp0addr_Compare 6'b010110
 `define Compare_ini 32'b0
