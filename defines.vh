@@ -119,6 +119,7 @@
 `define cp0addr_EPC 6'b011100
 //BadVAdrr
 `define BadVAddr_ini 32'hbfc00000
+`define cp0addr_BadVAddr 6'b001000
 //Count
 `define cp0addr_Count 6'b010010
 `define Count_ini 32'b0
