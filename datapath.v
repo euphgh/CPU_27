@@ -521,7 +521,8 @@ MEM  u_MEM (
     .mem_mtc0_data_out       ( mem_mtc0_data_out    ),
     .mem_error_VAddr_out     ( mem_error_VAddr_out  ), 
     .mem_eret_out            ( mem_eret_out         ),
-    .mem_mtc0_op_out         ( mem_mtc0_op_out      )
+    .mem_mtc0_op_out         ( mem_mtc0_op_out      ),
+    .mem_ClrStpJmp_out       ( mem_ClrStpJmp_out    )
 );
 
 assign mem_valid_in       = mem_valid_out       ;
@@ -535,7 +536,7 @@ assign mem_adrl_in        = mem_adrl_out        ;
 assign mem_write_type_in  = mem_write_type_out  ;
 assign mem_wbdata_in      = mem_wbdata_out      ;
 assign mem_llr_we_in      = mem_llr_we_out      ;
-
+assign mem_ClrStpJmp_in   = mem_ClrStpJmp_out   ;
 
 assign mem_exception_in = mem_exception_out;
 assign mem_bd_in = mem_bd_out;
@@ -595,6 +596,8 @@ mult_div  u_mult_div (
     .in0                     ( in0           ),
     .in1                     ( in1           ),
     .read_request            ( read_request  ),
+    .mem_ClrStpJmp_in        ( mem_ClrStpJmp_in),
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in),
 
     .mult_div_res            ( mult_div_res  ),
     .accessible              ( accessible    ) 

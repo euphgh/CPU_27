@@ -4,7 +4,7 @@ module mult_div (
         input wire [5:0] mult_div_op, //control:{0:mult,1:multu,2:div,4:mthi,5:mtol}
         input wire [31:0] in0,in1, //data:{运算指令时即为运算数字，MT指令时in0为hi和ol}
         input wire read_request, //{0:mthi,1:mtol}
-        input wire ClrStpJmp,
+        input wire wb_ClrStpJmp_in,mem_ClrStpJmp_in,
         output wire [31:0] mult_div_res,
         output reg accessible //control:表示hiol的数据可以使用
     );
@@ -109,7 +109,7 @@ module mult_div (
               .ol_out                  ( ol_out     )
           );
     assign wen_hiol = (complete ? 2'b11 : 
-                        (|mult_div_op_r[2:0]) ? 2'b11 : wen_temp1) & {2{!ClrStpJmp}};
+                        (|mult_div_op_r[2:0]) ? 2'b11 : wen_temp1) & {2{!(wb_ClrStpJmp_in||mem_ClrStpJmp_in)}};
     assign data_in =  complete ? {r,s} : 
                         (|mult_div_op_r[2:0]) ? mult_res : mt_temp1;
     assign mult_div_res = read_request ? hi_out : ol_out;

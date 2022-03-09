@@ -93,6 +93,7 @@ reg  exe_to_mem_mtc0_op_r;
 wire [31:0] MEM_PC = mem_PC_out;
 wire [31:0] mult_div_res_w;
 wire  mult_div_to_mem_accessible_w;
+wire mem_ClrStpJmp_w,mem_ClrStpJmp_r;
 // ---------------------------------------------
 /*====================Function Code====================*/
 assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]);
@@ -176,7 +177,9 @@ assign mem_sel_wbdata_out = {exe_to_mem_sel_wbdata_r[2:1],{exe_to_mem_sel_wbdata
 assign mem_onehot_out = exe_to_mem_onehot_r;
 assign mem_llr_we_out = llr_we;
 assign data_sram_en = rst_n;
-assign data_sram_wen =  exe_to_mem_dm_we_w & {4{!(exe_eret_in||exe_exception_in)}} & {4{!(exe_to_mem_eret_r||exe_to_mem_exception_r)}};
+assign mem_ClrStpJmp_w = exe_eret_in||exe_exception_in;
+assign mem_ClrStpJmp_r = exe_to_mem_eret_r||exe_to_mem_exception_r;
+assign data_sram_wen =  exe_to_mem_dm_we_w & {4{!(mem_ClrStpJmp_w||mem_ClrStpJmp_r)}};
 assign data_sram_addr = PAddr;
 assign data_sram_wdata = exe_to_mem_dm_data_w;
 assign mem_wnum_out = exe_to_mem_regnum_r;
