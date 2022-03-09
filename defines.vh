@@ -80,11 +80,6 @@
 `define ini_mem_wbdata_in 32'b0
 `define ini_mem_llr_we_in 4'b0
 
-
-// addrexc
-`define AdEL 8'h04 
-`define AdES 8'h05
-
 //datapath
 `define debug_wb_pc 32'b0
 `define debug_wb_rf_wen 4'b0
@@ -121,3 +116,18 @@
 //EPC
 `define EPC_ini 32'b0
 `define cp0addr_EPC 6'b011100
+//BadVAdrr
+`define BadVAddr_ini 32'hbfc00000
+//Count
+`define cp0addr_Count 6'b010010
+//compare
+`define cp0addr_Compare 6'b010110
+`define Compare_ini 32'b0
+//ExcCode
+`define Int 5'b0
+`define AdEL 5'b00100
+`define AdES 5'b00101
+`define Sys  5'b01000
+`define Bp   5'b01001
+`define RI   5'b01010
+`define Ov   5'b01100
