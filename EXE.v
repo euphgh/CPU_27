@@ -29,7 +29,7 @@ module EXE(
     input wire  [5:0]  id_cp0_addr_in,
     input wire  [31:0]  id_error_VAddr_in,
     input wire  id_eret_in,
-    input wire  id_mtc0_op_in,
+    input wire  [1:0] id_mftc0_op_in,
     input wire  wb_ClrStpJmp_in,
 	//dataout
 	output wire [31:0] exe_alures_out, //data:传送给sel_wb
@@ -54,7 +54,7 @@ module EXE(
     output wire  [31:0]  exe_mtc0_data_out,
     output wire  [31:0]  exe_error_VAddr_out,
     output wire  exe_eret_out,
-    output wire  exe_mtc0_op_out
+    output wire  [1:0] exe_mftc0_op_out
 	);
 /*====================Variable Declaration====================*/
 // ALU Inputs------------------------------------      
@@ -129,7 +129,7 @@ reg  [4:0]  id_to_exe_ExcCode_r;
 reg  [5:0]  id_to_exe_cp0_addr_r;
 reg  [31:0]  id_to_exe_error_VAddr_r;
 reg  id_to_exe_eret_r;
-reg  id_to_exe_mtc0_op_r;
+reg  [1:0] id_to_exe_mftc0_op_r;
 //----------------------------------------------
 
 /*====================Function Code====================*/
@@ -168,7 +168,7 @@ always @(posedge clk) begin
         id_to_exe_cp0_addr_r <= `ini_id_cp0_addr_in;
         id_to_exe_error_VAddr_r <= `ini_id_error_VAddr_in;
         id_to_exe_eret_r <= `ini_id_eret_in;
-        id_to_exe_mtc0_op_r <= `ini_id_mtc0_op_in;
+        id_to_exe_mftc0_op_r <= `ini_id_mftc0_op_in;
     end
     else if (allowin && id_valid_in) begin
         id_to_exe_sbhw_con_r <= id_sbhw_con_in;
@@ -192,7 +192,7 @@ always @(posedge clk) begin
         id_to_exe_cp0_addr_r <= id_cp0_addr_in;
         id_to_exe_error_VAddr_r <= id_error_VAddr_in;
         id_to_exe_eret_r <= id_eret_in;
-        id_to_exe_mtc0_op_r <= id_mtc0_op_in;
+        id_to_exe_mftc0_op_r <= id_mftc0_op_in;
     end 
 end
 
@@ -266,5 +266,5 @@ assign exe_cp0_addr_out = id_to_exe_cp0_addr_r;
 assign exe_mtc0_data_out = id_to_exe_aludata2_r;
 assign exe_error_VAddr_out = id_to_exe_exception_r ? id_to_exe_error_VAddr_r : aluso ;
 assign exe_eret_out = id_to_exe_eret_r ;
-assign exe_mtc0_op_out = id_to_exe_mtc0_op_r;
+assign exe_mftc0_op_out = id_to_exe_mftc0_op_r;
 endmodule

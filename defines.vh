@@ -37,7 +37,7 @@
 `define ini_if_ExcCode_in 5'b0
 `define ini_if_error_VAddr_in 32'b0
 `define ini_if_eret_in 1'b0
-`define ini_if_mtc0_op_in 1'b0
+`define ini_if_mftc0_op_in 1'b0
 //new
 `define ini_if_PC_in 32'b0
 `define ini_if_NNPC_in 32'b0
@@ -69,7 +69,7 @@
 `define ini_id_cp0_addr_in 6'b0
 `define ini_id_error_VAddr_in 32'b0
 `define ini_id_eret_in 1'b0
-`define ini_id_mtc0_op_in 1'b0
+`define ini_id_mftc0_op_in 1'b0
 //MEM
 `define ini_wbdata 32'b0   
 `define ini_reg_we_mem 4'b0
@@ -88,7 +88,7 @@
 `define ini_exe_mtc0_data_in 32'b0
 `define ini_exe_error_VAddr_in 32'b0
 `define ini_exe_eret_in 1'b0
-`define ini_exe_mtc0_op_in 1'b0
+`define ini_exe_mftc0_op_in 1'b0
 //WB
 `define ini_mem_PC_in 32'b0
 `define ini_mem_dm_data_in 32'b0
@@ -107,7 +107,7 @@
 `define ini_mem_mtc0_data_in 32'b0
 `define ini_mem_error_VAddr_in 32'b0
 `define ini_mem_eret_in 1'b0
-`define ini_mem_mtc0_op_in 1'b0
+`define ini_mem_mftc0_op_in 1'b0
 
 //datapath
 `define debug_wb_pc 32'b0

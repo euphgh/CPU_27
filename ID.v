@@ -41,10 +41,10 @@ module ID(
     output wire  id_exception_out,
     output wire  id_bd_out,
     output wire  [4:0]  id_ExcCode_out,
-    output wire  [5:0]  id_cp0_addr_out,
+    output wire  [7:0]  id_cp0_addr_out,
     output wire  [31:0]  id_error_VAddr_out,
     output wire  id_eret_out,
-    output wire  id_mtc0_op_out
+    output wire  [1:0] id_mftc0_op_out
 	);
 
 
@@ -282,8 +282,9 @@ brcal  u_brcal (
 );
 assign id_nextPC_out = wb_ClrStpJmp_in ? wb_cp0_res_in: (brcal_out ? bjpc_out : if_NPC_fast_wire);
 //需要decoder支持
-wire sys_exc,rsvinst_exc,eret,mtc0_op,mfc0_op;
-wire [5:0] cp0_addr;
+wire sys_exc,rsvinst_exc,eret;
+wire [1:0] mftc0_op;
+wire [7:0] cp0_addr;
 reg bj_last;//表示上一条指令时bj类指令
 always @(posedge clk ) begin
     if (!rst_n) 
@@ -297,5 +298,5 @@ assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : (rsvinst_exc
 assign id_cp0_addr_out = cp0_addr;
 assign id_error_VAddr_out = if_to_id_error_VAddr_r;
 assign id_eret_out = eret;
-assign id_mtc0_op_out = mtc0_op;
+assign id_mftc0_op_out = mftc0_op;
 endmodule

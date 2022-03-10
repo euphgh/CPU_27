@@ -29,7 +29,7 @@ module MEM(
     input  wire  [31:0]  exe_mtc0_data_in,
     input  wire  [31:0]  exe_error_VAddr_in,
     input  wire  exe_eret_in,
-    input  wire  exe_mtc0_op_in,
+    input  wire  [1:0] exe_mftc0_op_in,
     input wire  wb_ClrStpJmp_in,
     //dataout
     output wire [31:0] mem_PC_out,
@@ -50,7 +50,7 @@ module MEM(
     output wire  [31:0]  mem_mtc0_data_out,
     output wire  [31:0]  mem_error_VAddr_out,
     output wire  mem_eret_out,
-    output wire  mem_mtc0_op_out,
+    output wire  [1:0] mem_mftc0_op_out,
 
     output wire data_sram_en, //ram 使能信号,高电平有效
     output wire [3:0]  data_sram_wen, //ram 字节写使能信号,高电平有效
@@ -89,7 +89,7 @@ reg  [5:0]  exe_to_mem_cp0_addr_r;
 reg  [31:0]  exe_to_mem_mtc0_data_r;
 reg  [31:0]  exe_to_mem_error_VAddr_r;
 reg  exe_to_mem_eret_r;
-reg  exe_to_mem_mtc0_op_r;
+reg  [1:0] exe_to_mem_mftc0_op_r;
 wire [31:0] MEM_PC = mem_PC_out;
 wire [31:0] mult_div_res_w;
 wire  mult_div_to_mem_accessible_w;
@@ -131,7 +131,7 @@ always @(posedge clk) begin
         exe_to_mem_mtc0_data_r <= `ini_exe_mtc0_data_in;
         exe_to_mem_error_VAddr_r <= `ini_exe_error_VAddr_in;
         exe_to_mem_eret_r <= `ini_exe_eret_in;
-        exe_to_mem_mtc0_op_r <= `ini_exe_mtc0_op_in;
+        exe_to_mem_mftc0_op_r <= `ini_exe_mftc0_op_in;
     end
     else if (allowin && exe_valid_in) begin
         exe_to_mem_sel_wbdata_r <= exe_sel_wbdata_in;
@@ -150,7 +150,7 @@ always @(posedge clk) begin
         exe_to_mem_mtc0_data_r <= exe_mtc0_data_in;
         exe_to_mem_error_VAddr_r <= exe_error_VAddr_in;
         exe_to_mem_eret_r <= exe_eret_in;
-        exe_to_mem_mtc0_op_r <= exe_mtc0_op_in;
+        exe_to_mem_mftc0_op_r <= exe_mftc0_op_in;
     end
 end
 FixedMapping  u_FixedMapping (
@@ -192,5 +192,5 @@ assign mem_cp0_addr_out = exe_to_mem_cp0_addr_r;
 assign mem_mtc0_data_out = exe_to_mem_mtc0_data_r;
 assign mem_error_VAddr_out = exe_to_mem_error_VAddr_r;
 assign mem_eret_out = exe_to_mem_eret_r;
-assign mem_mtc0_op_out = exe_to_mem_mtc0_op_r;
+assign mem_mftc0_op_out = exe_to_mem_mftc0_op_r;
 endmodule

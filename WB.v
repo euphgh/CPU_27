@@ -24,7 +24,7 @@ module WB(
     input  wire  [31:0]  mem_mtc0_data_in,
     input  wire  [31:0]  mem_error_VAddr_in,
     input  wire  mem_eret_in,
-    input  wire  mem_mtc0_op_in,
+    input  wire  [1:0] mem_mftc0_op_in,//{0:mfc0,1:mtc0}
     //dataout
 	output wire [31:0] wb_wbdata_out, //data:回写数据
 	output wire [3:0]  wb_reg_we_out, //control:回写使能
@@ -64,8 +64,27 @@ reg  [5:0]  mem_to_wb_cp0_addr_r;
 reg  [31:0]  mem_to_wb_mtc0_data_r;
 reg  [31:0]  mem_to_wb_error_VAddr_r;
 reg  mem_to_wb_eret_r;
-reg  mem_to_wb_mtc0_op_r;
+reg  [1:0] mem_to_wb_mftc0_op_r;
 // ---------------------------------------------
+// llr Inputs-----------------------------------       
+wire  [31:0]  word_llr; 
+wire  [7:0]  onehot;
+// llr Outputs
+wire  [31:0]  llr_data;
+wire  [3:0]  llr_we;   
+// ---------------------------------------------
+
+// lubhw Inputs---------------------------------
+wire  [31:0]  word_lubhw;     
+wire  [1:0]  adrl_lubhw;
+wire  [4:0]  lubhw_con;
+
+// lubhw Outputs        
+wire  [31:0]  lubhw_out;
+wire [31:0] word; 
+//----------------------------------------------
+wire  [31:0]  cp0_res;
+wire  ClrStpJmp;
 /*====================Function Code====================*/
 assign ready = 1'b1; 
 assign allowin = (!valid_r) || ready ;
@@ -98,7 +117,7 @@ always @(posedge clk) begin
         mem_to_wb_mtc0_data_r <= `ini_mem_mtc0_data_in;
         mem_to_wb_error_VAddr_r <= `ini_mem_error_VAddr_in;
         mem_to_wb_eret_r <= `ini_mem_eret_in;
-        mem_to_wb_mtc0_op_r <= `ini_mem_mtc0_op_in;
+        mem_to_wb_mftc0_op_r <= `ini_mem_mftc0_op_in;
     end
     else if (allowin && mem_valid_in) begin
         mem_to_wb_PC_r <= mem_PC_in; 
@@ -118,26 +137,9 @@ always @(posedge clk) begin
         mem_to_wb_mtc0_data_r <= mem_mtc0_data_in;
         mem_to_wb_error_VAddr_r <= mem_error_VAddr_in;
         mem_to_wb_eret_r <= mem_eret_in;
-        mem_to_wb_mtc0_op_r <= mem_mtc0_op_in;
+        mem_to_wb_mftc0_op_r <= mem_mftc0_op_in;
     end
 end
-// llr Inputs-----------------------------------       
-wire  [31:0]  word_llr; 
-wire  [7:0]  onehot;
-// llr Outputs
-wire  [31:0]  llr_data;
-wire  [3:0]  llr_we;   
-// ---------------------------------------------
-
-// lubhw Inputs---------------------------------
-wire  [31:0]  word_lubhw;     
-wire  [1:0]  adrl_lubhw;
-wire  [4:0]  lubhw_con;
-
-// lubhw Outputs        
-wire  [31:0]  lubhw_out;
-wire [31:0] word; 
-//----------------------------------------------
 assign word = mem_to_wb_dm_data_r;
 assign onehot = mem_to_wb_onehot_r;
 assign llr_data =   (onehot[2]||onehot[7]) ? {word[23:16],word[15:8],word[7:0],word[31:24]} :
@@ -170,7 +172,7 @@ always @(posedge clk ) begin
         debug_wb_pc <= mem_to_wb_PC_r;
         debug_wb_rf_wen <=  wb_reg_we_out;
         debug_wb_rf_wnum <= wb_wnum_out;
-        debug_wb_rf_wdata <= wb_wbdata_out;
+        debug_wb_rf_wdata <= mem_to_wb_mftc0_op_r[0] ? wb_wbdata_out : cp0_res;
     end
 end
 // CP0 Inputs
@@ -183,13 +185,11 @@ end
 // wire  [31:0]  mem_to_wb_mtc0_data_r;[pileline]
 // wire  [31:0]  mem_to_wb_error_VAddr_r;[pileline]
 // wire  mem_to_wb_eret_r;[pileline]
-// wire  mem_to_wb_mtc0_op_r;[pileline]
+// wire  mem_to_wb_mftc0_op_r;[pileline]
 // wire  [31:0]  mem_to_wb_PC_r;[pileline]
 // wire  valid_r;[pileline]
 
 // CP0 Outputs        
-wire  [31:0]  cp0_res;
-wire  ClrStpJmp;
 
 CP0  u_CP0 (
     .clk                      ( clk                       ),
@@ -202,7 +202,7 @@ CP0  u_CP0 (
     .mem_to_wb_PC_r           ( mem_to_wb_PC_r            ),
     .mem_to_wb_error_VAddr_r  ( mem_to_wb_error_VAddr_r   ),
     .mem_to_wb_eret_r         ( mem_to_wb_eret_r          ),
-    .mem_to_wb_mtc0_op_r      ( mem_to_wb_mtc0_op_r       ),
+    .mem_to_wb_mftc0_op_r     ( mem_to_wb_mftc0_op_r      ),
     .valid_r                  ( valid_r                   ),
     .ext_int                  ( ext_int                   ),
 
