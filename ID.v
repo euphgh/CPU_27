@@ -250,6 +250,9 @@ assign id_NNPC_out = if_to_id_NNPC_r;
 assign reg_we = wb_to_id_wen_w & {4{valid_r}};
 assign WR = wb_to_id_wnum_w;
 assign id_write_type_out = write_type & {3{(!nop)&&valid_r}};
+wire sys_exc,rsvinst_exc,eret,break_exc;
+wire [1:0] mftc0_op;
+wire [7:0] cp0_addr;
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
     .mem_write_type          ( mem_write_type   ),
@@ -258,7 +261,7 @@ idready  u_idready (
     .mem_wnum                ( mem_wnum         ),
     .wb_wnum                 ( wb_wnum          ),
     .read_type               ( read_type        ),
-    .RR1                     ( RR1              ),
+    .RR1                     ( mftc0_op[0] ? rd : RR1 ),
     .RR2                     ( RR2              ),
 
     .ready                   ( ready            )
@@ -282,9 +285,6 @@ brcal  u_brcal (
 );
 assign id_nextPC_out = wb_ClrStpJmp_in ? wb_cp0_res_in: (brcal_out ? bjpc_out : if_NPC_fast_wire);
 //需要decoder支持
-wire sys_exc,rsvinst_exc,eret;
-wire [1:0] mftc0_op;
-wire [7:0] cp0_addr;
 reg bj_last;//表示上一条指令时bj类指令
 always @(posedge clk ) begin
     if (!rst_n) 
@@ -294,7 +294,8 @@ always @(posedge clk ) begin
 end
 assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc;
 assign id_bd_out = bj_last;
-assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : (rsvinst_exc ? `RI : `Sys);
+wire [7:0] ExcCode_id = ({7{rsvinst_exc}} & `RI)|({7{sys_exc}} & `Sys)|({7{break_exc}} & `RI); 
+assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : ExcCode_id;
 assign id_cp0_addr_out = cp0_addr;
 assign id_error_VAddr_out = if_to_id_error_VAddr_r;
 assign id_eret_out = eret;

@@ -8,7 +8,7 @@ module CP0 (
     input wire [5:0] mem_to_wb_cp0_addr_r,
     input wire [31:0] mem_to_wb_mtc0_data_r,mem_to_wb_PC_r,mem_to_wb_error_VAddr_r,
     input wire mem_to_wb_eret_r,
-    input wire mem_to_wb_mtc0_op_r,
+    input wire [1:0] mem_to_wb_mftc0_op_r,
     input wire valid_r,
     input wire [5:0] ext_int,
 
@@ -97,7 +97,7 @@ wire  [31:0]  cp0_Count_data;
 wire  [31:0]  cp0_BadVAddr_data;
 //-------------------------------------------------
 wire mtc0_we;
-assign mtc0_we = (!exception) && valid_r && mem_to_wb_mtc0_op_r;
+assign mtc0_we = (!exception) && valid_r && mem_to_wb_mftc0_op_r[1];
 /*====================Function Code====================*/
 cp0_Status  u_cp0_Status (
     .clk                     ( clk               ),
@@ -170,7 +170,7 @@ cp0_BadVAddr  u_cp0_BadVAddr (
     .cp0_BadVAddr_data       ( cp0_BadVAddr_data   )
 );
 wire [31:0] exc_jump_inst;
-wire [31:0] mft0;
+wire [31:0] mfc0;
 assign cp0_addr = mem_to_wb_cp0_addr_r;
 assign error_VAddr = mem_to_wb_error_VAddr_r;
 assign mtc0_data = mem_to_wb_mtc0_data_r;
@@ -180,11 +180,11 @@ assign exc_jump_inst = eret_op ? cp0_EPC_data : 32'hbfc00380;
 assign int_in = (cp0_Cause_data[`IP]&cp0_Status_data[`IM]!=8'h00)&&cp0_Status_data[`IE]&&(!cp0_Status_data[`EXL]);
 assign ExcCode = {5{!int_in}} && mem_to_wb_ExcCode_r;
 assign eret_op = mem_to_wb_eret_r;
-assign mft0 =   ({32{cp0_addr==`cp0addr_Status}} & cp0_Status_data )|
+assign mfc0 =   ({32{cp0_addr==`cp0addr_Status}} & cp0_Status_data )|
                 ({32{cp0_addr==`cp0addr_Cause}} & cp0_Cause_data )|
                 ({32{cp0_addr==`cp0addr_EPC}} & cp0_EPC_data )|
                 ({32{cp0_addr==`cp0addr_Compare}} & cp0_Compare_data )|
                 ({32{cp0_addr==`cp0addr_Count}} & cp0_Count_data )|
                 ({32{cp0_addr==`cp0addr_BadVAddr}} & cp0_BadVAddr_data) ;
-assign cp0_res = ClrStpJmp ? exc_jump_inst : mft0;
+assign cp0_res = ClrStpJmp ? exc_jump_inst : mfc0;
 endmodule

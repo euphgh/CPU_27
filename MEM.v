@@ -8,7 +8,7 @@ module MEM(
     input  wire exe_valid_in,
     output wire mem_valid_out,
     //datain
-	input  wire [4:0]  exe_sel_wbdata_in, //datar:{0:aluout,1:lubw,2:llr,3:NNPC,4:mf}
+	input  wire [4:0]  exe_sel_wbdata_in, //datar:{0:aluout,1:lubw,2:llr,3:NNPC,4:mfhiol}
 	input  wire [31:0] exe_aluout_in, //datar:地址或者回写数据
 	input  wire [7:0]  exe_onehot_in, //datar:控制llr
 	input  wire [4:0]  exe_lubhw_con_in, //datar:控制lubhw
