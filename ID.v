@@ -98,6 +98,9 @@ wire  [1:0]  read_type;
 wire  [2:0]  write_type;
 wire  [7:0]  mult_div_op;
 wire  nop;
+wire sys_exc,rsvinst_exc,eret,break_exc;
+wire [1:0] mftc0_op;
+wire [7:0] cp0_addr;
 //------------------------------------------------------------
 
 // brcal Inputs ----------------------------------------------       
@@ -224,7 +227,12 @@ decoder  u_decoder (
     .read_type               ( read_type       ),
     .write_type              ( write_type      ),
     .mult_div_op             ( mult_div_op     ),
-    .nop                     ( nop             )
+    .nop                     ( nop             ),
+    .break_exc               ( break_exc       ),
+    .sys_exc                 ( sys_exc         ),
+    .mftc0_op                ( mftc0_op        ),
+    .eret                    ( eret            ),
+    .cp0_addr                ( cp0_addr        )
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
@@ -250,9 +258,6 @@ assign id_NNPC_out = if_to_id_NNPC_r;
 assign reg_we = wb_to_id_wen_w & {4{valid_r}};
 assign WR = wb_to_id_wnum_w;
 assign id_write_type_out = write_type & {3{(!nop)&&valid_r}};
-wire sys_exc,rsvinst_exc,eret,break_exc;
-wire [1:0] mftc0_op;
-wire [7:0] cp0_addr;
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
     .mem_write_type          ( mem_write_type   ),
