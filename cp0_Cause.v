@@ -4,7 +4,7 @@ module cp0_Cause (
     input  wire clk,rst_n,mtc0_we,exception,bd,equal,
     input  wire [5:0] ext_int,
     input  wire [4:0] ExcCode, 
-    input  wire [5:0] cp0_addr,
+    input  wire [7:0] cp0_addr,
     input  wire [31:0] mtc0_data,
     output wire [31:0] cp0_Cause_data
     );

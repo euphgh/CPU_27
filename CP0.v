@@ -5,7 +5,7 @@ module CP0 (
     input wire mem_to_wb_exception_r,
     input wire mem_to_wb_bd_r,
     input wire [4:0] mem_to_wb_ExcCode_r,
-    input wire [5:0] mem_to_wb_cp0_addr_r,
+    input wire [7:0] mem_to_wb_cp0_addr_r,
     input wire [31:0] mem_to_wb_mtc0_data_r,mem_to_wb_PC_r,mem_to_wb_error_VAddr_r,
     input wire mem_to_wb_eret_r,
     input wire [1:0] mem_to_wb_mftc0_op_r,
@@ -16,7 +16,7 @@ module CP0 (
     output wire ClrStpJmp//指示发生中断、例外和eret时都要进行的stopwrite，clearpileline、jump的行为
     );
 /*====================Variable Declaration====================*/
-wire [5:0] cp0_addr;
+wire [7:0] cp0_addr;
 wire [5:0]int_in;
 wire [31:0] error_VAddr,mtc0_data;
 wire exception;

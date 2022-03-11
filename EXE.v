@@ -26,7 +26,7 @@ module EXE(
     input wire  id_exception_in,
     input wire  id_bd_in,
     input wire  [4:0]  id_ExcCode_in,
-    input wire  [5:0]  id_cp0_addr_in,
+    input wire  [7:0]  id_cp0_addr_in,
     input wire  [31:0]  id_error_VAddr_in,
     input wire  id_eret_in,
     input wire  [1:0] id_mftc0_op_in,
@@ -50,7 +50,7 @@ module EXE(
     output wire  exe_exception_out,
     output wire  exe_bd_out,
     output wire  [4:0]  exe_ExcCode_out,
-    output wire  [5:0]  exe_cp0_addr_out,
+    output wire  [7:0]  exe_cp0_addr_out,
     output wire  [31:0]  exe_mtc0_data_out,
     output wire  [31:0]  exe_error_VAddr_out,
     output wire  exe_eret_out,
@@ -126,7 +126,7 @@ wire [31:0] EXE_PC = exe_PC_out;
 reg  id_to_exe_exception_r;
 reg  id_to_exe_bd_r;
 reg  [4:0]  id_to_exe_ExcCode_r;
-reg  [5:0]  id_to_exe_cp0_addr_r;
+reg  [7:0]  id_to_exe_cp0_addr_r;
 reg  [31:0]  id_to_exe_error_VAddr_r;
 reg  id_to_exe_eret_r;
 reg  [1:0] id_to_exe_mftc0_op_r;

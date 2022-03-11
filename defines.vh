@@ -126,7 +126,7 @@
 `define IE_ini 1'b0
 `define IM 15:8
 `define IM_ini 8'b0
-`define cp0addr_Status  6'b011000
+`define cp0addr_Status  8'b00011000
 //Cause
 `define TI 30
 `define BD 31
@@ -141,8 +141,8 @@
 `define IP7 15
 `define IP6to2 14:10
 `define ExcCode_ini 5'b0
-`define cp0addr_Compare  6'b010110
-`define cp0addr_Cause  6'b011010
+`define cp0addr_Compare  8'b00010110
+`define cp0addr_Cause  8'b00011010
 //EPC
 `define EPC_ini 32'b0
 `define cp0addr_EPC 6'b011100
@@ -153,7 +153,7 @@
 `define cp0addr_Count 6'b010010
 `define Count_ini 32'b0
 //compare
-`define cp0addr_Compare 6'b010110
+`define cp0addr_Compare 8'b00010110
 `define Compare_ini 32'b0
 //ExcCode
 `define Int 5'b0

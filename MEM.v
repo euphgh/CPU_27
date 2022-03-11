@@ -25,7 +25,7 @@ module MEM(
     input  wire  exe_exception_in,
     input  wire  exe_bd_in,
     input  wire  [4:0]  exe_ExcCode_in,
-    input  wire  [5:0]  exe_cp0_addr_in,
+    input  wire  [7:0]  exe_cp0_addr_in,
     input  wire  [31:0]  exe_mtc0_data_in,
     input  wire  [31:0]  exe_error_VAddr_in,
     input  wire  exe_eret_in,
@@ -46,7 +46,7 @@ module MEM(
     output wire  mem_exception_out,
     output wire  mem_bd_out,
     output wire  [4:0]  mem_ExcCode_out,
-    output wire  [5:0]  mem_cp0_addr_out,
+    output wire  [7:0]  mem_cp0_addr_out,
     output wire  [31:0]  mem_mtc0_data_out,
     output wire  [31:0]  mem_error_VAddr_out,
     output wire  mem_eret_out,
@@ -85,7 +85,7 @@ reg  exe_to_mem_read_request_r;
 reg  exe_to_mem_exception_r;
 reg  exe_to_mem_bd_r;
 reg  [4:0]  exe_to_mem_ExcCode_r;
-reg  [5:0]  exe_to_mem_cp0_addr_r;
+reg  [7:0]  exe_to_mem_cp0_addr_r;
 reg  [31:0]  exe_to_mem_mtc0_data_r;
 reg  [31:0]  exe_to_mem_error_VAddr_r;
 reg  exe_to_mem_eret_r;

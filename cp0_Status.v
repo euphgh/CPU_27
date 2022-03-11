@@ -2,7 +2,7 @@
 /*====================Ports Declaration====================*/
 module cp0_Status (
     input  wire clk,rst_n,mtc0_we,exception,eret_op,
-    input  wire [5:0] cp0_addr,
+    input  wire [7:0] cp0_addr,
     input  wire [31:0] mtc0_data,
     output wire [31:0] cp0_Status_data
     );

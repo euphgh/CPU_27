@@ -3,7 +3,7 @@
 module cp0_EPC (
     input  wire clk,rst_n,mtc0_we,exception,EXL,BD,
     input  wire [31:0] mem_to_wb_PC_r,
-    input  wire [5:0]  cp0_addr,
+    input  wire [7:0]  cp0_addr,
     input  wire [31:0] mtc0_data,
     output reg  [31:0] cp0_EPC_data
     );

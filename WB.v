@@ -20,7 +20,7 @@ module WB(
     input  wire  mem_exception_in,
     input  wire  mem_bd_in,
     input  wire  [4:0]  mem_ExcCode_in,
-    input  wire  [5:0]  mem_cp0_addr_in,
+    input  wire  [7:0]  mem_cp0_addr_in,
     input  wire  [31:0]  mem_mtc0_data_in,
     input  wire  [31:0]  mem_error_VAddr_in,
     input  wire  mem_eret_in,
@@ -60,7 +60,7 @@ reg [3:0]  mem_to_wb_llr_we_r;
 reg  mem_to_wb_exception_r;
 reg  mem_to_wb_bd_r;
 reg  [4:0]  mem_to_wb_ExcCode_r;
-reg  [5:0]  mem_to_wb_cp0_addr_r;
+reg  [7:0]  mem_to_wb_cp0_addr_r;
 reg  [31:0]  mem_to_wb_mtc0_data_r;
 reg  [31:0]  mem_to_wb_error_VAddr_r;
 reg  mem_to_wb_eret_r;

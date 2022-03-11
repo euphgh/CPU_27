@@ -3,7 +3,7 @@
 module cp0_Count (
     input  wire clk,rst_n,exception,mtc0_we,
     input  wire [31:0] mtc0_data,
-    input  wire [5:0]  cp0_addr,
+    input  wire [7:0]  cp0_addr,
     output reg  [31:0] cp0_Count_data
     );
 /*====================Variable Declaration====================*/
