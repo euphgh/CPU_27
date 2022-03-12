@@ -97,7 +97,7 @@ wire mem_ClrStpJmp_w,mem_ClrStpJmp_r;
 // ---------------------------------------------
 /*====================Function Code====================*/
 assign ready = (exe_to_mem_sel_wbdata_r[4]&&mult_div_to_mem_accessible_w)||(!exe_to_mem_sel_wbdata_r[4]);
-assign allowin =  (!valid_r) || (ready && wb_allowin_in) ;
+assign allowin =  (!valid_r) || (ready && wb_allowin_in)||wb_ClrStpJmp_in;
 assign mem_allowin_out = allowin;
 assign mem_valid_out = ready && valid_r;
 always @(posedge clk ) begin

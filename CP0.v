@@ -126,6 +126,7 @@ cp0_Cause  u_cp0_Cause (
     .cp0_Cause_data          ( cp0_Cause_data   )
 );
 assign bd = mem_to_wb_bd_r;
+assign equal = (cp0_Compare_data==cp0_Count_data);
 cp0_EPC  u_cp0_EPC (
     .clk                     ( clk              ),
     .rst_n                   ( rst_n            ),

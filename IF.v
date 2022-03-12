@@ -47,13 +47,13 @@ reg [31:0] id_to_if_nextPC_r,if_to_if_NPC_r,VAddr_r;
 assign ready = 1'b1; //以后根据IM来判断
 assign valid_r = ready;
 assign if_valid_out = valid_r;
-assign allowin = ready&&id_allowin_in;
+assign allowin = ready&&id_allowin_in||wb_ClrStpJmp_in;
 always @(posedge clk) begin
     if (!rst_n) begin
         id_to_if_nextPC_r <= `ini_id_nextPC_in;
         VAddr_r <= `ini_if_NPC_in;
     end
-    else if ((allowin && valid_r)||wb_ClrStpJmp_in) begin
+    else if (allowin && valid_r) begin
         id_to_if_nextPC_r <= id_nextPC_in;
         VAddr_r <= VAddr;
     end

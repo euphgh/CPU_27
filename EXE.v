@@ -141,7 +141,7 @@ always @(posedge clk ) begin
     end
 end
 assign ready = 1'b1;//之后由乘除法决定
-assign allowin = !valid_r || (ready && mem_allowin_in);
+assign allowin = !valid_r || (ready && mem_allowin_in)||wb_ClrStpJmp_in;
 assign exe_allowin_out = allowin;
 assign exe_valid_out = valid_r && ready;
 
@@ -263,7 +263,7 @@ assign exe_exception_out = (id_to_exe_sel_wbdata_r[0]&&overflow)||ExceptSet||id_
 assign exe_bd_out = id_to_exe_bd_r;
 assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : ((id_to_exe_sel_wbdata_r[0]&&overflow) ? `Ov : ExcCode);
 assign exe_cp0_addr_out = id_to_exe_cp0_addr_r;
-assign exe_mtc0_data_out = id_to_exe_aludata2_r;
+assign exe_mtc0_data_out = id_to_exe_RD2_r;
 assign exe_error_VAddr_out = id_to_exe_exception_r ? id_to_exe_error_VAddr_r : aluso ;
 assign exe_eret_out = id_to_exe_eret_r ;
 assign exe_mftc0_op_out = id_to_exe_mftc0_op_r;

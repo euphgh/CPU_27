@@ -87,7 +87,7 @@ wire  [31:0]  cp0_res;
 wire  ClrStpJmp;
 /*====================Function Code====================*/
 assign ready = 1'b1; 
-assign allowin = (!valid_r) || ready ;
+assign allowin = (!valid_r) || ready || ClrStpJmp ;
 assign wb_allowin_out = allowin;
 assign wb_valid_out = ready && valid_r;
 always @(posedge clk ) begin

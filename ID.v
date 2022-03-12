@@ -156,7 +156,7 @@ always @(posedge clk ) begin
         valid_r <= if_valid_in ; 
     end
 end
-assign allowin = !valid_r || (ready && exe_allowin_in);
+assign allowin = !valid_r || (ready && exe_allowin_in)||wb_ClrStpJmp_in;
 assign id_allowin_out = allowin;
 assign id_valid_out = valid_r && ready;
 assign wb_to_id_wdata_w = wb_wdata_in ;

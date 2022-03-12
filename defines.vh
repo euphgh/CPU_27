@@ -5,8 +5,12 @@
 //IF
 `define ini_id_brcal_res_in 1'b0
 `define ini_id_bjpc_res_in 32'b0
-`define ini_id_nextPC_in 32'hbfc00000 
-`define ini_if_NPC_in 32'hbfbf_fffc
+//turn start point========================
+`define ini_id_nextPC_in    32'hbfc0_0000 
+`define ini_if_NPC_in       32'hbfbf_fffc
+// `define ini_id_nextPC_in 32'hbfc69f50 
+// `define ini_if_NPC_in    32'hbfc69f4c
+//=========================================
 `define ini_id_RD1_in 32'b0
 `define ini_id_RD2_in 32'b0
 `define ini_id_extend_res_in 32'b0
