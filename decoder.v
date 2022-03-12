@@ -55,13 +55,13 @@ assign rsvinst_exc = !((ins[31:26]==6'd0)||(ins[31:26]==6'd1)||(ins[31:26]==6'd2
 (ins[31:26]==6'd35)||(ins[31:26]==6'd36)||(ins[31:26]==6'd37)||(ins[31:26]==6'd38)||
 (ins[31:26]==6'd40)||(ins[31:26]==6'd41)||(ins[31:26]==6'd42)||(ins[31:26]==6'd43)||(ins[31:26]==6'd46));
 assign write_type[2] = sel_wb_con[3]||sel_wb_con[0];
+assign write_type[0] = mftc0_op[0]||sel_wb_con[4];
 //--------------------Python Code--------------------
 assign break_exc = (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[3]&&ins[2]&&ins[0] ;
 assign sys_exc = (!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[3]&&ins[2]&&(!ins[0]) ;
 assign eret = ins[30]&&ins[3] ;
-assign write_type[0] = mftc0_op[0];
-assign mftc0_op[1] = ins[30]&&(!ins[25])&&(!ins[23]) ;
-assign mftc0_op[0] = ins[30]&&ins[23];
+assign mftc0_op[1] = ins[30]&&ins[23];
+assign mftc0_op[0] = ins[30]&&(!ins[25])&&(!ins[23]) ;
 assign extend_con[0] = (ins[31]||(!ins[29])||(!ins[28])) && (ins[31]||ins[29]||(!ins[28])) && (ins[31]||ins[29]||ins[28]) ;
 assign extend_con[1] = ((!ins[31])&&ins[29]&&ins[28]) ;
 assign extend_con[2] = ((!ins[31])&&(!ins[29])) ;

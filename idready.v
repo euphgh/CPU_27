@@ -1,16 +1,11 @@
 `include "defines.vh"
 /*====================Ports Declaration====================*/
 module idready (
-	input  wire [2:0] exe_write_type,
-	mem_write_type,
-	wb_write_type,  //control{0:wb,1:mem,2:exe,000:nocheck}
-	input  wire [4:0] exe_wnum      ,
-	mem_wnum,
-	wb_wnum,
-	input  wire [1:0] read_type     , //control:{0:rs1:rt2:rtrs}
-	input  wire [4:0] RR1           ,
-	RR2,
-	output wire       ready
+	input  wire [2:0] exe_write_type,mem_write_type,wb_write_type,  //control{0:wb,1:mem,2:exe,000:nocheck}
+	input  wire [4:0] exe_wnum,mem_wnum,wb_wnum,
+	input  wire [1:0] read_type, //control:{0:rs1:rt2:rtrs}
+	input  wire [4:0] RR1,RR2,
+	output wire ready
 );
 	/*====================Variable Declaration====================*/
 	wire exe_RR1;//test

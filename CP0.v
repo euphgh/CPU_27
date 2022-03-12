@@ -144,7 +144,6 @@ assign EXL = cp0_Status_data[`EXL];
 cp0_Compare  u_cp0_Compare (
     .clk                     ( clk                ),
     .rst_n                   ( rst_n              ),
-    .exception               ( exception          ),
     .mtc0_we                 ( mtc0_we            ),
     .mtc0_data               ( mtc0_data          ),
     .cp0_addr                ( cp0_addr           ),
