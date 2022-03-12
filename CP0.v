@@ -17,7 +17,7 @@ module CP0 (
     );
 /*====================Variable Declaration====================*/
 wire [7:0] cp0_addr;
-wire [5:0]int_in;
+wire int_in;
 wire [31:0] error_VAddr,mtc0_data;
 wire exception;
 wire ExcCode,eret_op;

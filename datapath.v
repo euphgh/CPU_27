@@ -350,7 +350,7 @@ ID  u_ID (
     .id_cp0_addr_out         ( id_cp0_addr_out      ),          
     .id_error_VAddr_out      ( id_error_VAddr_out   ),                 
     .id_eret_out             ( id_eret_out          ),  
-    .id_mftc0_op_out          ( id_mftc0_op_ou        )     
+    .id_mftc0_op_out         ( id_mftc0_op_out      )     
 );
 assign exe_wnum          = exe_wnum_out      ;
 assign mem_wnum          = mem_wnum_out      ;
@@ -412,7 +412,7 @@ EXE  u_EXE (
     .id_cp0_addr_in          ( id_cp0_addr_in       ),              
     .id_error_VAddr_in       ( id_error_VAddr_in    ),                      
     .id_eret_in              ( id_eret_in           ),      
-    .id_mftc0_op_in           ( id_mftc0_op_in        ),    
+    .id_mftc0_op_in          ( id_mftc0_op_in       ),    
     .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
 
     .exe_allowin_out         ( exe_allowin_out      ),
@@ -521,8 +521,7 @@ MEM  u_MEM (
     .mem_mtc0_data_out       ( mem_mtc0_data_out    ),
     .mem_error_VAddr_out     ( mem_error_VAddr_out  ), 
     .mem_eret_out            ( mem_eret_out         ),
-    .mem_mftc0_op_out         ( mem_mftc0_op_out      ),
-    .mem_ClrStpJmp_out       ( mem_ClrStpJmp_out    )
+    .mem_mftc0_op_out        ( mem_mftc0_op_out     )
 );
 
 assign mem_valid_in       = mem_valid_out       ;
@@ -536,7 +535,7 @@ assign mem_adrl_in        = mem_adrl_out        ;
 assign mem_write_type_in  = mem_write_type_out  ;
 assign mem_wbdata_in      = mem_wbdata_out      ;
 assign mem_llr_we_in      = mem_llr_we_out      ;
-assign mem_ClrStpJmp_in   = mem_ClrStpJmp_out   ;
+assign mem_ClrStpJmp_in   = wb_ClrStpJmp_out   ;
 
 assign mem_exception_in = mem_exception_out;
 assign mem_bd_in = mem_bd_out;

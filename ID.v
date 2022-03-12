@@ -232,20 +232,21 @@ decoder  u_decoder (
     .sys_exc                 ( sys_exc         ),
     .mftc0_op                ( mftc0_op        ),
     .eret                    ( eret            ),
-    .cp0_addr                ( cp0_addr        )
+    .cp0_addr                ( cp0_addr        ),
+    .rsvinst_exc             ( rsvinst_exc     )
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
-assign id_sel_dm_out = sel_dm_con & {2{valid_r}};
-assign id_addrexc_con_out = addrexc_con & {4{valid_r}};
+assign id_sel_dm_out = sel_dm_con;
+assign id_addrexc_con_out = addrexc_con;
 assign id_lubhw_con_out = lubhw_con;
-assign id_sel_wbdata_out = sel_wb_con & {5{valid_r}};
+assign id_sel_wbdata_out = sel_wb_con & {5{(!nop)}};
 assign Instruct = if_to_id_Instruct_r; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
 assign id_mult_div_op = mult_div_op;
 assign regnum_id_wire = sel_wr_con[0] ? rt:
 			sel_wr_con[1] ? rd : 32'd31;
-assign id_regnum_out = (regnum_id_wire  & {5{(!nop)&&valid_r}}) ;
+assign id_regnum_out = (regnum_id_wire);  //& {5{(!nop)}}) ;
 assign aludata1_wire = sel_alud1_con[0] ? RD1 : {27'b0,sa}; //不支持位移负值
 assign id_aludata1_out = aludata1_wire;
 assign aludata2_wire = sel_alud2_con[0] ? RD2 : extend_res;
@@ -255,9 +256,9 @@ assign RR2 = rt;
 assign WD = wb_to_id_wdata_w;
 assign id_PC_out = if_to_id_PC_r;
 assign id_NNPC_out = if_to_id_NNPC_r;
-assign reg_we = wb_to_id_wen_w & {4{valid_r}};
+assign reg_we = wb_to_id_wen_w; //& {4{valid_r}};
 assign WR = wb_to_id_wnum_w;
-assign id_write_type_out = write_type & {3{(!nop)&&valid_r}};
+assign id_write_type_out = write_type & {3{(!nop)}};
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
     .mem_write_type          ( mem_write_type   ),
@@ -297,7 +298,7 @@ always @(posedge clk ) begin
     else
         bj_last <= |brcal_con;
 end
-assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc;
+assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc||break_exc;
 assign id_bd_out = bj_last;
 wire [7:0] ExcCode_id = ({7{rsvinst_exc}} & `RI)|({7{sys_exc}} & `Sys)|({7{break_exc}} & `RI); 
 assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : ExcCode_id;
