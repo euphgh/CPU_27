@@ -11,7 +11,7 @@ module EXE(
  	input wire [2:0]  id_sbhw_con_in, //datar:sbhw模块选择子
 	input wire [3:0]  id_addrexc_con_in, //datar:地址例外选择子
 	input wire [4:0]  id_sel_wbdata_in, //datar:与ID段sel_wbdata_id_reg相连，直接输出sel_wbdata_exe_reg
-	input wire [11:0] id_aluop_in, //datar:
+	input wire [12:0] id_aluop_in, //datar:
 	input wire [31:0] id_RD2_in, //datar:传送给swbh模块的数据
 	input wire [31:0] id_aludata1_in, //datar:
 	input wire [31:0] id_aludata2_in, //datar:
@@ -60,7 +60,7 @@ module EXE(
 // ALU Inputs------------------------------------      
 wire [31:0]  scr0; 
 wire [31:0]  scr1; 
-wire [11:0]  aluop; 
+wire [12:0]  aluop; 
 
 // ALU Outputs
 wire  overflow;
@@ -110,7 +110,7 @@ wire [31:0] aluout_exe_wire;
 reg  [2:0] id_to_exe_sbhw_con_r ;
 reg  [3:0] id_to_exe_addrexc_con_r ;
 reg  [4:0] id_to_exe_sel_wbdata_r ;
-reg  [11:0] id_to_exe_aluop_r ;
+reg  [12:0] id_to_exe_aluop_r ;
 reg  [31:0] id_to_exe_RD2_r ;
 reg  [31:0] id_to_exe_aludata1_r ;
 reg  [31:0] id_to_exe_aludata2_r ;
@@ -259,9 +259,9 @@ assign exe_in0_out = id_to_exe_aludata1_r;
 assign exe_in1_out = id_to_exe_aludata2_r;
 assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]};
 assign exe_read_request_out = id_to_exe_mult_div_op_r[4];
-assign exe_exception_out = overflow||ExceptSet||id_to_exe_exception_r;
+assign exe_exception_out = (id_to_exe_sel_wbdata_r[0]&&overflow)||ExceptSet||id_to_exe_exception_r;
 assign exe_bd_out = id_to_exe_bd_r;
-assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : (overflow ? `Ov : ExcCode);
+assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : ((id_to_exe_sel_wbdata_r[0]&&overflow) ? `Ov : ExcCode);
 assign exe_cp0_addr_out = id_to_exe_cp0_addr_r;
 assign exe_mtc0_data_out = id_to_exe_aludata2_r;
 assign exe_error_VAddr_out = id_to_exe_exception_r ? id_to_exe_error_VAddr_r : aluso ;

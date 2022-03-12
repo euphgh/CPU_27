@@ -30,5 +30,4 @@ assign sltu_res[0] = (cout) ? 1'b0:1'b1;
 assign add_res = ({BUS{add_op||sub_op}} & add_sub_res)
                  |({BUS{slt_op}} & slt_res)|
                  |({BUS{sltu_op}} & sltu_res);
-
 endmodule

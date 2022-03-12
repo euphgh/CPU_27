@@ -25,7 +25,7 @@ module ID(
 	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
 	output wire [31:0] id_RD2_out, //data:
-	output wire [11:0] id_aluop_out,
+	output wire [12:0] id_aluop_out,
 	output wire [31:0] id_aludata1_out, //data:
 	output wire [31:0] id_aludata2_out, //data:
     output wire [2:0]  id_sbhw_con_out, //control:
@@ -86,7 +86,7 @@ wire  [1:0]  sel_alud2_con;
 // wire  [2:0]  extend_con;[extend]   
 wire  [2:0]  bjpc_con;     
 wire  [6:0]  brcal_con;    
-wire  [11:0]  aluop;       
+wire  [12:0]  aluop;       
 wire  [2:0]  sbhw_con;     
 wire  [1:0]  sel_dm_con;   
 wire  [4:0]  sel_wb_con;   
@@ -267,8 +267,8 @@ idready  u_idready (
     .mem_wnum                ( mem_wnum         ),
     .wb_wnum                 ( wb_wnum          ),
     .read_type               ( read_type        ),
-    .RR1                     ( mftc0_op[0] ? rd : RR1 ),
-    .RR2                     ( RR2              ),
+    .RR1                     ( RR1              ),
+    .RR2                     ( mftc0_op[0] ? rd : RR2 ),
 
     .ready                   ( ready            )
 );

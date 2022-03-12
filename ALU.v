@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 module ALU(
         input wire [31:0] scr0,scr1,
-        input wire [11:0] aluop,
+        input wire [12:0] aluop,
         output wire overflow,
         output wire [31:0] aluso
     );
 
     //所有操作符的处理
     wire add_op,sub_op,and_op,or_op,nor_op,xor_op,slt_op,sltu_op,sll_op,srl_op,sra_op,lui_op;
-    assign {add_op,sub_op,and_op,or_op,nor_op,xor_op,slt_op,sltu_op,sll_op,srl_op,sra_op,lui_op} = aluop;
+    assign {add_op,sub_op,and_op,or_op,nor_op,xor_op,slt_op,sltu_op,sll_op,srl_op,sra_op,lui_op} = aluop[11:0];
 
     //与、或、或非、异或、逻辑左移右移、算数右移、高位置数
     wire [31:0] and_res,or_res,nor_res,xor_res,sll_res,srl_res,sra_res,lui_res;
@@ -24,15 +24,16 @@ module ALU(
     //加、减、无符号比较、有符号比较
     wire cin,cout;
     wire [31:0] add_a,add_b,add_sub_res;
+    wire overflow_add;
     adder #(.BUS(32)) u_adder (
               .add_a                   ( scr0      ),
               .add_b                   ( scr1      ),
               .adder_op                ( {add_op,sub_op,slt_op,sltu_op}   ),
 
               .add_res                 ( add_sub_res    ),
-              .overflow                ( overflow   )
+              .overflow                ( overflow_add   )
           );
-
+assign overflow = overflow_add&&aluop[12];
     //整理计算结果
     assign aluso  = ({32{add_op||sub_op||slt_op||sltu_op}} & add_sub_res)
            |({32{and_op}} & and_res)
