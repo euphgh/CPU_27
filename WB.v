@@ -99,7 +99,7 @@ always @(posedge clk ) begin
     end
 end
 always @(posedge clk) begin
-    if (!rst_n||(allowin&&(!mem_valid_in))) begin
+    if (!rst_n||(allowin&&(!mem_valid_in))||ClrStpJmp) begin
         mem_to_wb_PC_r <= `ini_mem_PC_in; 
         mem_to_wb_dm_data_r <= `ini_mem_dm_data_in;
         mem_to_wb_wnum_r <= `ini_mem_wnum_in; 

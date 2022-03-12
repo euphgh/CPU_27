@@ -1,6 +1,6 @@
 /*====================Ports Declaration====================*/
 module div (
-    input  wire div_clk,resetn,
+    input  wire div_clk,resetn,mem_ClrStpJmp_in,
     input  wire div,
     input  wire div_signed, //{0:无符号,1:有符号}
     input  wire [31:0] x,y,
@@ -21,6 +21,8 @@ reg reminder_sign_r,quotient_sign_r;
 wire  [31:0]  quotient_temp;
 wire  [63:0]  minuend_back;
 wire pre_complete;
+wire ge3 = (|timer[5:2])||(timer[0]&&timer[1]); //计数周期在3及其以上
+wire break = mem_ClrStpJmp_in && (!ge3);
 /*====================Function Code====================*/
 assign x_sign = x[31]&&div_signed;
 assign y_sign = y[31]&&div_signed;
@@ -31,7 +33,7 @@ assign quotient_sign = (x[31]^y[31]) && div_signed;
 assign reminder_sign = x[31] && div_signed;
 
 always @(posedge clk ) begin
-    if (!(rst_n&&div)||complete) begin
+    if (!(rst_n&&div)||complete||break) begin
         divisor <= 32'hffff_ffff;
         minuend <= 64'b0;
         timer = 6'b0;

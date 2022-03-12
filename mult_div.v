@@ -42,6 +42,7 @@ module mult_div (
     div  u_div (
              .div_clk                 ( clk          ),
              .resetn                  ( rst_n        ),
+             .mem_ClrStpJmp_in        ( mem_ClrStpJmp_in),
              .div                     ( div_w        ),
              .div_signed              ( div_signed   ),
              .x                       ( x            ),
