@@ -5,6 +5,7 @@ module IF(
     output wire if_valid_out,
     //data in
     input wire [31:0] id_nextPC_in,
+    input wire wb_ClrStpJmp_in,
     //data out
 	output wire [31:0] if_PC_out,if_NPC_out,if_NNPC_out,if_Instruct_out,
     output wire  if_exception_out,
@@ -52,7 +53,7 @@ always @(posedge clk) begin
         id_to_if_nextPC_r <= `ini_id_nextPC_in;
         VAddr_r <= `ini_if_NPC_in;
     end
-    else if (allowin && valid_r) begin
+    else if ((allowin && valid_r)||wb_ClrStpJmp_in) begin
         id_to_if_nextPC_r <= id_nextPC_in;
         VAddr_r <= VAddr;
     end

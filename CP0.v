@@ -20,7 +20,8 @@ wire [7:0] cp0_addr;
 wire int_in;
 wire [31:0] error_VAddr,mtc0_data;
 wire exception;
-wire ExcCode,eret_op;
+wire [4:0] ExcCode;
+wire eret_op;
 // cp0_EPC Inputs---------------------------------
 // wire  clk;[port]
 // wire  rst_n;[port]

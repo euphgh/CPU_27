@@ -278,6 +278,7 @@ IF  u_IF (
     .id_allowin_in           ( id_allowin_in     ),
     .id_nextPC_in            ( id_nextPC_in      ),
     .inst_sram_rdata         ( inst_sram_rdata   ),
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in   ),
 
     .if_valid_out            ( if_valid_out      ),
     .if_PC_out               ( if_PC_out         ),
