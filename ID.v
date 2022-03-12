@@ -267,8 +267,8 @@ idready  u_idready (
     .mem_wnum                ( mem_wnum         ),
     .wb_wnum                 ( wb_wnum          ),
     .read_type               ( read_type        ),
-    .RR1                     ( RR1              ),
-    .RR2                     ( mftc0_op[0] ? rd : RR2 ),
+    .RR1                     ( mftc0_op[0] ? rd : RR1  ),
+    .RR2                     ( RR2              ),
 
     .ready                   ( ready            )
 );

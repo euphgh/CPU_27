@@ -68,7 +68,7 @@ data_ram dm (
   .clka(clk),    
   .ena(data_sram_en),      // input wire ena
   .wea(data_sram_wen),      // input wire [3 : 0] wea
-  .addra({data_sram_addr[15:2]}),  // input wire [17 : 0] addra
+  .addra({data_sram_addr[19:2]}),  // input wire [17 : 0] addra
   .dina(data_sram_wdata),    // input wire [31 : 0] dina
   .douta(data_sram_rdata)  // output wire [31 : 0] douta
 );
@@ -76,7 +76,7 @@ ins_ram im (
   .clka(clk),    
   .ena(inst_sram_en),      // input wire ena
   .wea(inst_sram_wen),      // input wire [3 : 0] wea
-  .addra({inst_sram_addr[15:2]}),  // input wire [17 : 0] addra
+  .addra({inst_sram_addr[19:2]}),  // input wire [17 : 0] addra
   .dina(inst_sram_wdata),    // input wire [31 : 0] dina
   .douta(inst_sram_rdata)  // output wire [31 : 0] douta
 );

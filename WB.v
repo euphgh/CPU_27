@@ -155,9 +155,10 @@ lubhw  u_lubhw (
 assign word_lubhw = mem_to_wb_dm_data_r;
 assign adrl_lubhw = mem_to_wb_adrl_r;
 assign lubhw_con = mem_to_wb_lubhw_con_r;
-assign wb_wbdata_out = mem_to_wb_sel_wbdata_r[0] ? mem_to_wb_wbdata_r :
+assign wb_wbdata_out = mem_to_wb_mftc0_op_r[0] ? cp0_res :
+                        mem_to_wb_sel_wbdata_r[0] ? mem_to_wb_wbdata_r :
                         mem_to_wb_sel_wbdata_r[1] ? lubhw_out : llr_data;
-assign wb_reg_we_out = (|mem_to_wb_sel_wbdata_r[1:0]) ? 4'b1111:
+assign wb_reg_we_out = (|mem_to_wb_sel_wbdata_r[1:0]||mem_to_wb_mftc0_op_r[0]) ? 4'b1111:
                         mem_to_wb_sel_wbdata_r[2] ?  mem_to_wb_llr_we_r : 4'b0;
 assign wb_wnum_out = mem_to_wb_wnum_r;
 assign wb_write_type_out = mem_to_wb_write_type_r;
@@ -172,7 +173,7 @@ always @(posedge clk ) begin
         debug_wb_pc <= mem_to_wb_PC_r;
         debug_wb_rf_wen <=  wb_reg_we_out;
         debug_wb_rf_wnum <= wb_wnum_out;
-        debug_wb_rf_wdata <= mem_to_wb_mftc0_op_r[0] ? cp0_res : wb_wbdata_out;
+        debug_wb_rf_wdata <= wb_wbdata_out;
     end
 end
 // CP0 Inputs
