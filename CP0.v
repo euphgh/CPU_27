@@ -178,7 +178,7 @@ assign ClrStpJmp = exception||eret_op;
 assign exception = mem_to_wb_exception_r || int_in;
 assign exc_jump_inst = eret_op ? cp0_EPC_data : 32'hbfc00380;
 assign int_in = (cp0_Cause_data[`IP]&cp0_Status_data[`IM]!=8'h00)&&cp0_Status_data[`IE]&&(!cp0_Status_data[`EXL]);
-assign ExcCode = {5{!int_in}} && mem_to_wb_ExcCode_r;
+assign ExcCode = {5{!int_in}} & mem_to_wb_ExcCode_r;
 assign eret_op = mem_to_wb_eret_r;
 assign mfc0 =   ({32{cp0_addr==`cp0addr_Status}} & cp0_Status_data )|
                 ({32{cp0_addr==`cp0addr_Cause}} & cp0_Cause_data )|

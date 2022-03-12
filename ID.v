@@ -300,7 +300,7 @@ always @(posedge clk ) begin
 end
 assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc||break_exc;
 assign id_bd_out = bj_last;
-wire [7:0] ExcCode_id = ({7{rsvinst_exc}} & `RI)|({7{sys_exc}} & `Sys)|({7{break_exc}} & `RI); 
+wire [4:0] ExcCode_id = ({5{rsvinst_exc}} & `RI)|({5{sys_exc}} & `Sys)|({5{break_exc}} & `RI); 
 assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : ExcCode_id;
 assign id_cp0_addr_out = cp0_addr;
 assign id_error_VAddr_out = if_to_id_error_VAddr_r;

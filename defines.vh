@@ -156,7 +156,7 @@
 //compare
 `define Compare_ini 32'b0
 //ExcCode
-`define Int 5'b0
+`define Int  5'b00000
 `define AdEL 5'b00100
 `define AdES 5'b00101
 `define Sys  5'b01000
