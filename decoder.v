@@ -102,14 +102,6 @@ assign aluop[3] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(
 assign aluop[2] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[5])&&(!ins[4])&&ins[1]&&(!ins[0])) ;
 assign aluop[1] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[5])&&(!ins[4])&&ins[1]&&ins[0]) ;
 assign sel_wb_con[4] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[0])) ;
-assign mult_div_op[0] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&(!ins[1])&&(!ins[0])) ;
-assign mult_div_op[1] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&(!ins[1])&&ins[0]) ;
-assign mult_div_op[2] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&ins[1]&&(!ins[0])) ;
-assign mult_div_op[3] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&ins[1]&&ins[0]) ;
-assign mult_div_op[4] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[1])&&(!ins[0])) ;
-assign mult_div_op[5] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&ins[1]&&(!ins[0])) ;
-assign mult_div_op[6] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[1])&&ins[0]) ;
-assign mult_div_op[7] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&ins[1]&&ins[0]) ;
 assign brcal_con[6] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&(!ins[3])&&(!ins[2])&&(!ins[1])) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&(!ins[3])&&(!ins[2])&&ins[1]) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&(!ins[3])&&ins[2]&&(!ins[1]))
  || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&(!ins[3])&&ins[2]&&ins[1]) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&(!ins[2])&&(!ins[1])) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&(!ins[2])&&ins[1])
  || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&ins[2]&&(!ins[1])) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&ins[2]&&ins[1]) || ((!ins[31])&&(!ins[29])&&(!ins[28])&&ins[27]&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[2])&&(!ins[1]))
@@ -285,4 +277,12 @@ assign read_type[1] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27]
  || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&(!ins[4])&&(!ins[3])&&ins[1]) || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&(!ins[1])) || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&(!ins[4])&&ins[3]&&ins[1])
  || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[1])) || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&ins[4]&&(!ins[3])&&ins[1]) || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&ins[4]&&ins[3]&&(!ins[1]))
  || (ins[31]&&(!ins[30])&&ins[29]&&ins[28]&&ins[27]&&(!ins[26])&&ins[4]&&ins[3]&&ins[1]) || ((!ins[31])&&ins[30]&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[4])&&(!ins[3])&&(!ins[1])) || ((!ins[31])&&ins[30]&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&(!ins[4])&&(!ins[3])&&ins[1]) ;
+assign mult_div_op[0] = ((!ins[31])&&(!ins[30])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&(!ins[1])&&(!ins[0])) ;
+assign mult_div_op[1] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&(!ins[1])&&ins[0]) ;
+assign mult_div_op[2] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&ins[1]&&(!ins[0])) ;
+assign mult_div_op[3] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&ins[3]&&ins[1]&&ins[0]) ;
+assign mult_div_op[4] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[1])&&(!ins[0])) ;
+assign mult_div_op[5] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&ins[1]&&(!ins[0])) ;
+assign mult_div_op[6] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&(!ins[1])&&ins[0]) ;
+assign mult_div_op[7] = ((!ins[31])&&(!ins[29])&&(!ins[28])&&(!ins[27])&&(!ins[26])&&ins[4]&&(!ins[3])&&ins[1]&&ins[0]) ;
 endmodule
