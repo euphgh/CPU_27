@@ -145,7 +145,7 @@ always @(posedge clk ) begin
         valid_r <= id_valid_in;
     end
 end
-assign ready = (div_tready_in ^ (|id_to_exe_mult_div_op_r[3:2]));
+assign ready = !(div_tready_in ^ (|id_to_exe_mult_div_op_r[3:2]));
 assign allowin = !valid_r || (ready && mem_allowin_in)||wb_ClrStpJmp_in;
 assign exe_allowin_out = allowin;
 assign exe_valid_out = valid_r && ready;
@@ -265,7 +265,6 @@ assign exe_in0_out = id_to_exe_aludata1_r;
 assign exe_in1_out = id_to_exe_aludata2_r;
 assign exe_mult_div_op_out = id_to_exe_mult_div_op_r ;
 assign exe_mthiol_data_out = id_to_exe_RD1_r;
-assign exe_div_stop_out = id_to_exe_mult_div_op_r[0]||(|id_to_exe_mult_div_op_r[5:2]);
 assign exe_exception_out = (id_to_exe_sel_wbdata_r[0]&&overflow)||ExceptSet||id_to_exe_exception_r;
 assign exe_bd_out = id_to_exe_bd_r;
 assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : ((id_to_exe_sel_wbdata_r[0]&&overflow) ? `Ov : ExcCode);

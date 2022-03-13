@@ -8,8 +8,8 @@
 //turn start point========================
 `define ini_id_nextPC_in    32'hbfc0_0000 
 `define ini_if_NPC_in       32'hbfbf_fffc
-// `define ini_id_nextPC_in 32'hbfc69f50 
-// `define ini_if_NPC_in    32'hbfc69f4c
+// `define ini_id_nextPC_in 32'hbfc7d7c0
+// `define ini_if_NPC_in    32'hbfc7d7bc
 //=========================================
 `define ini_id_RD1_in 32'b0
 `define ini_id_RD2_in 32'b0

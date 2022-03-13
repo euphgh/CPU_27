@@ -23,8 +23,9 @@ reg reminder_sign_r,quotient_sign_r;
 wire  [31:0]  quotient_temp;
 wire  [63:0]  minuend_back;
 wire pre_complete;
+reg  have_data;
 /*====================Function Code====================*/
-assign div_tready = div&&complete;
+assign div_tready = div&&(complete||(!have_data));
 assign x_sign = x[31]&&div_signed;
 assign y_sign = y[31]&&div_signed;
 assign x_abs = ({32{x_sign}}^x) + x_sign;
@@ -41,16 +42,18 @@ always @(posedge clk ) begin
         quotient_iter <= 32'b0;
         reminder_sign_r <= 1'b0;
         quotient_sign_r <=1'b0;
+        have_data <= 1'b0;
     end
     else if (div_tready) begin
         timer <= 1'b1;
         minuend <= {32'b0,x_abs};
         divisor <= y_abs;
         quotient_iter <= 32'b0; 
-        reminder_sign_r = reminder_sign;
-        quotient_sign_r = quotient_sign;
+        reminder_sign_r <= reminder_sign;
+        quotient_sign_r <= quotient_sign;
+        have_data <= 1'b1;
     end
-    else begin
+    else if (have_data) begin
         timer <= timer + 1'b1;
         minuend <= minuend_back;
         quotient_iter <= quotient_temp;
@@ -84,6 +87,6 @@ always @(posedge clk ) begin
 end
 assign s = quotient_sign_r ? (~quotient_temp_r+1'b1) : quotient_temp_r;
 assign r = reminder_sign_r ? (~minuend_back_r+1'b1) : minuend_back_r;
-assign complete = pre_complete_r;
+assign complete = pre_complete_r||(!have_data);
 assign timer_out = timer;
 endmodule

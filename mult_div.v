@@ -31,6 +31,7 @@ module mult_div (
     assign scr1 = in1;
     assign multop = exe_mult_div_signed_in[0];
     assign mult_res_out = mult_res;
+    assign mult_complete_out = 1'b1;
     // div Inputs
     wire  div_signed,reseten;
     wire  [31:0]  x;
@@ -56,4 +57,11 @@ module mult_div (
              .div_tready              ( div_tready   )
          );
     assign reseten = rst_n&&(!(wb_ClrStpJmp_in&&(|timer_out[5:2])));
+    assign div_tready_out = div_tready;
+    assign div_signed = exe_mult_div_signed_in[2] ;
+    assign div = exe_mult_div_signed_in[3:2];
+    assign x = in0;
+    assign y = in1;
+    assign div_res_out = {r,s};
+    assign div_complete_out = complete;
 endmodule

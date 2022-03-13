@@ -175,7 +175,7 @@ wire [4:0]  mem_wnum_in;
 wire [2:0]  mem_sel_wbdata_in;
 wire [7:0]  mem_onehot_in;
 wire [4:0]  mem_lubhw_con_in;
-wire [31:0] mem_adrl_in;
+wire [1:0] mem_adrl_in;
 wire [2:0]  mem_write_type_in;
 wire [31:0] mem_wbdata_in;
 wire [3:0]  mem_llr_we_in;
@@ -404,7 +404,7 @@ EXE  u_EXE (
     .id_sel_wbdata_in        ( id_sel_wbdata_in     ),
     .id_aluop_in             ( id_aluop_in          ),
     .id_RD2_in               ( id_RD2_in            ),
-    .id_RD2_in               ( id_RD1_in            ),
+    .id_RD1_in               ( id_RD1_in            ),
     .id_aludata1_in          ( id_aludata1_in       ),
     .id_aludata2_in          ( id_aludata2_in       ),
     .id_sel_dm_con_in        ( id_sel_dm_con_in     ),
@@ -444,8 +444,6 @@ EXE  u_EXE (
     .exe_write_type_out      ( exe_write_type_out   ),
     .exe_in0_out             ( exe_in0_out          ),
     .exe_in1_out             ( exe_in1_out          ),
-    .exe_mult_div_op_out     ( exe_mult_div_op_out  ),
-    .exe_read_request_out    ( exe_read_request_out ),
     .exe_exception_out       ( exe_exception_out    ),
     .exe_bd_out              ( exe_bd_out           ),
     .exe_ExcCode_out         ( exe_ExcCode_out      ),
@@ -455,6 +453,7 @@ EXE  u_EXE (
     .exe_eret_out            ( exe_eret_out         ),
     .exe_mftc0_op_out         ( exe_mftc0_op_out      )
 );
+assign div_tready_in = div_tready_out;
 assign id_mult_div_op_in  = id_mult_div_op     ;
 assign mem_allowin_in     = mem_allowin_out    ;
 assign exe_allowin_in     = exe_allowin_out    ;
@@ -509,9 +508,6 @@ MEM  u_MEM (
     .exe_regnum_in           ( exe_regnum_in        ),
     .exe_write_type_in       ( exe_write_type_in    ),
     .data_sram_rdata         ( data_sram_rdata      ),
-    .mult_div_accessible_in  ( mult_div_accessible_in),
-    .mult_div_res_in         ( mult_div_res_in      ),
-    .exe_read_request_in     ( exe_read_request_in  ),
     .exe_exception_in        ( exe_exception_in     ),
     .exe_bd_in               ( exe_bd_in            ),
     .exe_ExcCode_in          ( exe_ExcCode_in       ),
@@ -537,7 +533,6 @@ MEM  u_MEM (
     .mem_lubhw_con_out       ( mem_lubhw_con_out    ),
     .mem_adrl_out            ( mem_adrl_out         ),
     .mem_write_type_out      ( mem_write_type_out   ),
-    .mem_read_request_out    ( mem_read_request_out ),
     .mem_wbdata_out          ( mem_wbdata_out       ),
     .mem_llr_we_out          ( mem_llr_we_out       ),
     .data_sram_en            ( data_sram_en         ),
@@ -635,7 +630,7 @@ mult_div  u_mult_div (
     .div_res_out             ( div_res_out              ),
     .div_tready_out          ( div_tready_out           ) 
 );
-assign exe_mult_div_signed_in = exe_mult_div_signed_in;
+assign exe_mult_div_signed_in = exe_mult_div_signed_out;
 assign div_complete_in = div_complete_out;
 assign mult_complete_in = mult_complete_out;
 assign mult_res_in = mult_res_out;

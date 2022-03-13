@@ -27,7 +27,7 @@ module MEM(
     input  wire  [31:0]  exe_error_VAddr_in,
     input  wire  exe_eret_in,
     input  wire  [1:0] exe_mftc0_op_in,
-    input  wire  [1:0] wb_ClrStpJmp_in,
+    input  wire  wb_ClrStpJmp_in,
 
     input  wire  [5:0]  exe_mult_div_op_in,//datar:{0:MULT,1:DIV,2:MFHI,3:MFOL,4:MTHI,5:MTOL}
     input  wire  div_complete_in, //dataw:表示此时hilo的数据是否有效
@@ -225,7 +225,7 @@ assign wen_hiol =   exe_to_mem_mult_div_op_r[0] ? {2{!stop_write}} :
                     exe_to_mem_mult_div_op_r[5] ? {!stop_write,1'b0} : 2'b00 ;
 assign data_in =    exe_to_mem_mult_div_op_r[0] ? mult_to_mem_res_w : 
                     exe_to_mem_mult_div_op_r[1] ? div_to_mem_res_w :
-                    (|exe_to_mem_mult_div_op_r[4:5]) ? 2'b01 :
+                    (|exe_to_mem_mult_div_op_r[5:4]) ? 2'b01 :
                     exe_to_mem_mult_div_op_r[5] ? 2'b10 : 2'b00 ;
 hiol  u_hiol (
     .clk                     ( clk        ),
