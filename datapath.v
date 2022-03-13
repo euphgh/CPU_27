@@ -194,13 +194,17 @@ wire [4:0] wb_wnum_out;
 // mult_div Inputs -----------------------------
 // wire  clk;[port]
 // wire  rst_n;[port]
-wire  [5:0]  mult_div_op;
-wire  [31:0]  in0;       
-wire  [31:0]  in1;       
+wire  [3:0]  exe_mult_div_signed_in;
+wire  [31:0]  in0;
+wire  [31:0]  in1;
+wire  wb_ClrStpJmp_in;
 
 // mult_div Outputs
-wire  [31:0]  mult_div_res;
-wire  accessible;
+wire  div_complete_out;
+wire  mult_complete_out;
+wire  [63:0]  mult_res_out;
+wire  [63:0]  div_res_out;
+wire  div_tready_out;
 //-----------------------------------------------
 wire [31:0] PC_IF,PC_ID,PC_EXE,PC_MEM,PC_WB,Instruct;
 assign PC_IF = if_PC_out;
@@ -223,7 +227,6 @@ wire  [7:0]  id_cp0_addr_out;
 wire  [31:0]  id_error_VAddr_out;
 wire  id_eret_out;
 wire  [1:0] id_mftc0_op_out;
-wire  wb_ClrStpJmp_in;
 wire  [31:0] wb_cp0_res_in  ;
 
 wire  id_exception_in;
@@ -386,7 +389,11 @@ assign id_eret_in = id_eret_out;
 assign id_mftc0_op_in = id_mftc0_op_out;
 assign wb_ClrStpJmp_in = wb_ClrStpJmp_out;
 assign wb_cp0_res_in = wb_cp0_res_out;
-
+wire [31:0] id_RD1_in;
+wire div_tready_in;
+wire [31:0] exe_mthiol_data_out;
+wire exe_div_stop_out;
+wire [3:0] exe_mult_div_signed_out;
 EXE  u_EXE (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
@@ -397,6 +404,7 @@ EXE  u_EXE (
     .id_sel_wbdata_in        ( id_sel_wbdata_in     ),
     .id_aluop_in             ( id_aluop_in          ),
     .id_RD2_in               ( id_RD2_in            ),
+    .id_RD2_in               ( id_RD1_in            ),
     .id_aludata1_in          ( id_aludata1_in       ),
     .id_aludata2_in          ( id_aludata2_in       ),
     .id_sel_dm_con_in        ( id_sel_dm_con_in     ),
@@ -415,7 +423,12 @@ EXE  u_EXE (
     .id_eret_in              ( id_eret_in           ),      
     .id_mftc0_op_in          ( id_mftc0_op_in       ),    
     .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
+    .div_tready_in           ( div_tready_in        ),
 
+    .exe_mult_div_op_out     ( exe_mult_div_op_out  ),
+    .exe_mthiol_data_out     ( exe_mthiol_data_out  ),
+    .exe_div_stop_out        ( exe_div_stop_out     ),
+    .exe_mult_div_signed_out ( exe_mult_div_signed_out),
     .exe_allowin_out         ( exe_allowin_out      ),
     .exe_valid_out           ( exe_valid_out        ),
     .exe_alures_out          ( exe_alures_out       ),
@@ -468,6 +481,17 @@ assign exe_error_VAddr_in = exe_error_VAddr_out;
 assign exe_eret_in = exe_eret_out;
 assign exe_mftc0_op_in = exe_mftc0_op_out;
 
+wire  [5:0]  exe_mult_div_op_in;
+wire  div_complete_in;
+wire  mult_complete_in;
+wire  [63:0] mult_res_in;
+wire  [63:0] div_res_in;
+wire  [31:0] exe_mthiol_data_in;
+wire  exe_div_stop_in;
+
+assign exe_mult_div_op_in = exe_mult_div_op_out;
+assign exe_mthiol_data_in = exe_mthiol_data_out;
+assign exe_div_stop_in = exe_div_stop_out;
 MEM  u_MEM (
     .clk                     ( clk                  ),
     .rst_n                   ( rst_n                ),
@@ -495,8 +519,15 @@ MEM  u_MEM (
     .exe_mtc0_data_in        ( exe_mtc0_data_in     ),
     .exe_error_VAddr_in      ( exe_error_VAddr_in   ),
     .exe_eret_in             ( exe_eret_in          ),
-    .exe_mftc0_op_in          ( exe_mftc0_op_in       ),
+    .exe_mftc0_op_in         ( exe_mftc0_op_in      ),
     .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in      ),
+    .exe_mult_div_op_in      ( exe_mult_div_op_in   ),        
+    .div_complete_in         ( div_complete_in      ),    
+    .mult_complete_in        ( mult_complete_in     ),    
+    .mult_res_in             ( mult_res_in          ),
+    .div_res_in              ( div_res_in           ),
+    .exe_mthiol_data_in      ( exe_mthiol_data_in   ),        
+    .exe_div_stop_in         ( exe_div_stop_in      ),    
 
     .mem_PC_out              ( mem_PC_out           ),
     .mem_dm_data_out         ( mem_dm_data_out      ),
@@ -589,23 +620,26 @@ assign wb_wdata_in       = wb_wbdata_out    ;
 assign wb_wen_in         = wb_reg_we_out    ;
 assign wb_wnum_in        = wb_wnum_out      ;
 assign wb_write_type_in  = wb_write_type_out;
-mult_div  u_mult_div (
-    .clk                     ( clk           ),
-    .rst_n                   ( rst_n         ),
-    .mult_div_op             ( mult_div_op   ),
-    .in0                     ( in0           ),
-    .in1                     ( in1           ),
-    .read_request            ( read_request  ),
-    .mem_ClrStpJmp_in        ( mem_ClrStpJmp_in),
-    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in),
 
-    .mult_div_res            ( mult_div_res  ),
-    .accessible              ( accessible    ) 
+mult_div  u_mult_div (
+    .clk                     ( clk                      ),
+    .rst_n                   ( rst_n                    ),
+    .exe_mult_div_signed_in  ( exe_mult_div_signed_in   ),
+    .in0                     ( in0                      ),
+    .in1                     ( in1                      ),
+    .wb_ClrStpJmp_in         ( wb_ClrStpJmp_in          ),
+
+    .div_complete_out        ( div_complete_out         ),
+    .mult_complete_out       ( mult_complete_out        ),
+    .mult_res_out            ( mult_res_out             ),
+    .div_res_out             ( div_res_out              ),
+    .div_tready_out          ( div_tready_out           ) 
 );
-assign mult_div_op = exe_mult_div_op_out;
+assign exe_mult_div_signed_in = exe_mult_div_signed_in;
+assign div_complete_in = div_complete_out;
+assign mult_complete_in = mult_complete_out;
+assign mult_res_in = mult_res_out;
+assign div_res_in = div_res_out;
 assign in0 = exe_in0_out;
 assign in1 = exe_in1_out;
-assign read_request = mem_read_request_out;
-assign mult_div_accessible_in = accessible;
-assign mult_div_res_in = mult_div_res;
 endmodule

@@ -13,6 +13,7 @@ module EXE(
 	input wire [4:0]  id_sel_wbdata_in, //datar:与ID段sel_wbdata_id_reg相连，直接输出sel_wbdata_exe_reg
 	input wire [12:0] id_aluop_in, //datar:
 	input wire [31:0] id_RD2_in, //datar:传送给swbh模块的数据
+	input wire [31:0] id_RD1_in, //datar:传送给hiol的数据
 	input wire [31:0] id_aludata1_in, //datar:
 	input wire [31:0] id_aludata2_in, //datar:
 	input wire [1:0]  id_sel_dm_con_in, //datar:选择使用slr还是sbhw模块的数据写入存储器--{0:sbhw,1:slr}
@@ -22,7 +23,7 @@ module EXE(
     input wire [31:0] id_NNPC_in, //datar:
     input wire [4:0]  id_regnum_in, //datar:
     input wire [2:0]  id_write_type_in, //datar:
-    input wire [7:0]  id_mult_div_op_in,
+    input wire [7:0]  id_mult_div_op_in,//{0:MULT,1:MULTU,2:DIV,3:DIVU,4:MFHI,5:MFOL,6:MTHI,7:MTOL}
     input wire  id_exception_in,
     input wire  id_bd_in,
     input wire  [4:0]  id_ExcCode_in,
@@ -31,7 +32,12 @@ module EXE(
     input wire  id_eret_in,
     input wire  [1:0] id_mftc0_op_in,
     input wire  wb_ClrStpJmp_in,
+    input wire  div_tready_in, //dataw:
 	//dataout
+    output wire [5:0]  exe_mult_div_op_out, //{0:MULT,1:DIV,2:MFHI,3:MFOL,4:MTHI,5:MTOL}
+    output wire [31:0] exe_mthiol_data_out,
+    output wire exe_div_stop_out,
+    output wire [3:0]  exe_mult_div_signed_out,
 	output wire [31:0] exe_alures_out, //data:传送给sel_wb
 	output wire [4:0]  exe_sel_wbdata_out, //contrl: sel_wbdata选择子
 	output wire [4:0]  exe_lubhw_con_out, //control:lubw模块的选择子,由上一段接下来
@@ -45,8 +51,6 @@ module EXE(
     output wire [2:0]  exe_write_type_out,
     output wire [31:0] exe_in0_out,
     output wire [31:0] exe_in1_out,
-    output wire [5:0]  exe_mult_div_op_out,
-    output wire exe_read_request_out,
     output wire  exe_exception_out,
     output wire  exe_bd_out,
     output wire  [4:0]  exe_ExcCode_out,
@@ -112,6 +116,7 @@ reg  [3:0] id_to_exe_addrexc_con_r ;
 reg  [4:0] id_to_exe_sel_wbdata_r ;
 reg  [12:0] id_to_exe_aluop_r ;
 reg  [31:0] id_to_exe_RD2_r ;
+reg  [31:0] id_to_exe_RD1_r ;
 reg  [31:0] id_to_exe_aludata1_r ;
 reg  [31:0] id_to_exe_aludata2_r ;
 reg  [1:0] id_to_exe_sel_dm_con_r ;
@@ -140,7 +145,7 @@ always @(posedge clk ) begin
         valid_r <= id_valid_in;
     end
 end
-assign ready = 1'b1;//之后由乘除法决定
+assign ready = (div_tready_in ^ (|id_to_exe_mult_div_op_r[3:2]));
 assign allowin = !valid_r || (ready && mem_allowin_in)||wb_ClrStpJmp_in;
 assign exe_allowin_out = allowin;
 assign exe_valid_out = valid_r && ready;
@@ -152,6 +157,7 @@ always @(posedge clk) begin
         id_to_exe_sel_wbdata_r <= `ini_id_sel_wbdata_in;
         id_to_exe_aluop_r <= `ini_id_aluop_in;
         id_to_exe_RD2_r <= `ini_id_RD2_in;
+        id_to_exe_RD1_r <= `ini_id_RD2_in;
         id_to_exe_aludata1_r <= `ini_id_aludata1_in;
         id_to_exe_aludata2_r <= `ini_id_aludata2_in;
         id_to_exe_sel_dm_con_r <= `ini_id_sel_dm_con_in;
@@ -176,6 +182,7 @@ always @(posedge clk) begin
         id_to_exe_sel_wbdata_r <= id_sel_wbdata_in;
         id_to_exe_aluop_r <= id_aluop_in;
         id_to_exe_RD2_r <= id_RD2_in;
+        id_to_exe_RD1_r <= id_RD1_in;
         id_to_exe_aludata1_r <= id_aludata1_in;
         id_to_exe_aludata2_r <= id_aludata2_in;
         id_to_exe_sel_dm_con_r <= id_sel_dm_con_in;
@@ -246,7 +253,6 @@ assign exe_dm_data_out = id_to_exe_sel_dm_con_r[0] ? sbhw_data : slr_data;
 
 assign exe_dm_we_out = (id_to_exe_sel_dm_con_r[0] ? sbhw_we : 
 				        id_to_exe_sel_dm_con_r[1] ? slr_we : 4'b0000)&{4{exe_valid_out}};//从发射的角度来看
-
 assign exe_dm_addr_out = aluso;
 assign exe_PC_out = id_to_exe_PC_r;
 assign exe_NNPC_out = id_to_exe_NNPC_r;
@@ -257,8 +263,9 @@ assign exe_wnum_out = id_to_exe_regnum_r ;
 assign exe_write_type_out = id_to_exe_write_type_r;
 assign exe_in0_out = id_to_exe_aludata1_r;
 assign exe_in1_out = id_to_exe_aludata2_r;
-assign exe_mult_div_op_out = {id_to_exe_mult_div_op_r[7:6],id_to_exe_mult_div_op_r[3:0]};
-assign exe_read_request_out = id_to_exe_mult_div_op_r[4];
+assign exe_mult_div_op_out = id_to_exe_mult_div_op_r ;
+assign exe_mthiol_data_out = id_to_exe_RD1_r;
+assign exe_div_stop_out = id_to_exe_mult_div_op_r[0]||(|id_to_exe_mult_div_op_r[5:2]);
 assign exe_exception_out = (id_to_exe_sel_wbdata_r[0]&&overflow)||ExceptSet||id_to_exe_exception_r;
 assign exe_bd_out = id_to_exe_bd_r;
 assign exe_ExcCode_out = id_to_exe_exception_r ? id_to_exe_ExcCode_r : ((id_to_exe_sel_wbdata_r[0]&&overflow) ? `Ov : ExcCode);
@@ -267,4 +274,6 @@ assign exe_mtc0_data_out = id_to_exe_RD2_r;
 assign exe_error_VAddr_out = id_to_exe_exception_r ? id_to_exe_error_VAddr_r : aluso ;
 assign exe_eret_out = id_to_exe_eret_r ;
 assign exe_mftc0_op_out = id_to_exe_mftc0_op_r;
+assign exe_mult_div_signed_out = id_to_exe_mult_div_op_r[3:0];
+assign exe_div_stop_out = (|id_to_exe_mult_div_op_r[7:4])||(|id_to_exe_mult_div_op_r[1:0]);
 endmodule

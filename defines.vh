@@ -74,6 +74,8 @@
 `define ini_id_error_VAddr_in 32'b0
 `define ini_id_eret_in 1'b0
 `define ini_id_mftc0_op_in 1'b0
+`define ini_exe_mult_div_op_in 8'b0
+`define ini_exe_mthiol_data_in 32'b0
 //MEM
 `define ini_wbdata 32'b0   
 `define ini_reg_we_mem 4'b0
