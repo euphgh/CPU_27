@@ -158,8 +158,8 @@ assign lubhw_con = mem_to_wb_lubhw_con_r;
 assign wb_wbdata_out = mem_to_wb_mftc0_op_r[0] ? cp0_res :
                         mem_to_wb_sel_wbdata_r[0] ? mem_to_wb_wbdata_r :
                         mem_to_wb_sel_wbdata_r[1] ? lubhw_out : llr_data;
-assign wb_reg_we_out = (|mem_to_wb_sel_wbdata_r[1:0]||mem_to_wb_mftc0_op_r[0]) ? 4'b1111:
-                        mem_to_wb_sel_wbdata_r[2] ?  mem_to_wb_llr_we_r : 4'b0;
+assign wb_reg_we_out = ((|mem_to_wb_sel_wbdata_r[1:0]||mem_to_wb_mftc0_op_r[0]) ? 4'b1111:
+                        mem_to_wb_sel_wbdata_r[2] ?  mem_to_wb_llr_we_r : 4'b0) & {4{!wb_ClrStpJmp_out}};
 assign wb_wnum_out = mem_to_wb_wnum_r;
 assign wb_write_type_out = mem_to_wb_write_type_r;
 always @(posedge clk ) begin

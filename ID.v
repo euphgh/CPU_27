@@ -25,6 +25,7 @@ module ID(
 	output wire [4:0]  id_sel_wbdata_out, //control:
 	output wire [1:0]  id_sel_dm_out, //control:
 	output wire [31:0] id_RD2_out, //data:
+	output wire [31:0] id_RD1_out, //data:
 	output wire [12:0] id_aluop_out,
 	output wire [31:0] id_aludata1_out, //data:
 	output wire [31:0] id_aludata2_out, //data:
@@ -145,6 +146,7 @@ reg  [31:0]  if_to_id_error_VAddr_r;
 wire [31:0] ID_PC;
 assign ID_PC = id_PC_out;
 wire [4:0] regnum_id_wire;
+reg bj_last;//表示上一条指令时bj类指令
 //------------------------------------------------------------
 
 /*====================Function Code====================*/
@@ -172,6 +174,7 @@ always @(posedge clk) begin
         if_to_id_exception_r <= `ini_if_exception_in;
         if_to_id_ExcCode_r <= `ini_if_ExcCode_in;
         if_to_id_error_VAddr_r <= `ini_if_error_VAddr_in;
+        bj_last <= 1'b0;
     end
     else if (allowin && if_valid_in) begin
         if_to_id_PC_r <= if_PC_in;
@@ -181,6 +184,7 @@ always @(posedge clk) begin
         if_to_id_exception_r <= if_exception_in;
         if_to_id_ExcCode_r <= if_ExcCode_in;
         if_to_id_error_VAddr_r <= if_error_VAddr_in;
+        bj_last = (!rsvinst_exc) && (|brcal_con);
     end
 end
 Reg  u_Reg (
@@ -196,6 +200,7 @@ Reg  u_Reg (
     .RD2                     ( RD2      )
 );
 assign id_RD2_out = RD2;
+assign id_RD1_out = RD1;
 signext  u_signext (
     .imm 		             ( imm		    ),
     .extend_con              ( extend_con   ),
@@ -237,13 +242,13 @@ decoder  u_decoder (
 );
 assign id_sbhw_con_out = sbhw_con;
 assign id_lr_con_out = lr_con;
-assign id_sel_dm_out = sel_dm_con;
-assign id_addrexc_con_out = addrexc_con;
+assign id_sel_dm_out = sel_dm_con & {2{!rsvinst_exc}};
+assign id_addrexc_con_out = addrexc_con & {4{!rsvinst_exc}};
 assign id_lubhw_con_out = lubhw_con;
 assign id_sel_wbdata_out = sel_wb_con & {5{(!nop)}};
 assign Instruct = if_to_id_Instruct_r; //在本阶段没有问题，因为不会出现IF段暂停但是ID段可以继续运行的现象。
 assign id_aluop_out = aluop;
-assign id_mult_div_op = mult_div_op;
+assign id_mult_div_op = mult_div_op & {8{!rsvinst_exc}};
 assign regnum_id_wire = sel_wr_con[0] ? rt:
 			sel_wr_con[1] ? rd : 32'd31;
 assign id_regnum_out = (regnum_id_wire);  //& {5{(!nop)}}) ;
@@ -258,7 +263,7 @@ assign id_PC_out = if_to_id_PC_r;
 assign id_NNPC_out = if_to_id_NNPC_r;
 assign reg_we = wb_to_id_wen_w; //& {4{valid_r}};
 assign WR = wb_to_id_wnum_w;
-assign id_write_type_out = write_type & {3{(!nop)}};
+assign id_write_type_out = write_type & {3{(!(nop&&rsvinst_exc))}};
 idready  u_idready (
     .exe_write_type          ( exe_write_type   ),
     .mem_write_type          ( mem_write_type   ),
@@ -291,19 +296,12 @@ brcal  u_brcal (
 );
 assign id_nextPC_out = wb_ClrStpJmp_in ? wb_cp0_res_in: (brcal_out ? bjpc_out : if_NPC_fast_wire);
 //需要decoder支持
-reg bj_last;//表示上一条指令时bj类指令
-always @(posedge clk ) begin
-    if (!rst_n) 
-        bj_last <= 1'b0;
-    else
-        bj_last <= |brcal_con;
-end
 assign id_exception_out = if_to_id_exception_r||sys_exc||rsvinst_exc||break_exc;
 assign id_bd_out = bj_last;
-wire [4:0] ExcCode_id = ({5{rsvinst_exc}} & `RI)|({5{sys_exc}} & `Sys)|({5{break_exc}} & `RI); 
+wire [4:0] ExcCode_id = ({5{rsvinst_exc}} & `RI)|({5{sys_exc}} & `Sys)|({5{break_exc}} & `Bp); 
 assign id_ExcCode_out = if_to_id_exception_r ? if_to_id_ExcCode_r : ExcCode_id;
 assign id_cp0_addr_out = cp0_addr;
 assign id_error_VAddr_out = if_to_id_error_VAddr_r;
-assign id_eret_out = eret;
-assign id_mftc0_op_out = mftc0_op;
+assign id_eret_out = (!rsvinst_exc) && eret;
+assign id_mftc0_op_out = mftc0_op & {2{!rsvinst_exc}};
 endmodule

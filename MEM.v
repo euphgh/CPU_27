@@ -116,7 +116,7 @@ wire stop_write;
 //datar:{0:MULT,1:DIV,2:MFHI,3:MFOL,4:MTHI,5:MTOL}
 // ---------------------------------------------
 /*====================Function Code====================*/
-assign ready = div_to_mem_complete_w||(!exe_to_mem_div_stop_w);//除法完成了，或者该周期的exe指令不是mtfhiol类指令，都可以继续流水
+assign ready = div_to_mem_complete_w;//||(!exe_to_mem_div_stop_w);//除法完成了，或者该周期的exe指令不是mtfhiol类指令，都可以继续流水
 assign allowin =  (!valid_r) || (ready && wb_allowin_in)||wb_ClrStpJmp_in;
 assign mem_allowin_out = allowin;
 assign mem_valid_out = ready && valid_r;
@@ -218,15 +218,13 @@ assign div_to_mem_complete_w = div_complete_in;
 assign mult_to_mem_res_w = mult_res_in;
 assign div_to_mem_res_w = div_res_in;
 assign exe_to_mem_div_stop_w = exe_div_stop_in;
-assign stop_write = mem_exception_out||wb_ClrStpJmp_in;
+assign stop_write = mem_exception_out||wb_ClrStpJmp_in||mem_eret_out;
 assign wen_hiol =   exe_to_mem_mult_div_op_r[0] ? {2{!stop_write}} : 
                     exe_to_mem_mult_div_op_r[1] ? {2{div_to_mem_complete_w&&(!stop_write)}} : 
                     exe_to_mem_mult_div_op_r[4] ? {1'b0,!stop_write} :
                     exe_to_mem_mult_div_op_r[5] ? {!stop_write,1'b0} : 2'b00 ;
 assign data_in =    exe_to_mem_mult_div_op_r[0] ? mult_to_mem_res_w : 
-                    exe_to_mem_mult_div_op_r[1] ? div_to_mem_res_w :
-                    (|exe_to_mem_mult_div_op_r[5:4]) ? 2'b01 :
-                    exe_to_mem_mult_div_op_r[5] ? 2'b10 : 2'b00 ;
+                    exe_to_mem_mult_div_op_r[1] ? div_to_mem_res_w : {2{exe_to_mem_mthiol_data_r}};
 hiol  u_hiol (
     .clk                     ( clk        ),
     .rst_n                   ( rst_n      ),

@@ -59,7 +59,7 @@ module mult_div (
     assign reseten = rst_n&&(!(wb_ClrStpJmp_in&&(|timer_out[5:2])));
     assign div_tready_out = div_tready;
     assign div_signed = exe_mult_div_signed_in[2] ;
-    assign div = exe_mult_div_signed_in[3:2];
+    assign div = (|exe_mult_div_signed_in[3:2]);
     assign x = in0;
     assign y = in1;
     assign div_res_out = {r,s};

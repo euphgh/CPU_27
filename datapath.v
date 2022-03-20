@@ -69,6 +69,7 @@ wire  id_valid_out;
 wire  [4:0]  id_sel_wbdata_out;
 wire  [1:0]  id_sel_dm_out;
 wire  [31:0]  id_RD2_out;
+wire  [31:0]  id_RD1_out;
 wire  [12:0]  id_aluop_out;
 wire  [31:0]  id_aludata1_out;
 wire  [31:0]  id_aludata2_out;
@@ -94,6 +95,7 @@ wire  [3:0]  id_addrexc_con_in;
 wire  [4:0]  id_sel_wbdata_in;
 wire  [12:0]  id_aluop_in;
 wire  [31:0]  id_RD2_in;
+wire  [31:0]  id_RD1_in;
 wire  [31:0]  id_aludata1_in;
 wire  [31:0]  id_aludata2_in;
 wire  [1:0]  id_sel_dm_con_in;
@@ -335,6 +337,7 @@ ID  u_ID (
     .id_sel_wbdata_out       ( id_sel_wbdata_out    ),
     .id_sel_dm_out           ( id_sel_dm_out        ),
     .id_RD2_out              ( id_RD2_out           ),
+    .id_RD1_out              ( id_RD1_out           ),
     .id_aluop_out            ( id_aluop_out         ),
     .id_aludata1_out         ( id_aludata1_out      ),
     .id_aludata2_out         ( id_aludata2_out      ),
@@ -368,6 +371,7 @@ assign if_NPC_in         = if_NPC_out        ;
 assign id_sel_wbdata_in  = id_sel_wbdata_out ;
 assign id_sel_dm_con_in  = id_sel_dm_out     ;
 assign id_RD2_in         = id_RD2_out        ;
+assign id_RD1_in         = id_RD1_out        ;
 assign id_aluop_in       = id_aluop_out      ;
 assign id_aludata1_in    = id_aludata1_out   ;
 assign id_aludata2_in    = id_aludata2_out   ;
@@ -389,7 +393,6 @@ assign id_eret_in = id_eret_out;
 assign id_mftc0_op_in = id_mftc0_op_out;
 assign wb_ClrStpJmp_in = wb_ClrStpJmp_out;
 assign wb_cp0_res_in = wb_cp0_res_out;
-wire [31:0] id_RD1_in;
 wire div_tready_in;
 wire [31:0] exe_mthiol_data_out;
 wire exe_div_stop_out;

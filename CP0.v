@@ -140,7 +140,7 @@ cp0_EPC  u_cp0_EPC (
 
     .cp0_EPC_data            ( cp0_EPC_data     )
 );
-assign BD = cp0_Cause_data[`BD];
+assign BD = mem_to_wb_bd_r;
 assign EXL = cp0_Status_data[`EXL];
 cp0_Compare  u_cp0_Compare (
     .clk                     ( clk                ),
@@ -178,7 +178,12 @@ assign mtc0_data = mem_to_wb_mtc0_data_r;
 assign ClrStpJmp = exception||eret_op;
 assign exception = mem_to_wb_exception_r || int_in;
 assign exc_jump_inst = eret_op ? cp0_EPC_data : 32'hbfc00380;
-assign int_in = (cp0_Cause_data[`IP]&cp0_Status_data[`IM]!=8'h00)&&cp0_Status_data[`IE]&&(!cp0_Status_data[`EXL]);
+wire [7:0] test_IP = cp0_Cause_data[`IP];
+wire [7:0] test_IM = cp0_Status_data[`IM];
+wire test_and = ((cp0_Cause_data[`IP]&cp0_Status_data[`IM])!=8'h00);
+wire test_IE = cp0_Status_data[`IE];
+wire test_EXL = !cp0_Status_data[`EXL];
+assign int_in = ((cp0_Cause_data[`IP]&cp0_Status_data[`IM])!=8'h00)&&cp0_Status_data[`IE]&&(!cp0_Status_data[`EXL]);
 assign ExcCode = {5{!int_in}} & mem_to_wb_ExcCode_r;
 assign eret_op = mem_to_wb_eret_r;
 assign mfc0 =   ({32{cp0_addr==`cp0addr_Status}} & cp0_Status_data )|

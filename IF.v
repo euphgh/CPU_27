@@ -85,7 +85,7 @@ addrexc  u_addrexc (
 assign address = VAddr_r;
 assign if_NPC_out = VAddr_r + 3'd4;
 assign if_NNPC_out = VAddr_r + 4'd8;
-assign addrexc_con = 4'b1;//表示一直开启开启读4检查
+assign addrexc_con = 4'b0010;//表示一直开启开启读4检查
 assign if_Instruct_out = inst_sram_rdata;
 assign inst_sram_wen = 4'b0;
 assign inst_sram_wdata = 32'b0;
